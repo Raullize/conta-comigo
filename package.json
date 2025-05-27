@@ -1,0 +1,79 @@
+{
+    "name": "conta-comigo",
+    "version": "0.1.0",
+    "description": "Plataforma web de gerenciamento financeiro pessoal que conecta o usuário ao ecossistema do Open Finance",
+    "main": "src/app.js",
+    "scripts": {
+        "start": "node src/app.js",
+        "dev": "nodemon src/app.js",
+        "serve": "cd public && python -m http.server 8000",
+        "lint": "eslint src/ public/js/ --ext .js",
+        "lint:fix": "eslint src/ public/js/ --ext .js --fix",
+        "format": "prettier --write \"src/**/*.js\" \"public/**/*.{html,css,js}\"",
+        "format:check": "prettier --check \"src/**/*.js\" \"public/**/*.{html,css,js}\""
+    },
+    "keywords": [
+        "fintech",
+        "open-finance",
+        "financial-management",
+        "personal-finance",
+        "banking",
+        "investment",
+        "budget",
+        "expense-tracker",
+        "financial-planning",
+        "web-platform"
+    ],
+    "authors": [
+        {
+            "name": "Dante Alsino",
+            "email": "dante.alsino57@gmail.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Lucas Guidotti",
+            "email": "lucasguidoti.lg@gmail.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Patrícia Quiroz",
+            "email": "patriciaquirozadolpho@gmail.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Raul Lize Teixeira",
+            "email": "raullizeteixeira@gmail.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Thiago Caputi",
+            "email": "lcaputi2@gmail.com",
+            "role": "Developer"
+        },
+        {
+            "name": "Vitor Hugo",
+            "email": "vhkm12@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "license": "MIT",
+    "dependencies": {
+        "express": "^4.18.2",
+        "cors": "^2.8.5",
+        "helmet": "^7.0.0",
+        "dotenv": "^16.3.1",
+        "bcryptjs": "^2.4.3",
+        "jsonwebtoken": "^9.0.2",
+        "mongoose": "^7.5.0",
+        "joi": "^17.9.2",
+        "express-rate-limit": "^6.10.0",
+        "compression": "^1.7.4"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1",
+        "eslint": "^8.47.0",
+        "eslint-config-prettier": "^9.0.0",
+        "eslint-plugin-prettier": "^5.0.0",
+        "prettier": "^3.0.2"
+    }
+}
