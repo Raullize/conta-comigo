@@ -230,6 +230,10 @@
   overflow: hidden;
 }
 
+.cta-button i {
+  margin-left: var(--spacing-sm);
+}
+
 .cta-button::before {
   content: '';
   position: absolute;
@@ -517,7 +521,7 @@
 
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-2xl);
 }
 
