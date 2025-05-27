@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContaComigo - Conectando você ao seu dinheiro</title>
+    <meta name="description" content="O ContaComigo é uma plataforma web de gerenciamento financeiro pessoal que conecta o usuário ao ecossistema do Open Finance.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="./assets/logos/logo.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="./css/globals.css">
+    <link rel="stylesheet" href="./css/landing.css">
+</head>
+<body>
+    <!-- Header/Navigation -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-content">
+                    <div class="logo">
+                        <img src="./assets/logos/logo.png" alt="ContaComigo Logo" class="logo-img">
+                        <span class="logo-text"><span class="logo-conta">Conta</span><span class="logo-comigo">Comigo</span></span>
+                    </div>
+                    
+                    <div class="nav-links">
+                        <a href="#beneficios" class="nav-link">Benefícios</a>
+                        <a href="#equipe" class="nav-link">Nossa Equipe</a>
+                        <a href="#faq" class="nav-link">FAQ</a>
+                    </div>
+                    
+                    <div class="nav-actions">
+                        <a href="#login" class="btn btn-outline btn-sm">Login</a>
+                        <a href="#cadastro" class="btn btn-primary btn-sm">Cadastro</a>
+                    </div>
+                    
+                    <button class="mobile-menu-toggle" aria-label="Menu">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Mobile Sidebar Menu -->
+        <div class="mobile-sidebar-overlay"></div>
+        <div class="mobile-sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <img src="./assets/logos/logo.png" alt="ContaComigo Logo" class="sidebar-logo-img">
+                    <span class="sidebar-logo-text">
+                        <span class="logo-conta">Conta</span><span class="logo-comigo">Comigo</span>
+                    </span>
+                </div>
+                <button class="sidebar-close" aria-label="Fechar Menu">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#beneficios" class="sidebar-link">
+                    <i class="fas fa-star"></i>
+                    <span>Benefícios</span>
+                </a>
+                <a href="#equipe" class="sidebar-link">
+                    <i class="fas fa-users"></i>
+                    <span>Nossa Equipe</span>
+                </a>
+                <a href="#faq" class="sidebar-link">
+                    <i class="fas fa-question-circle"></i>
+                    <span>FAQ</span>
+                </a>
+            </nav>
+            
+            <div class="sidebar-actions">
+                <a href="#login" class="sidebar-btn sidebar-btn-outline">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login</span>
+                </a>
+                <a href="#cadastro" class="sidebar-btn sidebar-btn-primary">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Cadastro</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background">
+            <div class="hero-shapes">
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
+            </div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        Conectando você ao seu
+                        <span class="gradient-text">dinheiro</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        O ContaComigo é uma plataforma web de gerenciamento financeiro pessoal que conecta o usuário ao ecossistema do Open Finance. Simplifique sua vida financeira em um só lugar.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="#comecar" class="btn btn-primary btn-lg cta-button">
+                            Comece Agora
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="#saiba-mais" class="btn btn-secondary btn-lg">
+                            Saiba Mais
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="hero-visual">
+                    <div class="dashboard-preview">
+                        <div class="dashboard-card">
+                            <div class="card-header">
+                                <div class="card-title">Visão Geral</div>
+                                <div class="card-amount">R$ 12.450,00</div>
+                            </div>
+                            <div class="card-chart">
+                                <div class="chart-bar" style="height: 60%"></div>
+                                <div class="chart-bar" style="height: 80%"></div>
+                                <div class="chart-bar" style="height: 45%"></div>
+                                <div class="chart-bar" style="height: 90%"></div>
+                                <div class="chart-bar" style="height: 70%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="floating-cards">
+                            <div class="floating-card card-1">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Cartões</span>
+                            </div>
+                            <div class="floating-card card-2">
+                                <i class="fas fa-chart-line"></i>
+                                <span>Investimentos</span>
+                            </div>
+                            <div class="floating-card card-3">
+                                <i class="fas fa-piggy-bank"></i>
+                                <span>Economia</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefícios Section -->
+    <section id="beneficios" class="benefits">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Por que escolher o ContaComigo?</h2>
+                <p class="section-subtitle">
+                    Descubra como nossa plataforma pode transformar sua relação com o dinheiro
+                </p>
+            </div>
+            
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <h3 class="benefit-title">Integração Completa</h3>
+                    <p class="benefit-description">
+                        Conecte todas suas contas bancárias, cartões e investimentos em um só lugar através do Open Finance.
+                    </p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3 class="benefit-title">Visualização Inteligente</h3>
+                    <p class="benefit-description">
+                        Gráficos interativos e relatórios detalhados para entender seus hábitos financeiros.
+                    </p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="benefit-title">Categorização Automática</h3>
+                    <p class="benefit-description">
+                        Inteligência artificial que categoriza suas despesas automaticamente para melhor controle.
+                    </p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="benefit-title">Segurança Total</h3>
+                    <p class="benefit-description">
+                        Criptografia de ponta e conformidade com LGPD para proteger seus dados financeiros.
+                    </p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3 class="benefit-title">Educação Financeira</h3>
+                    <p class="benefit-description">
+                        Dicas personalizadas e insights para melhorar sua saúde financeira continuamente.
+                    </p>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="benefit-title">Acesso Multiplataforma</h3>
+                    <p class="benefit-description">
+                        Interface responsiva que funciona perfeitamente em qualquer dispositivo.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="features-content">
+                <div class="features-text">
+                    <h2 class="features-title">Funcionalidades que fazem a diferença</h2>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Metas Financeiras</h4>
+                                <p>Defina e acompanhe suas metas de economia e investimento</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Alertas Inteligentes</h4>
+                                <p>Receba notificações sobre gastos excessivos e oportunidades</p>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="feature-content">
+                                <h4>Relatórios Detalhados</h4>
+                                <p>Exporte relatórios em PDF e CSV para análise completa</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="features-visual">
+                    <div class="phone-mockup">
+                        <div class="phone-screen">
+                            <!-- Conteúdo será substituído por imagem da aplicação -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="equipe" class="team">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Nossa Equipe</h2>
+                <p class="section-subtitle">
+                    Conheça os profissionais dedicados que tornam o ContaComigo possível
+                </p>
+            </div>
+            
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="member-name">Dante Alsino</h3>
+                    <p class="member-role">Desenvolvedor Full Stack</p>
+                    <div class="member-social">
+                        <a href="#" class="social-link linkedin" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link github" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="member-name">Lucas Guidotti</h3>
+                    <p class="member-role">Desenvolvedor Backend</p>
+                    <div class="member-social">
+                        <a href="#" class="social-link linkedin" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link github" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="member-name">Patrícia Quiroz</h3>
+                    <p class="member-role">UX/UI Designer</p>
+                    <div class="member-social">
+                        <a href="#" class="social-link linkedin" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link github" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="member-name">Raul Lize Teixeira</h3>
+                    <p class="member-role">Desenvolvedor Frontend</p>
+                    <div class="member-social">
+                        <a href="#" class="social-link linkedin" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link github" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="member-name">Thiago Caputi</h3>
+                    <p class="member-role">Analista de Sistemas</p>
+                    <div class="member-social">
+                        <a href="#" class="social-link linkedin" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link github" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h3 class="member-name">Vitor Hugo</h3>
+                    <p class="member-role">DevOps Engineer</p>
+                    <div class="member-social">
+                        <a href="#" class="social-link linkedin" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link github" aria-label="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Perguntas Frequentes</h2>
+                <p class="section-subtitle">
+                    Tire suas dúvidas sobre o ContaComigo
+                </p>
+            </div>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>O que é o Open Finance e como funciona?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>O Open Finance é um sistema que permite o compartilhamento seguro de dados financeiros entre instituições autorizadas pelo Banco Central. Com sua autorização, podemos acessar informações de suas contas para oferecer uma visão consolidada de suas finanças.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Meus dados estão seguros?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Sim! Utilizamos criptografia de ponta a ponta, seguimos as diretrizes da LGPD e todas as normas de segurança do Banco Central. Seus dados são protegidos com os mais altos padrões de segurança da indústria.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Quais bancos são suportados?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Suportamos todos os bancos participantes do Open Finance no Brasil, incluindo Itaú, Bradesco, Banco do Brasil, Santander, Nubank, Inter, e muitos outros. A lista está em constante expansão.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>O ContaComigo é gratuito?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Oferecemos um plano gratuito com funcionalidades básicas e planos premium com recursos avançados como relatórios detalhados, alertas personalizados e suporte prioritário.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <span>Como posso cancelar minha conta?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Você pode cancelar sua conta a qualquer momento através das configurações da plataforma. Todos os seus dados serão removidos conforme nossa política de privacidade.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Pronto para transformar suas finanças?</h2>
+                <p class="cta-subtitle">
+                    Junte-se a milhares de usuários que já estão no controle de suas finanças
+                </p>
+                <a href="#comecar" class="btn btn-primary btn-lg cta-button">
+                    Comece Agora Gratuitamente
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <img src="./assets/logos/logo.png" alt="ContaComigo Logo" class="footer-logo-img">
+                        <span class="footer-logo-text">ContaComigo</span>
+                    </div>
+                    <p class="footer-description">
+                        Conectando você ao seu dinheiro de forma segura, inteligente e acessível.
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">Produto</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Funcionalidades</a></li>
+                        <li><a href="#">Preços</a></li>
+                        <li><a href="#">Segurança</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">Empresa</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Sobre Nós</a></li>
+                        <li><a href="#">Carreiras</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Imprensa</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">Suporte</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Central de Ajuda</a></li>
+                        <li><a href="#">Contato</a></li>
+                        <li><a href="#">Status</a></li>
+                        <li><a href="#">Comunidade</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h4 class="footer-title">Legal</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacidade</a></li>
+                        <li><a href="#">Termos</a></li>
+                        <li><a href="#">LGPD</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    © 2024 ContaComigo. Todos os direitos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="./js/landing.js"></script>
+</body>
+</html>
