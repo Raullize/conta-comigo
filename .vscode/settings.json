@@ -1,0 +1,8 @@
+{
+    "liveServer.settings.port": 5501,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "eslint.validate": ["javascript"]
+}
