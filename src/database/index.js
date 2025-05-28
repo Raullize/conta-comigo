@@ -1,0 +1,31 @@
+// src/database/index.js
+const { Sequelize } = require('sequelize');
+const sequelizeConnection = require('./database');
+
+const User = require('../app/models/User');
+const Category = require('../app/models/Category');
+const Account = require('../app/models/Account');
+const Goal = require('../app/models/Goal');
+const Investment = require('../app/models/Investment');
+
+const models = [User, Category, Account, Goal, Investment];
+
+class Database {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    this.connection = sequelizeConnection;
+
+    models
+      .map(model => model(this.connection, Sequelize.DataTypes))
+      .forEach(model => {
+        if (model.associate) {
+          model.associate(this.connection.models);
+        }
+      });
+  }
+}
+
+module.exports = new Database();
