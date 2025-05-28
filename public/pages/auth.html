@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContaComigo - Entrar</title>
+    <meta name="description" content="Faça login na sua conta ContaComigo e gerencie suas finanças de forma inteligente.">
+    <link rel="icon" type="image/png" href="../assets/logos/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/globals.css">
+    <link rel="stylesheet" href="../css/auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-background">
+            <div class="bg-shapes">
+                <div class="bg-shape bg-shape-1"></div>
+                <div class="bg-shape bg-shape-2"></div>
+                <div class="bg-shape bg-shape-3"></div>
+                <div class="bg-shape bg-shape-4"></div>
+            </div>
+        </div>
+
+        <div class="auth-content">
+            <div class="auth-header">
+                <a href="../index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Voltar</span>
+                </a>
+                <div class="auth-logo">
+                    <img src="../assets/logos/logo.png" alt="ContaComigo Logo" class="logo-img">
+                    <span class="logo-text">
+                        <span class="logo-conta">Conta</span><span class="logo-comigo">Comigo</span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="auth-forms">
+                <div class="form-container active" id="loginForm">
+                    <div class="form-header">
+                        <h1 class="form-title">Bem-vindo de volta!</h1>
+                        <p class="form-subtitle">Entre na sua conta para continuar gerenciando suas finanças</p>
+                    </div>
+
+                    <form class="auth-form" id="loginFormElement">
+                        <div class="form-group">
+                            <label for="loginEmail" class="form-label">
+                                <i class="fas fa-envelope"></i>
+                                E-mail
+                            </label>
+                            <input 
+                                type="email" 
+                                id="loginEmail" 
+                                name="email" 
+                                class="form-input" 
+                                placeholder="seu@email.com"
+                                required
+                                autocomplete="email"
+                            >
+                            <div class="input-error" id="loginEmailError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="loginPassword" class="form-label">
+                                <i class="fas fa-lock"></i>
+                                Senha
+                            </label>
+                            <div class="password-input">
+                                <input 
+                                    type="password" 
+                                    id="loginPassword" 
+                                    name="password" 
+                                    class="form-input" 
+                                    placeholder="Digite sua senha"
+                                    required
+                                    autocomplete="current-password"
+                                >
+                                <button type="button" class="password-toggle" data-target="loginPassword" tabindex="-1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="input-error" id="loginPasswordError"></div>
+                        </div>
+
+                        <div class="form-options">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="rememberMe" name="rememberMe">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-text">Lembrar de mim</span>
+                            </label>
+                            <a href="#" class="forgot-password">Esqueceu a senha?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg btn-full loading-btn" id="loginBtn">
+                            <span class="btn-text">Entrar</span>
+                            <span class="btn-loading">
+                                Carregando&nbsp;&nbsp;<i class="fas fa-spinner fa-spin"></i>
+                            </span>
+                            <span class="btn-success">
+                                Sucesso&nbsp;&nbsp;<i class="fas fa-check"></i>
+                            </span>
+                        </button>
+
+
+                    </form>
+
+                    <div class="form-footer">
+                        <p>Não tem uma conta? 
+                            <button type="button" class="link-btn" onclick="switchToRegister()">Cadastre-se</button>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Formulário de Cadastro - Etapa 1 -->
+                <div class="form-container" id="registerForm">
+                    <div class="form-header">
+                        <h1 class="form-title">Crie sua conta</h1>
+                        <p class="form-subtitle">Comece a gerenciar suas finanças de forma inteligente</p>
+                        <div class="progress-indicator">
+                            <div class="progress-step active" data-step="1">
+                                <span class="step-number">1</span>
+                                <span class="step-label">Dados Pessoais</span>
+                            </div>
+                            <div class="progress-line"></div>
+                            <div class="progress-step" data-step="2">
+                                <span class="step-number">2</span>
+                                <span class="step-label">Segurança</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form class="auth-form" id="registerFormStep1">
+                        <div class="form-group">
+                            <label for="fullName" class="form-label">
+                                <i class="fas fa-user"></i>
+                                Nome Completo
+                            </label>
+                            <input 
+                                type="text" 
+                                id="fullName" 
+                                name="fullName" 
+                                class="form-input" 
+                                placeholder="Digite seu nome completo"
+                                required
+                                autocomplete="name"
+                            >
+                            <div class="input-error" id="fullNameError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="registerEmail" class="form-label">
+                                <i class="fas fa-envelope"></i>
+                                E-mail
+                            </label>
+                            <input 
+                                type="email" 
+                                id="registerEmail" 
+                                name="email" 
+                                class="form-input" 
+                                placeholder="seu@email.com"
+                                required
+                                autocomplete="email"
+                            >
+                            <div class="input-error" id="registerEmailError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="cpf" class="form-label">
+                                <i class="fas fa-id-card"></i>
+                                CPF
+                            </label>
+                            <input 
+                                type="text" 
+                                id="cpf" 
+                                name="cpf" 
+                                class="form-input" 
+                                placeholder="000.000.000-00"
+                                required
+                                autocomplete="off"
+                            >
+                            <div class="input-error" id="cpfError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="birthDate" class="form-label">
+                                <i class="fas fa-calendar-alt"></i>
+                                Data de Nascimento
+                            </label>
+                            <input 
+                                type="date" 
+                                id="birthDate" 
+                                name="birthDate" 
+                                class="form-input" 
+                                required
+                                autocomplete="bday"
+                            >
+                            <div class="input-error" id="birthDateError"></div>
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-lg btn-full" id="nextStepBtn">
+                            <span class="btn-text">Continuar</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+
+                    <div class="form-footer">
+                        <p>Já tem uma conta? 
+                            <button type="button" class="link-btn" onclick="switchToLogin()">Faça login</button>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Formulário de Cadastro - Etapa 2 -->
+                <div class="form-container" id="registerFormStep2">
+                    <div class="form-header">
+                        <h1 class="form-title">Quase lá!</h1>
+                        <p class="form-subtitle">Agora vamos configurar sua segurança</p>
+                        <div class="progress-indicator">
+                            <div class="progress-step completed" data-step="1">
+                                <span class="step-number"><i class="fas fa-check"></i></span>
+                                <span class="step-label">Dados Pessoais</span>
+                            </div>
+                            <div class="progress-line completed"></div>
+                            <div class="progress-step active" data-step="2">
+                                <span class="step-number">2</span>
+                                <span class="step-label">Segurança</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form class="auth-form" id="registerFormElement">
+                        <div class="form-group">
+                            <label for="registerPassword" class="form-label">
+                                <i class="fas fa-lock"></i>
+                                Senha
+                            </label>
+                            <div class="password-input">
+                                <input 
+                                    type="password" 
+                                    id="registerPassword" 
+                                    name="password" 
+                                    class="form-input" 
+                                    placeholder="Crie uma senha forte"
+                                    required
+                                    autocomplete="new-password"
+                                >
+                                <button type="button" class="password-toggle" data-target="registerPassword" tabindex="-1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="password-strength" id="passwordStrength">
+                                <div class="strength-bar">
+                                    <div class="strength-fill"></div>
+                                </div>
+                                <span class="strength-text">Força da senha</span>
+                            </div>
+                            <div class="input-error" id="registerPasswordError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword" class="form-label">
+                                <i class="fas fa-lock"></i>
+                                Confirmar Senha
+                            </label>
+                            <div class="password-input">
+                                <input 
+                                    type="password" 
+                                    id="confirmPassword" 
+                                    name="confirmPassword" 
+                                    class="form-input" 
+                                    placeholder="Confirme sua senha"
+                                    required
+                                    autocomplete="new-password"
+                                >
+                                <button type="button" class="password-toggle" data-target="confirmPassword" tabindex="-1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <div class="input-error" id="confirmPasswordError"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="acceptTerms" name="acceptTerms">
+                                <span class="checkmark"></span>
+                                <span class="checkbox-text">
+                                    Aceito os <a href="#" class="link">Termos de Uso</a> e 
+                                    <a href="#" class="link">Política de Privacidade</a>
+                                </span>
+                            </label>
+                            <div class="input-error" id="acceptTermsError"></div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary btn-lg" id="prevStepBtn">
+                                <i class="fas fa-arrow-left"></i>
+                                <span class="btn-text">Voltar</span>
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg loading-btn" id="registerBtn">
+                                <span class="btn-text">Criar Conta</span>
+                                <span class="btn-loading">
+                                    Carregando&nbsp;&nbsp;<i class="fas fa-spinner fa-spin"></i>
+                                </span>
+                                <span class="btn-success">
+                                    Sucesso&nbsp;&nbsp;<i class="fas fa-check"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="form-footer">
+                        <p>Já tem uma conta? 
+                            <button type="button" class="link-btn" onclick="switchToLogin()">Faça login</button>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção lateral com benefícios -->
+        <div class="auth-sidebar">
+            <div class="sidebar-content">
+                <div class="benefits">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="benefit-text">
+                            <h3>Segurança Total</h3>
+                            <p>Seus dados protegidos com criptografia de ponta</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="benefit-text">
+                            <h3>Análises Inteligentes</h3>
+                            <p>Insights personalizados para suas finanças</p>
+                        </div>
+                    </div>
+
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="benefit-text">
+                            <h3>Acesso Multiplataforma</h3>
+                            <p>Gerencie suas finanças em qualquer dispositivo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        <p>"O ContaComigo transformou a forma como gerencio meu dinheiro. Agora tenho controle total das minhas finanças!"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <span class="author-name">Lara Lima</span>
+                            <span class="author-role">Usuária desde 2025</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="../js/auth.js"></script>
+</body>
+</html>

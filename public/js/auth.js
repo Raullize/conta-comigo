@@ -1,0 +1,891 @@
+const authState = {
+  currentForm: 'login',
+  currentStep: 1,
+  isLoading: false,
+  passwordStrength: 0,
+  registrationData: {},
+};
+
+const TEMP_CREDENTIALS = {
+  email: 'admin@contacomigo.com',
+  password: '12345678'
+};
+
+let tempUsers = [];
+
+function isUserLoggedIn() {
+  return localStorage.getItem('isLoggedIn') === 'true';
+}
+
+function loginUser(userData) {
+  localStorage.setItem('isLoggedIn', 'true');
+  localStorage.setItem('userData', JSON.stringify(userData));
+}
+
+function logoutUser() {
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('userData');
+}
+
+const elements = {
+  loginForm: document.getElementById('loginForm'),
+  registerForm: document.getElementById('registerForm'),
+  registerFormStep2: document.getElementById('registerFormStep2'),
+  loginFormElement: document.getElementById('loginFormElement'),
+  registerFormStep1: document.getElementById('registerFormStep1'),
+  registerFormElement: document.getElementById('registerFormElement'),
+  toastContainer: document.getElementById('toastContainer'),
+  nextStepBtn: document.getElementById('nextStepBtn'),
+  prevStepBtn: document.getElementById('prevStepBtn'),
+};
+
+document.addEventListener('DOMContentLoaded', initializeAuth);
+
+function initializeAuth() {
+  setupFormSwitching();
+  setupPasswordToggles();
+  setupFormValidation();
+  setupPasswordStrength();
+  setupCPFMask();
+  setupAgeValidation();
+  setupFormSubmissions();
+  setupStepNavigation();
+
+  // Verificar se há parâmetros na URL para determinar qual formulário mostrar
+  const urlParams = new URLSearchParams(window.location.search);
+  const action = urlParams.get('action');
+
+  if (action === 'register') {
+    switchToRegister();
+  } else {
+    switchToLogin();
+  }
+}
+
+
+function setupFormSwitching() {
+
+  window.switchToLogin = function () {
+    authState.currentForm = 'login';
+    elements.loginForm.classList.add('active');
+    elements.registerForm.classList.remove('active');
+
+
+    const url = new URL(window.location);
+    url.searchParams.delete('action');
+    window.history.replaceState({}, '', url);
+
+
+    clearFormErrors();
+    elements.registerFormStep1.reset();
+    elements.registerFormElement.reset();
+    authState.registrationData = {};
+    authState.currentStep = 1;
+  };
+
+
+  window.switchToRegister = function () {
+    authState.currentForm = 'register';
+    authState.currentStep = 1;
+    elements.registerForm.classList.add('active');
+    elements.registerFormStep2.classList.remove('active');
+    elements.loginForm.classList.remove('active');
+
+
+    const url = new URL(window.location);
+    url.searchParams.set('action', 'register');
+    window.history.replaceState({}, '', url);
+
+
+    clearFormErrors();
+    elements.loginFormElement.reset();
+    elements.registerFormStep1.reset();
+    elements.registerFormElement.reset();
+    authState.registrationData = {};
+  };
+}
+
+// ===== NAVEGAÇÃO ENTRE ETAPAS =====
+function setupStepNavigation() {
+  // Botão "Continuar" da etapa 1
+  if (elements.nextStepBtn) {
+    elements.nextStepBtn.addEventListener('click', function() {
+      if (validateStep1()) {
+        goToStep2();
+      }
+    });
+  }
+
+  // Botão "Voltar" da etapa 2
+  if (elements.prevStepBtn) {
+    elements.prevStepBtn.addEventListener('click', function() {
+      goToStep1();
+    });
+  }
+}
+
+function validateStep1() {
+  const form = elements.registerFormStep1;
+  const inputs = form.querySelectorAll('.form-input');
+  let isValid = true;
+
+  // Validar todos os campos da etapa 1
+  inputs.forEach(input => {
+    if (!validateField(input)) {
+      isValid = false;
+    }
+  });
+
+  return isValid;
+}
+
+function goToStep2() {
+  // Salvar dados da etapa 1
+  const form = elements.registerFormStep1;
+  const formData = new FormData(form);
+  
+  authState.registrationData = {
+    fullName: formData.get('fullName'),
+    email: formData.get('email'),
+    cpf: formData.get('cpf'),
+    birthDate: formData.get('birthDate')
+  };
+
+  // Atualizar estado
+  authState.currentStep = 2;
+
+  // Alternar formulários
+  elements.registerForm.classList.remove('active');
+  elements.registerFormStep2.classList.add('active');
+
+  // Preencher dados na etapa 2 se necessário
+  populateStep2Data();
+}
+
+function goToStep1() {
+  // Atualizar estado
+  authState.currentStep = 1;
+
+  // Alternar formulários
+  elements.registerFormStep2.classList.remove('active');
+  elements.registerForm.classList.add('active');
+
+  // Restaurar dados da etapa 1
+  populateStep1Data();
+}
+
+function populateStep1Data() {
+  if (authState.registrationData) {
+    const form = elements.registerFormStep1;
+    
+    if (authState.registrationData.fullName) {
+      form.querySelector('#fullName').value = authState.registrationData.fullName;
+    }
+    if (authState.registrationData.email) {
+      form.querySelector('#registerEmail').value = authState.registrationData.email;
+    }
+    if (authState.registrationData.cpf) {
+      form.querySelector('#cpf').value = authState.registrationData.cpf;
+    }
+    if (authState.registrationData.birthDate) {
+      form.querySelector('#birthDate').value = authState.registrationData.birthDate;
+    }
+  }
+}
+
+function populateStep2Data() {
+  // Limpar campos de senha ao voltar para etapa 2
+  const form = elements.registerFormElement;
+  form.querySelector('#registerPassword').value = '';
+  form.querySelector('#confirmPassword').value = '';
+  form.querySelector('#acceptTerms').checked = false;
+  
+  // Resetar indicador de força da senha
+  updatePasswordStrength('');
+}
+
+// ===== TOGGLE DE SENHAS =====
+function setupPasswordToggles() {
+  const passwordToggles = document.querySelectorAll('.password-toggle');
+
+  passwordToggles.forEach(toggle => {
+    toggle.addEventListener('click', function () {
+      const targetId = this.getAttribute('data-target');
+      const passwordInput = document.getElementById(targetId);
+      const icon = this.querySelector('i');
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+  });
+}
+
+// ===== VALIDAÇÃO DE FORMULÁRIOS =====
+function setupFormValidation() {
+  // Validação em tempo real
+  const inputs = document.querySelectorAll('.form-input');
+
+  inputs.forEach(input => {
+    input.addEventListener('blur', function () {
+      validateField(this);
+    });
+
+    input.addEventListener('input', function () {
+      // Remover erro quando o usuário começar a digitar
+      clearFieldError(this);
+    });
+  });
+}
+
+function validateField(field) {
+  const value = field.value.trim();
+  const fieldName = field.name;
+  let isValid = true;
+  let errorMessage = '';
+
+  // Validações específicas por campo
+  switch (fieldName) {
+    case 'email':
+      if (!value) {
+        errorMessage = 'E-mail é obrigatório';
+        isValid = false;
+      } else if (!isValidEmail(value)) {
+        errorMessage = 'E-mail inválido';
+        isValid = false;
+      }
+      break;
+
+    case 'password':
+      if (!value) {
+        errorMessage = 'Senha é obrigatória';
+        isValid = false;
+      } else if (value.length < 8) {
+        errorMessage = 'Senha deve ter pelo menos 8 caracteres';
+        isValid = false;
+      }
+      break;
+
+    case 'confirmPassword':
+      const passwordField = document.getElementById('registerPassword');
+      if (!value) {
+        errorMessage = 'Confirmação de senha é obrigatória';
+        isValid = false;
+      } else if (value !== passwordField.value) {
+        errorMessage = 'Senhas não coincidem';
+        isValid = false;
+      }
+      break;
+
+    case 'fullName':
+      if (!value) {
+        errorMessage = 'Nome completo é obrigatório';
+        isValid = false;
+      } else if (value.length < 3) {
+        errorMessage = 'Nome deve ter pelo menos 3 caracteres';
+        isValid = false;
+      } else if (!value.includes(' ')) {
+        errorMessage = 'Digite seu nome completo';
+        isValid = false;
+      }
+      break;
+
+    case 'cpf':
+      if (!value) {
+        errorMessage = 'CPF é obrigatório';
+        isValid = false;
+      } else if (!isValidCPF(value)) {
+        errorMessage = 'CPF inválido';
+        isValid = false;
+      }
+      break;
+
+    case 'birthDate':
+      if (!value) {
+        errorMessage = 'Data de nascimento é obrigatória';
+        isValid = false;
+      } else {
+        isValid = validateAge(field);
+      }
+      break;
+  }
+
+  // Mostrar ou esconder erro
+  if (isValid) {
+    showFieldSuccess(field);
+  } else {
+    showFieldError(field, errorMessage);
+  }
+
+  return isValid;
+}
+
+function showFieldError(field, message) {
+  field.classList.add('error');
+  field.classList.remove('success');
+
+  const errorElement =
+    document.getElementById(field.name + 'Error') ||
+    document.getElementById(field.id + 'Error');
+
+  if (errorElement) {
+    errorElement.textContent = message;
+    errorElement.classList.add('show');
+  }
+}
+
+function showFieldSuccess(field) {
+  field.classList.remove('error');
+  field.classList.add('success');
+
+  const errorElement =
+    document.getElementById(field.name + 'Error') ||
+    document.getElementById(field.id + 'Error');
+
+  if (errorElement) {
+    errorElement.classList.remove('show');
+  }
+}
+
+function clearFieldError(field) {
+  field.classList.remove('error');
+
+  const errorElement =
+    document.getElementById(field.name + 'Error') ||
+    document.getElementById(field.id + 'Error');
+
+  if (errorElement) {
+    errorElement.classList.remove('show');
+  }
+}
+
+function clearFormErrors() {
+  const errorElements = document.querySelectorAll('.input-error');
+  const inputElements = document.querySelectorAll('.form-input');
+
+  errorElements.forEach(error => error.classList.remove('show'));
+  inputElements.forEach(input => {
+    input.classList.remove('error', 'success');
+  });
+}
+
+// ===== FORÇA DA SENHA =====
+function setupPasswordStrength() {
+  const passwordInput = document.getElementById('registerPassword');
+  const strengthBar = document.querySelector('.strength-fill');
+  const strengthText = document.querySelector('.strength-text');
+
+  if (passwordInput && strengthBar && strengthText) {
+    passwordInput.addEventListener('input', function () {
+      const strength = calculatePasswordStrength(this.value);
+      updatePasswordStrengthUI(strength, strengthBar, strengthText);
+    });
+  }
+}
+
+// ===== MÁSCARA DE CPF =====
+function setupCPFMask() {
+  const cpfInput = document.getElementById('cpf');
+
+  if (cpfInput) {
+    cpfInput.addEventListener('input', function () {
+      let value = this.value.replace(/\D/g, '');
+
+      if (value.length <= 11) {
+        value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+        value = value.replace(/(\d{3})(\d{3})(\d{3})/, '$1.$2.$3');
+        value = value.replace(/(\d{3})(\d{3})/, '$1.$2');
+        value = value.replace(/(\d{3})/, '$1');
+      }
+
+      this.value = value;
+    });
+  }
+}
+
+function calculatePasswordStrength(password) {
+  let score = 0;
+
+  // Critérios de força
+  if (password.length >= 8) {
+    score += 1;
+  }
+  if (password.length >= 12) {
+    score += 1;
+  }
+  if (/[a-z]/.test(password)) {
+    score += 1;
+  }
+  if (/[A-Z]/.test(password)) {
+    score += 1;
+  }
+  if (/[0-9]/.test(password)) {
+    score += 1;
+  }
+  if (/[^A-Za-z0-9]/.test(password)) {
+    score += 1;
+  }
+
+  return Math.min(score, 4);
+}
+
+function updatePasswordStrength(password) {
+  const strengthBar = document.querySelector('.strength-fill');
+  const strengthText = document.querySelector('.strength-text');
+  
+  if (strengthBar && strengthText) {
+    const strength = calculatePasswordStrength(password);
+    updatePasswordStrengthUI(strength, strengthBar, strengthText);
+  }
+}
+
+function updatePasswordStrengthUI(strength, strengthBar, strengthText) {
+  const levels = ['', 'weak', 'fair', 'good', 'strong'];
+  const texts = ['', 'Fraca', 'Regular', 'Boa', 'Forte'];
+
+  // Remover classes anteriores
+  strengthBar.className = 'strength-fill';
+
+  if (strength > 0) {
+    strengthBar.classList.add(levels[strength]);
+    strengthText.textContent = `Força: ${texts[strength]}`;
+  } else {
+    strengthText.textContent = 'Força da senha';
+  }
+
+  authState.passwordStrength = strength;
+}
+
+// ===== VALIDAÇÃO DE IDADE =====
+function setupAgeValidation() {
+  const birthDateInput = document.getElementById('birthDate');
+
+  if (birthDateInput) {
+    // Definir data máxima (18 anos atrás)
+    const today = new Date();
+    const maxDate = new Date(
+      today.getFullYear() - 18,
+      today.getMonth(),
+      today.getDate()
+    );
+    const maxDateString = maxDate.toISOString().split('T')[0];
+    birthDateInput.setAttribute('max', maxDateString);
+
+    birthDateInput.addEventListener('change', function () {
+      validateAge(this);
+    });
+  }
+}
+
+function validateAge(birthDateInput) {
+  const birthDate = new Date(birthDateInput.value);
+  const today = new Date();
+  const age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  const actualAge =
+    monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      ? age - 1
+      : age;
+
+  if (actualAge < 18) {
+    showFieldError(
+      birthDateInput,
+      'Você deve ter pelo menos 18 anos para se cadastrar'
+    );
+    return false;
+  } else {
+    showFieldSuccess(birthDateInput);
+    return true;
+  }
+}
+
+// ===== SUBMISSÃO DE FORMULÁRIOS =====
+function setupFormSubmissions() {
+  // Login
+  elements.loginFormElement.addEventListener('submit', function (e) {
+    e.preventDefault();
+    handleLogin(this);
+  });
+
+  // Registro - apenas o formulário da etapa 2
+  elements.registerFormElement.addEventListener('submit', function (e) {
+    e.preventDefault();
+    handleRegister(this);
+  });
+}
+
+async function handleLogin(form) {
+  if (authState.isLoading) {
+    return;
+  }
+
+  const formData = new FormData(form);
+  const data = {
+    email: formData.get('email'),
+    password: formData.get('password'),
+    rememberMe: formData.get('rememberMe') === 'on',
+  };
+
+  // Validar campos
+  const emailField = form.querySelector('[name="email"]');
+  const passwordField = form.querySelector('[name="password"]');
+
+  let isValid = true;
+
+  if (!validateField(emailField)) {
+    isValid = false;
+  }
+
+  if (!validateField(passwordField)) {
+    isValid = false;
+  }
+
+  if (!isValid) {
+    showToast(
+      'error',
+      'Erro de validação',
+      'Por favor, corrija os erros no formulário.'
+    );
+    return;
+  }
+
+  // Mostrar loading
+  setFormLoading('login', true);
+
+  try {
+    // Simular chamada de API
+    await simulateAPICall(1000);
+
+    // Verificar credenciais temporárias ou usuários registrados
+    const isValidCredentials = 
+      (data.email === TEMP_CREDENTIALS.email && data.password === TEMP_CREDENTIALS.password) ||
+      tempUsers.some(user => user.email === data.email && user.password === data.password);
+
+    if (!isValidCredentials) {
+      throw new Error('Credenciais inválidas');
+    }
+
+    // Fazer login
+    const userData = {
+      email: data.email,
+      name: data.email === TEMP_CREDENTIALS.email ? 'Administrador' : 
+            tempUsers.find(user => user.email === data.email)?.fullName || 'Usuário',
+      loginTime: new Date().toISOString()
+    };
+    
+    loginUser(userData);
+
+    // Mostrar sucesso
+    setFormSuccess('login');
+    showToast(
+      'success',
+      'Login realizado!',
+      'Redirecionando para o dashboard...'
+    );
+
+    // Redirecionar após um tempo
+    setTimeout(() => {
+      window.location.href = './dashboard.html';
+    }, 1500);
+  } catch (error) {
+    showToast('error', 'Erro no login', 'E-mail ou senha incorretos.');
+  } finally {
+    setFormLoading('login', false);
+  }
+}
+
+async function handleRegister(form) {
+  if (authState.isLoading) {
+    return;
+  }
+
+  const formData = new FormData(form);
+  
+  // Validar todos os campos da etapa 2
+  const fields = form.querySelectorAll('.form-input');
+  let isValid = true;
+
+  fields.forEach(field => {
+    if (!validateField(field)) {
+      isValid = false;
+    }
+  });
+
+  // Validar termos
+  const termsCheckbox = form.querySelector('[name="acceptTerms"]');
+  if (!termsCheckbox.checked) {
+    showToast(
+      'warning',
+      'Termos obrigatórios',
+      'É necessário aceitar os Termos de Uso e Política de Privacidade para continuar.'
+    );
+    isValid = false;
+  }
+
+  // Validar força da senha
+  if (authState.passwordStrength < 2) {
+    showToast('warning', 'Senha fraca', 'Por favor, use uma senha mais forte.');
+    isValid = false;
+  }
+
+  if (!isValid && termsCheckbox.checked && authState.passwordStrength >= 2) {
+    showToast(
+      'error',
+      'Erro de validação',
+      'Por favor, corrija os erros no formulário.'
+    );
+  }
+
+  if (!isValid) {
+    return;
+  }
+
+  // Combinar dados das duas etapas
+  const completeRegistrationData = {
+    ...authState.registrationData,
+    password: formData.get('password'),
+    acceptTerms: formData.get('acceptTerms') === 'on'
+  };
+
+  // Mostrar loading
+  setFormLoading('register', true);
+
+  try {
+    // Simular chamada de API com dados completos
+
+    await simulateAPICall(2000);
+
+    // Adicionar usuário à lista temporária
+    tempUsers.push({
+      email: completeRegistrationData.email,
+      password: completeRegistrationData.password,
+      fullName: completeRegistrationData.fullName,
+      cpf: completeRegistrationData.cpf,
+      birthDate: completeRegistrationData.birthDate,
+      registrationDate: new Date().toISOString()
+    });
+
+    // Fazer login automático
+    const userData = {
+      email: completeRegistrationData.email,
+      name: completeRegistrationData.fullName,
+      loginTime: new Date().toISOString()
+    };
+    
+    loginUser(userData);
+
+    // Mostrar sucesso
+    setFormSuccess('register');
+    showToast('success', 'Conta criada!', 'Redirecionando para o dashboard...');
+    
+    // Limpar dados temporários
+    authState.registrationData = {};
+
+    // Redirecionar para dashboard
+    setTimeout(() => {
+      window.location.href = './dashboard.html';
+    }, 1500);
+  } catch (error) {
+    showToast(
+      'error',
+      'Erro no cadastro',
+      'Tente novamente em alguns instantes.'
+    );
+  } finally {
+    setFormLoading('register', false);
+  }
+}
+
+// ===== ESTADOS DE LOADING =====
+function setFormLoading(formType, isLoading) {
+  authState.isLoading = isLoading;
+
+  const button = document.getElementById(
+    formType === 'login' ? 'loginBtn' : 'registerBtn'
+  );
+  const form =
+    formType === 'login'
+      ? elements.loginFormElement
+      : elements.registerFormElement;
+
+  if (isLoading) {
+    button.classList.add('loading');
+    button.classList.remove('success');
+    button.disabled = true;
+
+    // Desabilitar todos os inputs
+    const inputs = form.querySelectorAll('input, button');
+    inputs.forEach(input => (input.disabled = true));
+  } else {
+    button.classList.remove('loading');
+    button.disabled = false;
+
+    // Reabilitar todos os inputs
+    const inputs = form.querySelectorAll('input, button');
+    inputs.forEach(input => (input.disabled = false));
+  }
+}
+
+function setFormSuccess(formType) {
+  const button = document.getElementById(
+    formType === 'login' ? 'loginBtn' : 'registerBtn'
+  );
+  
+  button.classList.remove('loading');
+  button.classList.add('success');
+  button.disabled = true;
+}
+
+// ===== SISTEMA DE TOAST =====
+function showToast(type, title, message, duration = 5000) {
+  const toast = createToastElement(type, title, message);
+  elements.toastContainer.appendChild(toast);
+
+  // Auto remover
+  setTimeout(() => {
+    removeToast(toast);
+  }, duration);
+
+  // Remover ao clicar no X
+  const closeBtn = toast.querySelector('.toast-close');
+  closeBtn.addEventListener('click', () => removeToast(toast));
+}
+
+function createToastElement(type, title, message) {
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+
+  const icons = {
+    success: 'fa-check-circle',
+    error: 'fa-exclamation-circle',
+    warning: 'fa-exclamation-triangle',
+    info: 'fa-info-circle',
+  };
+
+  toast.innerHTML = `
+    <div class="toast-icon ${type}">
+      <i class="fas ${icons[type]}"></i>
+    </div>
+    <div class="toast-content">
+      <div class="toast-title">${title}</div>
+      <div class="toast-message">${message}</div>
+    </div>
+    <button class="toast-close">
+      <i class="fas fa-times"></i>
+    </button>
+  `;
+
+  return toast;
+}
+
+function removeToast(toast) {
+  toast.style.animation = 'slideOutRight 0.3s ease-out';
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.parentNode.removeChild(toast);
+    }
+  }, 300);
+}
+
+// ===== UTILITÁRIOS =====
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+function isValidCPF(cpf) {
+  // Remove formatação
+  cpf = cpf.replace(/[^\d]/g, '');
+
+  // Verifica se tem 11 dígitos
+  if (cpf.length !== 11) {
+    return false;
+  }
+
+  // Verifica se todos os dígitos são iguais
+  if (/^(\d)\1{10}$/.test(cpf)) {
+    return false;
+  }
+
+  // Validação do primeiro dígito verificador
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += parseInt(cpf.charAt(i)) * (10 - i);
+  }
+  let remainder = (sum * 10) % 11;
+  if (remainder === 10 || remainder === 11) {
+    remainder = 0;
+  }
+  if (remainder !== parseInt(cpf.charAt(9))) {
+    return false;
+  }
+
+  // Validação do segundo dígito verificador
+  sum = 0;
+  for (let i = 0; i < 10; i++) {
+    sum += parseInt(cpf.charAt(i)) * (11 - i);
+  }
+  remainder = (sum * 10) % 11;
+  if (remainder === 10 || remainder === 11) {
+    remainder = 0;
+  }
+  if (remainder !== parseInt(cpf.charAt(10))) {
+    return false;
+  }
+
+  return true;
+}
+
+function simulateAPICall(delay) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      // Simular sucesso na maioria das vezes
+      if (Math.random() > 0.1) {
+        resolve();
+      } else {
+        reject(new Error('Erro simulado'));
+      }
+    }, delay);
+  });
+}
+
+// ===== ANIMAÇÕES ADICIONAIS =====
+
+// Adicionar animação de slide out para toasts
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideOutRight {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+`;
+document.head.appendChild(style);
+
+// ===== ACESSIBILIDADE =====
+
+// Melhorar navegação por teclado
+document.addEventListener('keydown', e => {
+  // ESC para fechar toasts
+  if (e.key === 'Escape') {
+    const toasts = document.querySelectorAll('.toast');
+    toasts.forEach(toast => removeToast(toast));
+  }
+
+  // Enter para alternar entre formulários quando focado nos links
+  if (e.key === 'Enter' && e.target.classList.contains('link-btn')) {
+    e.target.click();
+  }
+});
