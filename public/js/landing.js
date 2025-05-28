@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeSmoothScrolling();
   initializeHeroAnimation();
   initializeCopyright();
+  initializeAccessibility();
 });
 
 function initializeMobileMenu() {
@@ -181,48 +182,7 @@ function initializeHeroAnimation() {
   heroSection?.classList.add('fade-in-up');
 }
 
-const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-const validateForm = (form) => {
-  const inputs = form.querySelectorAll('input[required], textarea[required]');
-  let isValid = true;
-  
-  inputs.forEach(input => {
-    const value = input.value.trim();
-    
-    if (!value) {
-      showFieldError(input, 'Este campo é obrigatório');
-      isValid = false;
-    } else if (input.type === 'email' && !validateEmail(value)) {
-      showFieldError(input, 'Por favor, insira um email válido');
-      isValid = false;
-    } else {
-      clearFieldError(input);
-    }
-  });
-  
-  return isValid;
-};
-
-const showFieldError = (field, message) => {
-  clearFieldError(field);
-  field.classList.add('error');
-  
-  const errorElement = document.createElement('span');
-  errorElement.className = 'field-error';
-  errorElement.textContent = message;
-  field.parentNode.appendChild(errorElement);
-};
-
-const clearFieldError = (field) => {
-  field.classList.remove('error');
-  field.parentNode.querySelector('.field-error')?.remove();
-};
-
-const toggleLoading = (element, isLoading) => {
-  element.classList.toggle('loading', isLoading);
-  element.disabled = isLoading;
-};
 
 const debounce = (func, wait) => {
   let timeout;
@@ -243,7 +203,7 @@ const throttle = (func, limit) => {
   };
 };
 
-const initializeAccessibility = () => {
+function initializeAccessibility() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Tab') {
       document.body.classList.add('keyboard-navigation');
@@ -253,17 +213,11 @@ const initializeAccessibility = () => {
   document.addEventListener('mousedown', () => {
     document.body.classList.remove('keyboard-navigation');
   });
-};
+}
 
 function initializeCopyright() {
   const currentYearElement = document.getElementById('current-year');
   if (currentYearElement) {
     currentYearElement.textContent = new Date().getFullYear();
   }
-}
-
-initializeAccessibility();
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { validateEmail, validateForm, toggleLoading, debounce, throttle };
 }

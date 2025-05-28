@@ -15,7 +15,6 @@
 </head>
 <body>
     <div class="auth-container">
-        <!-- Background decorativo -->
         <div class="auth-background">
             <div class="bg-shapes">
                 <div class="bg-shape bg-shape-1"></div>
@@ -25,9 +24,7 @@
             </div>
         </div>
 
-        <!-- Conteúdo principal -->
         <div class="auth-content">
-            <!-- Logo e voltar -->
             <div class="auth-header">
                 <a href="../index.html" class="back-link">
                     <i class="fas fa-arrow-left"></i>
@@ -41,9 +38,7 @@
                 </div>
             </div>
 
-            <!-- Formulários -->
             <div class="auth-forms">
-                <!-- Formulário de Login -->
                 <div class="form-container active" id="loginForm">
                     <div class="form-header">
                         <h1 class="form-title">Bem-vindo de volta!</h1>
@@ -83,7 +78,7 @@
                                     required
                                     autocomplete="current-password"
                                 >
-                                <button type="button" class="password-toggle" data-target="loginPassword">
+                                <button type="button" class="password-toggle" data-target="loginPassword" tabindex="-1">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
@@ -102,8 +97,10 @@
                         <button type="submit" class="btn btn-primary btn-lg btn-full loading-btn" id="loginBtn">
                             <span class="btn-text">Entrar</span>
                             <span class="btn-loading">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                Entrando...
+                                Carregando&nbsp;&nbsp;<i class="fas fa-spinner fa-spin"></i>
+                            </span>
+                            <span class="btn-success">
+                                Sucesso&nbsp;&nbsp;<i class="fas fa-check"></i>
                             </span>
                         </button>
 
@@ -117,14 +114,25 @@
                     </div>
                 </div>
 
-                <!-- Formulário de Cadastro -->
+                <!-- Formulário de Cadastro - Etapa 1 -->
                 <div class="form-container" id="registerForm">
                     <div class="form-header">
                         <h1 class="form-title">Crie sua conta</h1>
                         <p class="form-subtitle">Comece a gerenciar suas finanças de forma inteligente</p>
+                        <div class="progress-indicator">
+                            <div class="progress-step active" data-step="1">
+                                <span class="step-number">1</span>
+                                <span class="step-label">Dados Pessoais</span>
+                            </div>
+                            <div class="progress-line"></div>
+                            <div class="progress-step" data-step="2">
+                                <span class="step-number">2</span>
+                                <span class="step-label">Segurança</span>
+                            </div>
+                        </div>
                     </div>
 
-                    <form class="auth-form" id="registerFormElement">
+                    <form class="auth-form" id="registerFormStep1">
                         <div class="form-group">
                             <label for="fullName" class="form-label">
                                 <i class="fas fa-user"></i>
@@ -192,6 +200,38 @@
                             <div class="input-error" id="birthDateError"></div>
                         </div>
 
+                        <button type="button" class="btn btn-primary btn-lg btn-full" id="nextStepBtn">
+                            <span class="btn-text">Continuar</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+
+                    <div class="form-footer">
+                        <p>Já tem uma conta? 
+                            <button type="button" class="link-btn" onclick="switchToLogin()">Faça login</button>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Formulário de Cadastro - Etapa 2 -->
+                <div class="form-container" id="registerFormStep2">
+                    <div class="form-header">
+                        <h1 class="form-title">Quase lá!</h1>
+                        <p class="form-subtitle">Agora vamos configurar sua segurança</p>
+                        <div class="progress-indicator">
+                            <div class="progress-step completed" data-step="1">
+                                <span class="step-number"><i class="fas fa-check"></i></span>
+                                <span class="step-label">Dados Pessoais</span>
+                            </div>
+                            <div class="progress-line completed"></div>
+                            <div class="progress-step active" data-step="2">
+                                <span class="step-number">2</span>
+                                <span class="step-label">Segurança</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form class="auth-form" id="registerFormElement">
                         <div class="form-group">
                             <label for="registerPassword" class="form-label">
                                 <i class="fas fa-lock"></i>
@@ -207,7 +247,7 @@
                                     required
                                     autocomplete="new-password"
                                 >
-                                <button type="button" class="password-toggle" data-target="registerPassword">
+                                <button type="button" class="password-toggle" data-target="registerPassword" tabindex="-1">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
@@ -235,7 +275,7 @@
                                     required
                                     autocomplete="new-password"
                                 >
-                                <button type="button" class="password-toggle" data-target="confirmPassword">
+                                <button type="button" class="password-toggle" data-target="confirmPassword" tabindex="-1">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
@@ -244,7 +284,7 @@
 
                         <div class="form-group">
                             <label class="checkbox-container">
-                                <input type="checkbox" id="acceptTerms" name="acceptTerms" required>
+                                <input type="checkbox" id="acceptTerms" name="acceptTerms">
                                 <span class="checkmark"></span>
                                 <span class="checkbox-text">
                                     Aceito os <a href="#" class="link">Termos de Uso</a> e 
@@ -254,15 +294,21 @@
                             <div class="input-error" id="acceptTermsError"></div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-lg btn-full loading-btn" id="registerBtn">
-                            <span class="btn-text">Criar Conta</span>
-                            <span class="btn-loading">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                Criando conta...
-                            </span>
-                        </button>
-
-
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary btn-lg" id="prevStepBtn">
+                                <i class="fas fa-arrow-left"></i>
+                                <span class="btn-text">Voltar</span>
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg loading-btn" id="registerBtn">
+                                <span class="btn-text">Criar Conta</span>
+                                <span class="btn-loading">
+                                    Carregando&nbsp;&nbsp;<i class="fas fa-spinner fa-spin"></i>
+                                </span>
+                                <span class="btn-success">
+                                    Sucesso&nbsp;&nbsp;<i class="fas fa-check"></i>
+                                </span>
+                            </button>
+                        </div>
                     </form>
 
                     <div class="form-footer">

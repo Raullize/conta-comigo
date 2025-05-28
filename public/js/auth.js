@@ -1,25 +1,45 @@
-// ===== AUTENTICAÇÃO - FUNCIONALIDADES INTERATIVAS =====
-
-// Estado da aplicação
 const authState = {
   currentForm: 'login',
+  currentStep: 1,
   isLoading: false,
   passwordStrength: 0,
+  registrationData: {},
 };
 
-// Elementos DOM
+const TEMP_CREDENTIALS = {
+  email: 'admin@contacomigo.com',
+  password: '12345678'
+};
+
+let tempUsers = [];
+
+function isUserLoggedIn() {
+  return localStorage.getItem('isLoggedIn') === 'true';
+}
+
+function loginUser(userData) {
+  localStorage.setItem('isLoggedIn', 'true');
+  localStorage.setItem('userData', JSON.stringify(userData));
+}
+
+function logoutUser() {
+  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('userData');
+}
+
 const elements = {
   loginForm: document.getElementById('loginForm'),
   registerForm: document.getElementById('registerForm'),
+  registerFormStep2: document.getElementById('registerFormStep2'),
   loginFormElement: document.getElementById('loginFormElement'),
+  registerFormStep1: document.getElementById('registerFormStep1'),
   registerFormElement: document.getElementById('registerFormElement'),
   toastContainer: document.getElementById('toastContainer'),
+  nextStepBtn: document.getElementById('nextStepBtn'),
+  prevStepBtn: document.getElementById('prevStepBtn'),
 };
 
-// ===== INICIALIZAÇÃO =====
-document.addEventListener('DOMContentLoaded', () => {
-  initializeAuth();
-});
+document.addEventListener('DOMContentLoaded', initializeAuth);
 
 function initializeAuth() {
   setupFormSwitching();
@@ -29,6 +49,7 @@ function initializeAuth() {
   setupCPFMask();
   setupAgeValidation();
   setupFormSubmissions();
+  setupStepNavigation();
 
   // Verificar se há parâmetros na URL para determinar qual formulário mostrar
   const urlParams = new URLSearchParams(window.location.search);
@@ -41,39 +62,146 @@ function initializeAuth() {
   }
 }
 
-// ===== ALTERNÂNCIA ENTRE FORMULÁRIOS =====
+
 function setupFormSwitching() {
-  // Função global para alternar para login
+
   window.switchToLogin = function () {
     authState.currentForm = 'login';
     elements.loginForm.classList.add('active');
     elements.registerForm.classList.remove('active');
 
-    // Atualizar URL sem recarregar a página
+
     const url = new URL(window.location);
     url.searchParams.delete('action');
     window.history.replaceState({}, '', url);
 
-    // Limpar formulários
+
     clearFormErrors();
+    elements.registerFormStep1.reset();
     elements.registerFormElement.reset();
+    authState.registrationData = {};
+    authState.currentStep = 1;
   };
 
-  // Função global para alternar para registro
+
   window.switchToRegister = function () {
     authState.currentForm = 'register';
+    authState.currentStep = 1;
     elements.registerForm.classList.add('active');
+    elements.registerFormStep2.classList.remove('active');
     elements.loginForm.classList.remove('active');
 
-    // Atualizar URL sem recarregar a página
+
     const url = new URL(window.location);
     url.searchParams.set('action', 'register');
     window.history.replaceState({}, '', url);
 
-    // Limpar formulários
+
     clearFormErrors();
     elements.loginFormElement.reset();
+    elements.registerFormStep1.reset();
+    elements.registerFormElement.reset();
+    authState.registrationData = {};
   };
+}
+
+// ===== NAVEGAÇÃO ENTRE ETAPAS =====
+function setupStepNavigation() {
+  // Botão "Continuar" da etapa 1
+  if (elements.nextStepBtn) {
+    elements.nextStepBtn.addEventListener('click', function() {
+      if (validateStep1()) {
+        goToStep2();
+      }
+    });
+  }
+
+  // Botão "Voltar" da etapa 2
+  if (elements.prevStepBtn) {
+    elements.prevStepBtn.addEventListener('click', function() {
+      goToStep1();
+    });
+  }
+}
+
+function validateStep1() {
+  const form = elements.registerFormStep1;
+  const inputs = form.querySelectorAll('.form-input');
+  let isValid = true;
+
+  // Validar todos os campos da etapa 1
+  inputs.forEach(input => {
+    if (!validateField(input)) {
+      isValid = false;
+    }
+  });
+
+  return isValid;
+}
+
+function goToStep2() {
+  // Salvar dados da etapa 1
+  const form = elements.registerFormStep1;
+  const formData = new FormData(form);
+  
+  authState.registrationData = {
+    fullName: formData.get('fullName'),
+    email: formData.get('email'),
+    cpf: formData.get('cpf'),
+    birthDate: formData.get('birthDate')
+  };
+
+  // Atualizar estado
+  authState.currentStep = 2;
+
+  // Alternar formulários
+  elements.registerForm.classList.remove('active');
+  elements.registerFormStep2.classList.add('active');
+
+  // Preencher dados na etapa 2 se necessário
+  populateStep2Data();
+}
+
+function goToStep1() {
+  // Atualizar estado
+  authState.currentStep = 1;
+
+  // Alternar formulários
+  elements.registerFormStep2.classList.remove('active');
+  elements.registerForm.classList.add('active');
+
+  // Restaurar dados da etapa 1
+  populateStep1Data();
+}
+
+function populateStep1Data() {
+  if (authState.registrationData) {
+    const form = elements.registerFormStep1;
+    
+    if (authState.registrationData.fullName) {
+      form.querySelector('#fullName').value = authState.registrationData.fullName;
+    }
+    if (authState.registrationData.email) {
+      form.querySelector('#registerEmail').value = authState.registrationData.email;
+    }
+    if (authState.registrationData.cpf) {
+      form.querySelector('#cpf').value = authState.registrationData.cpf;
+    }
+    if (authState.registrationData.birthDate) {
+      form.querySelector('#birthDate').value = authState.registrationData.birthDate;
+    }
+  }
+}
+
+function populateStep2Data() {
+  // Limpar campos de senha ao voltar para etapa 2
+  const form = elements.registerFormElement;
+  form.querySelector('#registerPassword').value = '';
+  form.querySelector('#confirmPassword').value = '';
+  form.querySelector('#acceptTerms').checked = false;
+  
+  // Resetar indicador de força da senha
+  updatePasswordStrength('');
 }
 
 // ===== TOGGLE DE SENHAS =====
@@ -307,6 +435,16 @@ function calculatePasswordStrength(password) {
   return Math.min(score, 4);
 }
 
+function updatePasswordStrength(password) {
+  const strengthBar = document.querySelector('.strength-fill');
+  const strengthText = document.querySelector('.strength-text');
+  
+  if (strengthBar && strengthText) {
+    const strength = calculatePasswordStrength(password);
+    updatePasswordStrengthUI(strength, strengthBar, strengthText);
+  }
+}
+
 function updatePasswordStrengthUI(strength, strengthBar, strengthText) {
   const levels = ['', 'weak', 'fair', 'good', 'strong'];
   const texts = ['', 'Fraca', 'Regular', 'Boa', 'Forte'];
@@ -376,7 +514,7 @@ function setupFormSubmissions() {
     handleLogin(this);
   });
 
-  // Registro
+  // Registro - apenas o formulário da etapa 2
   elements.registerFormElement.addEventListener('submit', function (e) {
     e.preventDefault();
     handleRegister(this);
@@ -404,6 +542,7 @@ async function handleLogin(form) {
   if (!validateField(emailField)) {
     isValid = false;
   }
+
   if (!validateField(passwordField)) {
     isValid = false;
   }
@@ -422,9 +561,29 @@ async function handleLogin(form) {
 
   try {
     // Simular chamada de API
-    await simulateAPICall(2000);
+    await simulateAPICall(1000);
 
-    // Sucesso
+    // Verificar credenciais temporárias ou usuários registrados
+    const isValidCredentials = 
+      (data.email === TEMP_CREDENTIALS.email && data.password === TEMP_CREDENTIALS.password) ||
+      tempUsers.some(user => user.email === data.email && user.password === data.password);
+
+    if (!isValidCredentials) {
+      throw new Error('Credenciais inválidas');
+    }
+
+    // Fazer login
+    const userData = {
+      email: data.email,
+      name: data.email === TEMP_CREDENTIALS.email ? 'Administrador' : 
+            tempUsers.find(user => user.email === data.email)?.fullName || 'Usuário',
+      loginTime: new Date().toISOString()
+    };
+    
+    loginUser(userData);
+
+    // Mostrar sucesso
+    setFormSuccess('login');
     showToast(
       'success',
       'Login realizado!',
@@ -433,7 +592,7 @@ async function handleLogin(form) {
 
     // Redirecionar após um tempo
     setTimeout(() => {
-      window.location.href = '/dashboard.html';
+      window.location.href = './dashboard.html';
     }, 1500);
   } catch (error) {
     showToast('error', 'Erro no login', 'E-mail ou senha incorretos.');
@@ -448,17 +607,8 @@ async function handleRegister(form) {
   }
 
   const formData = new FormData(form);
-  const data = {
-    fullName: formData.get('fullName'),
-    email: formData.get('email'),
-    cpf: formData.get('cpf'),
-    birthDate: formData.get('birthDate'),
-    password: formData.get('password'),
-    confirmPassword: formData.get('confirmPassword'),
-    acceptTerms: formData.get('acceptTerms') === 'on',
-  };
-
-  // Validar todos os campos
+  
+  // Validar todos os campos da etapa 2
   const fields = form.querySelectorAll('.form-input');
   let isValid = true;
 
@@ -471,7 +621,11 @@ async function handleRegister(form) {
   // Validar termos
   const termsCheckbox = form.querySelector('[name="acceptTerms"]');
   if (!termsCheckbox.checked) {
-    showFieldError(termsCheckbox, 'Você deve aceitar os termos de uso');
+    showToast(
+      'warning',
+      'Termos obrigatórios',
+      'É necessário aceitar os Termos de Uso e Política de Privacidade para continuar.'
+    );
     isValid = false;
   }
 
@@ -481,34 +635,63 @@ async function handleRegister(form) {
     isValid = false;
   }
 
-  if (!isValid) {
+  if (!isValid && termsCheckbox.checked && authState.passwordStrength >= 2) {
     showToast(
       'error',
       'Erro de validação',
       'Por favor, corrija os erros no formulário.'
     );
+  }
+
+  if (!isValid) {
     return;
   }
+
+  // Combinar dados das duas etapas
+  const completeRegistrationData = {
+    ...authState.registrationData,
+    password: formData.get('password'),
+    acceptTerms: formData.get('acceptTerms') === 'on'
+  };
 
   // Mostrar loading
   setFormLoading('register', true);
 
   try {
-    // Simular chamada de API
-    await simulateAPICall(3000);
+    // Simular chamada de API com dados completos
 
-    // Sucesso
-    showToast('success', 'Conta criada!', 'Bem-vindo ao ContaComigo!');
+    await simulateAPICall(2000);
 
-    // Alternar para login após um tempo
+    // Adicionar usuário à lista temporária
+    tempUsers.push({
+      email: completeRegistrationData.email,
+      password: completeRegistrationData.password,
+      fullName: completeRegistrationData.fullName,
+      cpf: completeRegistrationData.cpf,
+      birthDate: completeRegistrationData.birthDate,
+      registrationDate: new Date().toISOString()
+    });
+
+    // Fazer login automático
+    const userData = {
+      email: completeRegistrationData.email,
+      name: completeRegistrationData.fullName,
+      loginTime: new Date().toISOString()
+    };
+    
+    loginUser(userData);
+
+    // Mostrar sucesso
+    setFormSuccess('register');
+    showToast('success', 'Conta criada!', 'Redirecionando para o dashboard...');
+    
+    // Limpar dados temporários
+    authState.registrationData = {};
+
+    // Redirecionar para dashboard
     setTimeout(() => {
-      switchToLogin();
-      showToast(
-        'success',
-        'Agora faça login',
-        'Use suas credenciais para entrar.'
-      );
-    }, 2000);
+      window.location.href = './dashboard.html';
+    }, 1500);
   } catch (error) {
     showToast(
       'error',
@@ -534,6 +717,7 @@ function setFormLoading(formType, isLoading) {
 
   if (isLoading) {
     button.classList.add('loading');
+    button.classList.remove('success');
     button.disabled = true;
 
     // Desabilitar todos os inputs
@@ -547,6 +731,16 @@ function setFormLoading(formType, isLoading) {
     const inputs = form.querySelectorAll('input, button');
     inputs.forEach(input => (input.disabled = false));
   }
+}
+
+function setFormSuccess(formType) {
+  const button = document.getElementById(
+    formType === 'login' ? 'loginBtn' : 'registerBtn'
+  );
+  
+  button.classList.remove('loading');
+  button.classList.add('success');
+  button.disabled = true;
 }
 
 // ===== SISTEMA DE TOAST =====
@@ -695,33 +889,3 @@ document.addEventListener('keydown', e => {
     e.target.click();
   }
 });
-
-// ===== ANALYTICS E TRACKING (PLACEHOLDER) =====
-
-// Função para tracking de eventos (será implementada com analytics reais)
-function trackEvent(eventName, properties = {}) {
-  console.log('Event tracked:', eventName, properties);
-
-  // Aqui seria integrado com Google Analytics, Mixpanel, etc.
-  // gtag('event', eventName, properties);
-}
-
-// Tracking de eventos importantes
-function setupEventTracking() {
-  // Track form switches
-  const originalSwitchToLogin = window.switchToLogin;
-  const originalSwitchToRegister = window.switchToRegister;
-
-  window.switchToLogin = function () {
-    trackEvent('auth_form_switch', { form: 'login' });
-    originalSwitchToLogin();
-  };
-
-  window.switchToRegister = function () {
-    trackEvent('auth_form_switch', { form: 'register' });
-    originalSwitchToRegister();
-  };
-}
-
-// Inicializar tracking
-setupEventTracking();
