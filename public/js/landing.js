@@ -15,12 +15,14 @@ function initializeMobileMenu() {
     sidebar: document.querySelector('.mobile-sidebar'),
     overlay: document.querySelector('.mobile-sidebar-overlay'),
     close: document.querySelector('.sidebar-close'),
-    links: document.querySelectorAll('.sidebar-link')
+    links: document.querySelectorAll('.sidebar-link'),
   };
 
-  if (!elements.toggle || !elements.sidebar || !elements.overlay) return;
+  if (!elements.toggle || !elements.sidebar || !elements.overlay) {
+    return;
+  }
 
-  const toggleSidebar = (isOpen) => {
+  const toggleSidebar = isOpen => {
     const action = isOpen ? 'add' : 'remove';
     elements.sidebar.classList[action]('active');
     elements.overlay.classList[action]('active');
@@ -32,22 +34,24 @@ function initializeMobileMenu() {
   const closeSidebar = () => toggleSidebar(false);
   const openSidebar = () => toggleSidebar(true);
 
-  elements.toggle.addEventListener('click', (e) => {
+  elements.toggle.addEventListener('click', e => {
     e.preventDefault();
     openSidebar();
   });
 
-  elements.close?.addEventListener('click', (e) => {
+  elements.close?.addEventListener('click', e => {
     e.preventDefault();
     closeSidebar();
   });
 
-  elements.overlay.addEventListener('click', (e) => {
-    if (e.target === elements.overlay) closeSidebar();
+  elements.overlay.addEventListener('click', e => {
+    if (e.target === elements.overlay) {
+      closeSidebar();
+    }
   });
 
   elements.links.forEach(link => {
-    link.addEventListener('click', (e) => {
+    link.addEventListener('click', e => {
       closeSidebar();
       const targetId = link.getAttribute('href');
       if (targetId?.startsWith('#')) {
@@ -57,7 +61,7 @@ function initializeMobileMenu() {
     });
   });
 
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && elements.sidebar.classList.contains('active')) {
       closeSidebar();
     }
@@ -68,19 +72,19 @@ function initializeMobileMenu() {
 
 function initializeFAQ() {
   const faqQuestions = document.querySelectorAll('.faq-question');
-  
+
   faqQuestions.forEach(question => {
     question.addEventListener('click', () => {
       const answer = question.nextElementSibling;
       const isExpanded = question.getAttribute('aria-expanded') === 'true';
-      
+
       faqQuestions.forEach(otherQuestion => {
         if (otherQuestion !== question) {
           otherQuestion.setAttribute('aria-expanded', 'false');
           otherQuestion.nextElementSibling?.classList.remove('active');
         }
       });
-      
+
       question.setAttribute('aria-expanded', !isExpanded);
       answer?.classList.toggle('active');
     });
@@ -99,7 +103,7 @@ function scrollToElement(targetId) {
 function initializeSmoothScrolling() {
   const navLinks = document.querySelectorAll('a[href^="#"]');
   navLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
+    link.addEventListener('click', e => {
       e.preventDefault();
       scrollToElement(link.getAttribute('href'));
     });
@@ -114,33 +118,40 @@ function initializeScrollReveal() {
 
 function initializeHeaderScrollEffect() {
   const header = document.querySelector('.header');
-  if (!header) return;
-  
+  if (!header) {
+    return;
+  }
+
   const scrollHandler = throttle(() => {
     const scrollY = window.scrollY;
     const isScrolled = scrollY > 100;
-    
-    header.style.background = isScrolled 
-      ? 'rgba(255, 255, 255, 0.98)' 
+
+    header.style.background = isScrolled
+      ? 'rgba(255, 255, 255, 0.98)'
       : 'rgba(255, 255, 255, 0.95)';
-    header.style.boxShadow = isScrolled 
-      ? '0 2px 20px rgba(0, 0, 0, 0.1)' 
+    header.style.boxShadow = isScrolled
+      ? '0 2px 20px rgba(0, 0, 0, 0.1)'
       : 'none';
   }, 16);
-  
+
   window.addEventListener('scroll', scrollHandler);
 }
 
 function initializeScrollRevealAnimation() {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('revealed');
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  const observer = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+  );
 
-  const elementsToReveal = document.querySelectorAll('.benefit-card, .feature-item, .team-member, .faq-item, .scroll-reveal');
+  const elementsToReveal = document.querySelectorAll(
+    '.benefit-card, .feature-item, .team-member, .faq-item, .scroll-reveal'
+  );
   elementsToReveal.forEach(element => {
     element.classList.add('scroll-reveal');
     observer.observe(element);
@@ -150,8 +161,10 @@ function initializeScrollRevealAnimation() {
 function initializeChartAnimation() {
   const chartBars = document.querySelectorAll('.chart-bar');
   const dashboardPreview = document.querySelector('.dashboard-preview');
-  
-  if (!chartBars.length || !dashboardPreview) return;
+
+  if (!chartBars.length || !dashboardPreview) {
+    return;
+  }
 
   const animateCharts = () => {
     const heights = ['60%', '80%', '45%', '90%', '70%', '55%', '85%'];
@@ -164,14 +177,17 @@ function initializeChartAnimation() {
     });
   };
 
-  const chartObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        animateCharts();
-        chartObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.5 });
+  const chartObserver = new IntersectionObserver(
+    entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCharts();
+          chartObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.5 }
+  );
 
   chartObserver.observe(dashboardPreview);
 }
@@ -181,15 +197,15 @@ function initializeHeroAnimation() {
   heroSection?.classList.add('fade-in-up');
 }
 
-const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+const validateEmail = email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-const validateForm = (form) => {
+const validateForm = form => {
   const inputs = form.querySelectorAll('input[required], textarea[required]');
   let isValid = true;
-  
+
   inputs.forEach(input => {
     const value = input.value.trim();
-    
+
     if (!value) {
       showFieldError(input, 'Este campo é obrigatório');
       isValid = false;
@@ -200,21 +216,21 @@ const validateForm = (form) => {
       clearFieldError(input);
     }
   });
-  
+
   return isValid;
 };
 
 const showFieldError = (field, message) => {
   clearFieldError(field);
   field.classList.add('error');
-  
+
   const errorElement = document.createElement('span');
   errorElement.className = 'field-error';
   errorElement.textContent = message;
   field.parentNode.appendChild(errorElement);
 };
 
-const clearFieldError = (field) => {
+const clearFieldError = field => {
   field.classList.remove('error');
   field.parentNode.querySelector('.field-error')?.remove();
 };
@@ -234,22 +250,22 @@ const debounce = (func, wait) => {
 
 const throttle = (func, limit) => {
   let inThrottle;
-  return function(...args) {
+  return function (...args) {
     if (!inThrottle) {
       func.apply(this, args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      setTimeout(() => (inThrottle = false), limit);
     }
   };
 };
 
 const initializeAccessibility = () => {
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', e => {
     if (e.key === 'Tab') {
       document.body.classList.add('keyboard-navigation');
     }
   });
-  
+
   document.addEventListener('mousedown', () => {
     document.body.classList.remove('keyboard-navigation');
   });
@@ -265,5 +281,11 @@ function initializeCopyright() {
 initializeAccessibility();
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { validateEmail, validateForm, toggleLoading, debounce, throttle };
+  module.exports = {
+    validateEmail,
+    validateForm,
+    toggleLoading,
+    debounce,
+    throttle,
+  };
 }
