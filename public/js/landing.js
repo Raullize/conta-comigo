@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeScrollReveal();
   initializeSmoothScrolling();
   initializeHeroAnimation();
+  initializeCopyright();
 });
 
 function initializeMobileMenu() {
@@ -253,6 +254,13 @@ const initializeAccessibility = () => {
     document.body.classList.remove('keyboard-navigation');
   });
 };
+
+function initializeCopyright() {
+  const currentYearElement = document.getElementById('current-year');
+  if (currentYearElement) {
+    currentYearElement.textContent = new Date().getFullYear();
+  }
+}
 
 initializeAccessibility();
 
