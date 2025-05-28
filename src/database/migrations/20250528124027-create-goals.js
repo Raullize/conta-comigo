@@ -8,13 +8,29 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true,
       },
-      name: {
+      user_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'users',
+          key: 'id',
+        },
+      },
+      title: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      value: {
-        type: Sequelize.NUMBER,
-        allowNull: false,
+      target_amount: {
+        type: Sequelize.DECIMAL(10, 2),
+        allowNull: true,
+      },
+      current_amount: {
+        type: Sequelize.DECIMAL(10, 2),
+        defaultValue: 0.0,
+      },
+      target_date: {
+        type: Sequelize.DATE,
+        allowNull: true,
       },
       created_at: {
         type: Sequelize.DATE,
