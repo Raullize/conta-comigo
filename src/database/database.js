@@ -1,6 +1,5 @@
-// 1. Importação com require()
-const { Sequelize } = require('sequelize'); // Importa Sequelize
-const dotenv = require('dotenv'); // Importa dotenv
+const { Sequelize } = require('sequelize');
+const dotenv = require('dotenv'); 
 
 dotenv.config();
 

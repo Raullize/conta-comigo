@@ -1,7 +1,5 @@
 const express = require('express');
 const routes = require('./routes/routes.js');
-const helmet = require('helmet');
-const compression = require('compression');
 require('dotenv').config();
 
 class App {
@@ -13,8 +11,6 @@ class App {
 
   middlewares() {
     this.server.use(express.json());
-    this.server.use(helmet());     
-    this.server.use(compression());
   }
 
   routes() {
