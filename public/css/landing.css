@@ -497,7 +497,7 @@
   position: relative;
 }
 
-/* Mockup do celular simplificado - apenas o molde */
+
 .phone-screen {
   background: #f8f9fa;
   display: flex;
@@ -776,7 +776,7 @@
   margin-bottom: var(--spacing-sm);
 }
 
-/* Responsive Design */
+
 @media (max-width: 1024px) {
   .hero-content,
   .features-content {

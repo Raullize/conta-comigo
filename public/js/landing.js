@@ -1,5 +1,3 @@
-// Landing Page JavaScript
-
 document.addEventListener('DOMContentLoaded', () => {
   initializeMobileMenu();
   initializeFAQ();
