@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
       Category.belongsTo(models.Account, {
         foreignKey: 'account_id',
         as: 'account',
-      }),
+      });
     }
   }
   Category.init({
