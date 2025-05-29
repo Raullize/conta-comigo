@@ -1,0 +1,20 @@
+# Usar uma imagem oficial do Node.js como base
+FROM node:18-alpine
+
+# Definir o diretório de trabalho dentro do contêiner
+WORKDIR /usr/src/app
+
+# Copiar o package.json e o package-lock.json
+COPY package*.json ./
+
+# Instalar as dependências do projeto
+RUN npm install
+
+# Copiar o restante dos arquivos da aplicação para o diretório de trabalho
+COPY . .
+
+# Certifique-se que sua API no index.js está ouvindo nesta porta
+EXPOSE 3000
+
+# Comando para iniciar a sua API quando o contêiner iniciar
+CMD [ "node", "index.js" ]

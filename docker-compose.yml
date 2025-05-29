@@ -1,22 +1,253 @@
 services:
-  postgres:
-    image: postgres:17
-    container_name: contacomigo-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+  # --- API Principal: conta-comigo ---
+  conta-comigo:
+    build: .
+    container_name: conta_comigo
     ports:
-      - "${POSTGRES_PORT}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - "${CONTA_COMIGO_EXT_PORT:-4000}:3000"
+    environment:
+      - PORT=3000 
+      - DB_HOST=postgres_conta_comigo
+      - DB_USER=${CONTA_COMIGO_DB_USER}
+      - DB_PASSWORD=${CONTA_COMIGO_DB_PASSWORD}
+      - DB_NAME=${CONTA_COMIGO_DB_NAME}
+      - DB_PORT=5432
+      - CAPUTI_API_URL=http://caputi-api:3001
+      - DANTE_API_URL=http://dante-api:3002
+      - LUCAS_API_URL=http://lucas-api:3003
+      - PATRICIA_API_URL=http://patricia-api:3004
+      - VITOR_API_URL=http://vitor-api:3005
+    depends_on:
+      postgres_conta_comigo:
+        condition: service_healthy
     networks:
       - openfinance_network
 
-volumes:
-  postgres_data:
+  postgres_conta_comigo:
+    image: postgres:17-alpine
+    container_name: postgres_conta_comigo_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${CONTA_COMIGO_DB_USER}
+      POSTGRES_PASSWORD: ${CONTA_COMIGO_DB_PASSWORD}
+      POSTGRES_DB: ${CONTA_COMIGO_DB_NAME}
+    ports:
+      - "${CONTA_COMIGO_DB_EXT_PORT:-5432}:5432"
+    volumes:
+      - postgres_conta_comigo_data:/var/lib/postgresql/data
+    networks:
+      - openfinance_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${CONTA_COMIGO_DB_USER} -d ${CONTA_COMIGO_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
+  # --- Caputi API e seu Banco de Dados ---
+  caputi-api:
+    build: ./apis/caputi-api
+    container_name: caputi_api_app
+    ports:
+      - "${CAPUTI_API_EXT_PORT:-4001}:3001"
+    environment:
+      - PORT=3001 
+      - DB_HOST=postgres_caputi
+      - DB_USER=${CAPUTI_DB_USER}
+      - DB_PASSWORD=${CAPUTI_DB_PASSWORD}
+      - DB_NAME=${CAPUTI_DB_NAME}
+      - DB_PORT=5432
+    depends_on:
+      postgres_caputi:
+        condition: service_healthy
+    networks:
+      - openfinance_network
+
+  postgres_caputi:
+    image: postgres:17-alpine
+    container_name: postgres_caputi_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${CAPUTI_DB_USER}
+      POSTGRES_PASSWORD: ${CAPUTI_DB_PASSWORD}
+      POSTGRES_DB: ${CAPUTI_DB_NAME}
+    ports:
+      - "${CAPUTI_DB_EXT_PORT:-5433}:5432"
+    volumes:
+      - postgres_caputi_data:/var/lib/postgresql/data
+    networks:
+      - openfinance_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${CAPUTI_DB_USER} -d ${CAPUTI_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Dante API e seu Banco de Dados ---
+  dante-api:
+    build: ./apis/dante-api
+    container_name: dante_api_app
+    ports:
+      - "${DANTE_API_EXT_PORT:-4002}:3002"
+    environment:
+      - PORT=3002
+      - DB_HOST=postgres_dante
+      - DB_USER=${DANTE_DB_USER}
+      - DB_PASSWORD=${DANTE_DB_PASSWORD}
+      - DB_NAME=${DANTE_DB_NAME}
+      - DB_PORT=5432
+    depends_on:
+      postgres_dante:
+        condition: service_healthy
+    networks:
+      - openfinance_network
+
+  postgres_dante:
+    image: postgres:17-alpine
+    container_name: postgres_dante_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DANTE_DB_USER}
+      POSTGRES_PASSWORD: ${DANTE_DB_PASSWORD}
+      POSTGRES_DB: ${DANTE_DB_NAME}
+    ports:
+      - "${DANTE_DB_EXT_PORT:-5434}:5432"
+    volumes:
+      - postgres_dante_data:/var/lib/postgresql/data
+    networks:
+      - openfinance_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DANTE_DB_USER} -d ${DANTE_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Lucas API e seu Banco de Dados ---
+  lucas-api:
+    build: ./apis/lucas-api
+    container_name: lucas_api_app
+    ports:
+      - "${LUCAS_API_EXT_PORT:-4003}:3003"
+    environment:
+      - PORT=3003
+      - DB_HOST=postgres_lucas
+      - DB_USER=${LUCAS_DB_USER}
+      - DB_PASSWORD=${LUCAS_DB_PASSWORD}
+      - DB_NAME=${LUCAS_DB_NAME}
+      - DB_PORT=5432
+    depends_on:
+      postgres_lucas:
+        condition: service_healthy
+    networks:
+      - openfinance_network
+
+  postgres_lucas:
+    image: postgres:17-alpine
+    container_name: postgres_lucas_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${LUCAS_DB_USER}
+      POSTGRES_PASSWORD: ${LUCAS_DB_PASSWORD}
+      POSTGRES_DB: ${LUCAS_DB_NAME}
+    ports:
+      - "${LUCAS_DB_EXT_PORT:-5435}:5432"
+    volumes:
+      - postgres_lucas_data:/var/lib/postgresql/data
+    networks:
+      - openfinance_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${LUCAS_DB_USER} -d ${LUCAS_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Patricia API e seu Banco de Dados ---
+  patricia-api:
+    build: ./apis/patricia-api
+    container_name: patricia_api_app
+    ports:
+      - "${PATRICIA_API_EXT_PORT:-4004}:3004"
+    environment:
+      - PORT=3004
+      - DB_HOST=postgres_patricia
+      - DB_USER=${PATRICIA_DB_USER}
+      - DB_PASSWORD=${PATRICIA_DB_PASSWORD}
+      - DB_NAME=${PATRICIA_DB_NAME}
+      - DB_PORT=5432
+    depends_on:
+      postgres_patricia:
+        condition: service_healthy
+    networks:
+      - openfinance_network
+
+  postgres_patricia:
+    image: postgres:17-alpine
+    container_name: postgres_patricia_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PATRICIA_DB_USER}
+      POSTGRES_PASSWORD: ${PATRICIA_DB_PASSWORD}
+      POSTGRES_DB: ${PATRICIA_DB_NAME}
+    ports:
+      - "${PATRICIA_DB_EXT_PORT:-5436}:5432"
+    volumes:
+      - postgres_patricia_data:/var/lib/postgresql/data
+    networks:
+      - openfinance_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PATRICIA_DB_USER} -d ${PATRICIA_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- Vitor API e seu Banco de Dados ---
+  vitor-api:
+    build: ./apis/vitor-api
+    container_name: vitor_api_app
+    ports:
+      - "${VITOR_API_EXT_PORT:-4005}:3005"
+    environment:
+      - PORT=3005
+      - DB_HOST=postgres_vitor
+      - DB_USER=${VITOR_DB_USER}
+      - DB_PASSWORD=${VITOR_DB_PASSWORD}
+      - DB_NAME=${VITOR_DB_NAME}
+      - DB_PORT=5432
+    depends_on:
+      postgres_vitor:
+        condition: service_healthy
+    networks:
+      - openfinance_network
+
+  postgres_vitor:
+    image: postgres:17-alpine
+    container_name: postgres_vitor_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${VITOR_DB_USER}
+      POSTGRES_PASSWORD: ${VITOR_DB_PASSWORD}
+      POSTGRES_DB: ${VITOR_DB_NAME}
+    ports:
+      - "${VITOR_DB_EXT_PORT:-5437}:5432"
+    volumes:
+      - postgres_vitor_data:/var/lib/postgresql/data
+    networks:
+      - openfinance_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${VITOR_DB_USER} -d ${VITOR_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# --- Volumes para persistência dos dados dos bancos ---
+volumes:
+  postgres_conta_comigo_data:
+  postgres_caputi_data:
+  postgres_dante_data:
+  postgres_lucas_data:
+  postgres_patricia_data:
+  postgres_vitor_data:
+
+# --- Rede customizada para comunicação entre os contêineres ---
 networks:
   openfinance_network:
     driver: bridge
