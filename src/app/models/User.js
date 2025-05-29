@@ -15,6 +15,10 @@ module.exports = sequelize => {
         as: 'accounts',
       });
     }
+
+    checkPassword(password) {
+      return bcrypt.compare(password, this.password);
+    }
   }
 
   User.init(
@@ -24,7 +28,6 @@ module.exports = sequelize => {
       email: Sequelize.STRING,
       birth_date: Sequelize.STRING,
       password: Sequelize.STRING,
-      password_hash: Sequelize.VIRTUAL,
     },
     {
       sequelize,
