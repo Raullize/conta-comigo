@@ -17,7 +17,6 @@ class App {
     this.server.use(routes);
     this.server.use((req, res) => {
       res.status(404).json({ error: 'Route Not Found' });
-
     });
     this.server.use((err, req, res, next) => {
       // eslint-disable-next-line
