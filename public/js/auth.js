@@ -8,10 +8,10 @@ const authState = {
 
 const TEMP_CREDENTIALS = {
   email: 'admin@contacomigo.com',
-  password: '12345678'
+  password: '12345678',
 };
 
-let tempUsers = [];
+const tempUsers = [];
 
 function isUserLoggedIn() {
   return localStorage.getItem('isLoggedIn') === 'true';
@@ -62,17 +62,14 @@ function initializeAuth() {
 }
 
 function setupFormSwitching() {
-
   window.switchToLogin = function () {
     authState.currentForm = 'login';
     elements.loginForm.classList.add('active');
     elements.registerForm.classList.remove('active');
 
-
     const url = new URL(window.location);
     url.searchParams.delete('action');
     window.history.replaceState({}, '', url);
-
 
     clearFormErrors();
     elements.registerFormStep1.reset();
@@ -81,7 +78,6 @@ function setupFormSwitching() {
     authState.currentStep = 1;
   };
 
-
   window.switchToRegister = function () {
     authState.currentForm = 'register';
     authState.currentStep = 1;
@@ -89,11 +85,9 @@ function setupFormSwitching() {
     elements.registerFormStep2.classList.remove('active');
     elements.loginForm.classList.remove('active');
 
-
     const url = new URL(window.location);
     url.searchParams.set('action', 'register');
     window.history.replaceState({}, '', url);
-
 
     clearFormErrors();
     elements.loginFormElement.reset();
@@ -105,7 +99,7 @@ function setupFormSwitching() {
 
 function setupStepNavigation() {
   if (elements.nextStepBtn) {
-    elements.nextStepBtn.addEventListener('click', function() {
+    elements.nextStepBtn.addEventListener('click', () => {
       if (validateStep1()) {
         goToStep2();
       }
@@ -113,7 +107,7 @@ function setupStepNavigation() {
   }
 
   if (elements.prevStepBtn) {
-    elements.prevStepBtn.addEventListener('click', function() {
+    elements.prevStepBtn.addEventListener('click', () => {
       goToStep1();
     });
   }
@@ -136,12 +130,12 @@ function validateStep1() {
 function goToStep2() {
   const form = elements.registerFormStep1;
   const formData = new FormData(form);
-  
+
   authState.registrationData = {
     fullName: formData.get('fullName'),
     email: formData.get('email'),
     cpf: formData.get('cpf'),
-    birthDate: formData.get('birthDate')
+    birthDate: formData.get('birthDate'),
   };
 
   authState.currentStep = 2;
@@ -160,18 +154,21 @@ function goToStep1() {
 function populateStep1Data() {
   if (authState.registrationData) {
     const form = elements.registerFormStep1;
-    
+
     if (authState.registrationData.fullName) {
-      form.querySelector('#fullName').value = authState.registrationData.fullName;
+      form.querySelector('#fullName').value =
+        authState.registrationData.fullName;
     }
     if (authState.registrationData.email) {
-      form.querySelector('#registerEmail').value = authState.registrationData.email;
+      form.querySelector('#registerEmail').value =
+        authState.registrationData.email;
     }
     if (authState.registrationData.cpf) {
       form.querySelector('#cpf').value = authState.registrationData.cpf;
     }
     if (authState.registrationData.birthDate) {
-      form.querySelector('#birthDate').value = authState.registrationData.birthDate;
+      form.querySelector('#birthDate').value =
+        authState.registrationData.birthDate;
     }
   }
 }
@@ -182,7 +179,7 @@ function populateStep2Data() {
   form.querySelector('#registerPassword').value = '';
   form.querySelector('#confirmPassword').value = '';
   form.querySelector('#acceptTerms').checked = false;
-  
+
   // Resetar indicador de força da senha
   updatePasswordStrength('');
 }
@@ -218,7 +215,6 @@ function setupFormValidation() {
     });
 
     input.addEventListener('input', function () {
-  
       clearFieldError(this);
     });
   });
@@ -229,7 +225,6 @@ function validateField(field) {
   const fieldName = field.name;
   let isValid = true;
   let errorMessage = '';
-
 
   switch (fieldName) {
     case 'email':
@@ -295,7 +290,6 @@ function validateField(field) {
       }
       break;
   }
-
 
   if (isValid) {
     showFieldSuccess(field);
@@ -390,7 +384,6 @@ function setupCPFMask() {
 function calculatePasswordStrength(password) {
   let score = 0;
 
-
   if (password.length >= 8) {
     score += 1;
   }
@@ -416,7 +409,7 @@ function calculatePasswordStrength(password) {
 function updatePasswordStrength(password) {
   const strengthBar = document.querySelector('.strength-fill');
   const strengthText = document.querySelector('.strength-text');
-  
+
   if (strengthBar && strengthText) {
     const strength = calculatePasswordStrength(password);
     updatePasswordStrengthUI(strength, strengthBar, strengthText);
@@ -426,7 +419,6 @@ function updatePasswordStrength(password) {
 function updatePasswordStrengthUI(strength, strengthBar, strengthText) {
   const levels = ['', 'weak', 'fair', 'good', 'strong'];
   const texts = ['', 'Fraca', 'Regular', 'Boa', 'Forte'];
-
 
   strengthBar.className = 'strength-fill';
 
@@ -488,7 +480,6 @@ function setupFormSubmissions() {
     handleLogin(this);
   });
 
-
   elements.registerFormElement.addEventListener('submit', function (e) {
     e.preventDefault();
     handleRegister(this);
@@ -506,7 +497,6 @@ async function handleLogin(form) {
     password: formData.get('password'),
     rememberMe: formData.get('rememberMe') === 'on',
   };
-
 
   const emailField = form.querySelector('[name="email"]');
   const passwordField = form.querySelector('[name="password"]');
@@ -530,33 +520,34 @@ async function handleLogin(form) {
     return;
   }
 
-
   setFormLoading('login', true);
 
   try {
-  
     await simulateAPICall(1000);
 
-  
-    const isValidCredentials = 
-      (data.email === TEMP_CREDENTIALS.email && data.password === TEMP_CREDENTIALS.password) ||
-      tempUsers.some(user => user.email === data.email && user.password === data.password);
+    const isValidCredentials =
+      (data.email === TEMP_CREDENTIALS.email &&
+        data.password === TEMP_CREDENTIALS.password) ||
+      tempUsers.some(
+        user => user.email === data.email && user.password === data.password
+      );
 
     if (!isValidCredentials) {
       throw new Error('Credenciais inválidas');
     }
 
-  
     const userData = {
       email: data.email,
-      name: data.email === TEMP_CREDENTIALS.email ? 'Administrador' : 
-            tempUsers.find(user => user.email === data.email)?.fullName || 'Usuário',
-      loginTime: new Date().toISOString()
+      name:
+        data.email === TEMP_CREDENTIALS.email
+          ? 'Administrador'
+          : tempUsers.find(user => user.email === data.email)?.fullName ||
+            'Usuário',
+      loginTime: new Date().toISOString(),
     };
-    
+
     loginUser(userData);
 
-  
     setFormSuccess('login');
     showToast(
       'success',
@@ -564,7 +555,6 @@ async function handleLogin(form) {
       'Redirecionando para o dashboard...'
     );
 
-  
     setTimeout(() => {
       window.location.href = './dashboard.html';
     }, 1500);
@@ -581,7 +571,7 @@ async function handleRegister(form) {
   }
 
   const formData = new FormData(form);
-  
+
   // Validar todos os campos da etapa 2
   const fields = form.querySelectorAll('.form-input');
   let isValid = true;
@@ -625,9 +615,8 @@ async function handleRegister(form) {
   const completeRegistrationData = {
     ...authState.registrationData,
     password: formData.get('password'),
-    acceptTerms: formData.get('acceptTerms') === 'on'
+    acceptTerms: formData.get('acceptTerms') === 'on',
   };
-
 
   setFormLoading('register', true);
 
@@ -641,22 +630,21 @@ async function handleRegister(form) {
       fullName: completeRegistrationData.fullName,
       cpf: completeRegistrationData.cpf,
       birthDate: completeRegistrationData.birthDate,
-      registrationDate: new Date().toISOString()
+      registrationDate: new Date().toISOString(),
     });
 
     // Login automático
     const userData = {
       email: completeRegistrationData.email,
       name: completeRegistrationData.fullName,
-      loginTime: new Date().toISOString()
+      loginTime: new Date().toISOString(),
     };
-    
+
     loginUser(userData);
 
-  
     setFormSuccess('register');
     showToast('success', 'Conta criada!', 'Redirecionando para o dashboard...');
-    
+
     // Limpar dados temporários
     authState.registrationData = {};
 
@@ -691,13 +679,11 @@ function setFormLoading(formType, isLoading) {
     button.classList.remove('success');
     button.disabled = true;
 
-
     const inputs = form.querySelectorAll('input, button');
     inputs.forEach(input => (input.disabled = true));
   } else {
     button.classList.remove('loading');
     button.disabled = false;
-
 
     const inputs = form.querySelectorAll('input, button');
     inputs.forEach(input => (input.disabled = false));
@@ -708,7 +694,7 @@ function setFormSuccess(formType) {
   const button = document.getElementById(
     formType === 'login' ? 'loginBtn' : 'registerBtn'
   );
-  
+
   button.classList.remove('loading');
   button.classList.add('success');
   button.disabled = true;
@@ -718,11 +704,9 @@ function showToast(type, title, message, duration = 5000) {
   const toast = createToastElement(type, title, message);
   elements.toastContainer.appendChild(toast);
 
-
   setTimeout(() => {
     removeToast(toast);
   }, duration);
-
 
   const closeBtn = toast.querySelector('.toast-close');
   closeBtn.addEventListener('click', () => removeToast(toast));
@@ -772,16 +756,13 @@ function isValidEmail(email) {
 function isValidCPF(cpf) {
   cpf = cpf.replace(/[^\d]/g, '');
 
-
   if (cpf.length !== 11) {
     return false;
   }
 
-
   if (/^(\d)\1{10}$/.test(cpf)) {
     return false;
   }
-
 
   let sum = 0;
   for (let i = 0; i < 9; i++) {
@@ -794,7 +775,6 @@ function isValidCPF(cpf) {
   if (remainder !== parseInt(cpf.charAt(9))) {
     return false;
   }
-
 
   sum = 0;
   for (let i = 0; i < 10; i++) {
@@ -814,7 +794,6 @@ function isValidCPF(cpf) {
 function simulateAPICall(delay) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-
       if (Math.random() > 0.1) {
         resolve();
       } else {
@@ -823,7 +802,6 @@ function simulateAPICall(delay) {
     }, delay);
   });
 }
-
 
 const style = document.createElement('style');
 style.textContent = `
@@ -840,14 +818,11 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-
 document.addEventListener('keydown', e => {
-
   if (e.key === 'Escape') {
     const toasts = document.querySelectorAll('.toast');
     toasts.forEach(toast => removeToast(toast));
   }
-
 
   if (e.key === 'Enter' && e.target.classList.contains('link-btn')) {
     e.target.click();
