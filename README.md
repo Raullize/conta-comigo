@@ -174,3 +174,12 @@ Para dúvidas, sugestões ou feedback, entre em contato conosco através dos per
   <p>Desenvolvido com 💙 pela equipe ContaComigo</p>
   <p>🚀 Conectando você ao seu dinheiro</p>
 </div>
+
+
+RODAR O BANCO
+
+ABRA O DOCKER NA SUA MAQUINA (PROGRAMA DO DOCKER)
+CRIE UM .ENV NA PASTA (TA NO WHATSAPP PRONTO, MAS PRA UTILIZADORES DPS TEM O .ENV.EXEMPLE)
+EXECUTE NO TERMINAL docker compose -d (CRIA O CONTAINER)
+apos isso já com o sequelize instalado de (npx sequelize db:migrate) se nao tiver o sequelize use npm install sequelize antes
+agora, rode o codigo
