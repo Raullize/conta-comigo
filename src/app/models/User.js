@@ -1,8 +1,8 @@
 'use strict';
-const { 
-  Model 
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
+const { Model, Sequelize } = require('sequelize');
+const bcrypt = require('bcrypt');
+
+module.exports = sequelize => {
   class User extends Model {
     static associate(models) {
       User.hasMany(models.Goal, {
@@ -19,30 +19,12 @@ module.exports = (sequelize, DataTypes) => {
 
   User.init(
     {
-      cpf: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-      },
-      name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      email: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-        validate: {
-          isEmail: true,
-        },
-      },
-      birth_date: {
-        type: DataTypes.DATEONLY,
-      },
-      password: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+      cpf: Sequelize.STRING,
+      name: Sequelize.STRING,
+      email: Sequelize.STRING,
+      birth_date: Sequelize.STRING,
+      password: Sequelize.STRING,
+      password_hash: Sequelize.VIRTUAL,
     },
     {
       sequelize,
@@ -50,5 +32,12 @@ module.exports = (sequelize, DataTypes) => {
       tableName: 'users',
     }
   );
+
+  User.addHook('beforeSave', async user => {
+    if (user.password_hash) {
+      user.password = await bcrypt.hash(user.password, 8);
+    }
+  });
+
   return User;
 };
