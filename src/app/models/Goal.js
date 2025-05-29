@@ -2,26 +2,44 @@
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Goal extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
+    
     static associate(models) {
-      // define association here
+      Goal.belongsTo(models.User, {
+        foreignKey: 'user_id',
+        as: 'users'
+      }),
+      Goal.belongsTo(models.Category, {
+        foreignKey: 'cetegory_id',
+        as: 'category'
+      }),
     }
   }
   Goal.init(
     {
-      user_id: DataTypes.INTEGER,
-      title: DataTypes.STRING,
-      target_amount: DataTypes.DECIMAL,
-      current_amount: DataTypes.DECIMAL,
-      target_date: DataTypes.DATE,
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      target_amount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+      },
+      current_amount: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false
+      },
+      target_date: {
+        type: DataTypes.DATE,
+      },
     },
     {
       sequelize,
       modelName: 'Goal',
+      tableName: 'goals',
     }
   );
   return Goal;
