@@ -11,7 +11,7 @@ module.exports = {
       cpf: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
       },
       name: {
         type: Sequelize.STRING,
@@ -20,7 +20,7 @@ module.exports = {
       email: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: true
+        unique: true,
       },
       birth_date: {
         type: Sequelize.DATE,

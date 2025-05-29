@@ -2,7 +2,6 @@
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Investment extends Model {
-    
     static associate(models) {
       Investment.belongsTo(models.User, {
         foreignKey: 'user_id',
@@ -10,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       });
       Investment.belongsTo(models.Category, {
         foreignKey: 'category_id',
-        as: 'categories'
+        as: 'categories',
       });
     }
   }

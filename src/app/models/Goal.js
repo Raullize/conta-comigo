@@ -2,15 +2,14 @@
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Goal extends Model {
-    
     static associate(models) {
       Goal.belongsTo(models.User, {
         foreignKey: 'user_id',
-        as: 'users'
+        as: 'users',
       });
       Goal.belongsTo(models.Category, {
         foreignKey: 'cetegory_id',
-        as: 'category'
+        as: 'category',
       });
     }
   }
@@ -30,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       current_amount: {
         type: DataTypes.DECIMAL(10, 2),
-        allowNull: false
+        allowNull: false,
       },
       target_date: {
         type: DataTypes.DATE,
@@ -44,4 +43,3 @@ module.exports = (sequelize, DataTypes) => {
   );
   return Goal;
 };
-
