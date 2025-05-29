@@ -1,18 +1,13 @@
 const User = require('../models/User');
-
 class userController {
-  async store (req,res){
-
+  async store(req, res) {
     const userExists = await User.findOne({
-      where: { email: req.body.email}
+      where: { email: req.body.email },
     });
-
-    if(userExists){
-      return res.status(400).json ({ error: 'The user already exists.'})
+    if (userExists) {
+      return res.status(400).json({ error: 'The user already exists.' });
     }
-
-    const { name, cpf, email, } = await User.create(req.body);
-
+    const { name, cpf, email } = await User.create(req.body);
     return res.json({
       name,
       cpf,
@@ -20,5 +15,4 @@ class userController {
     });
   }
 }
-
-export default new userController();
+module.exports = new userController();
