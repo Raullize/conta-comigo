@@ -3,18 +3,27 @@ const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Account extends Model {
     static associate(models) {
-      // define association here
+     this.belongsTo(models.User, {
+      foreignKey: 'user_id',
+      as: 'user'
+     }),
     }
   }
-  Account.init(
-    {
-      user_id: DataTypes.INTEGER,
-      institution: DataTypes.STRING,
+  Account.init({
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: { model: 'User', key: 'id' }
     },
-    {
-      sequelize,
-      modelName: 'Account',
+    institution: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
-  );
+  }, {
+    sequelize,
+    modelName: 'Account',
+    tableName: 'Account'
+  });
+  
   return Account;
 };
