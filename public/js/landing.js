@@ -1,5 +1,3 @@
-// Landing Page JavaScript
-
 document.addEventListener('DOMContentLoaded', () => {
   initializeMobileMenu();
   initializeFAQ();
@@ -8,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeHeroAnimation();
   initializeCopyright();
   initializeAccessibility();
+  initializeBackToTop();
 });
 
 function initializeMobileMenu() {
@@ -93,8 +92,33 @@ function scrollToElement(targetId) {
   if (targetElement) {
     const headerHeight = document.querySelector('.header')?.offsetHeight || 0;
     const targetPosition = targetElement.offsetTop - headerHeight;
-    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+    smoothScrollTo(targetPosition);
   }
+}
+
+function smoothScrollTo(targetPosition, duration = 1200) {
+  const startPosition = window.pageYOffset;
+  const distance = targetPosition - startPosition;
+  let startTime = null;
+
+  function animation(currentTime) {
+    if (startTime === null) startTime = currentTime;
+    const timeElapsed = currentTime - startTime;
+    const progress = Math.min(timeElapsed / duration, 1);
+    
+    // Easing function para movimento mais suave (ease-in-out)
+    const easeInOutCubic = progress < 0.5 
+      ? 4 * progress * progress * progress 
+      : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+    
+    window.scrollTo(0, startPosition + distance * easeInOutCubic);
+    
+    if (timeElapsed < duration) {
+      requestAnimationFrame(animation);
+    }
+  }
+  
+  requestAnimationFrame(animation);
 }
 
 function initializeSmoothScrolling() {
@@ -220,4 +244,34 @@ function initializeCopyright() {
   if (currentYearElement) {
     currentYearElement.textContent = new Date().getFullYear();
   }
+}
+
+function initializeBackToTop() {
+  const backToTopButton = document.getElementById('back-to-top');
+  if (!backToTopButton) return;
+
+  const toggleVisibility = throttle(() => {
+    const scrollY = window.scrollY;
+    const shouldShow = scrollY > 300;
+    
+    if (shouldShow) {
+      backToTopButton.classList.add('visible');
+    } else {
+      backToTopButton.classList.remove('visible');
+    }
+  }, 16);
+
+  const scrollToTop = () => {
+    smoothScrollTo(0, 1000);
+  };
+
+  window.addEventListener('scroll', toggleVisibility);
+  backToTopButton.addEventListener('click', scrollToTop);
+
+  backToTopButton.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      scrollToTop();
+    }
+  });
 }

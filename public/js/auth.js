@@ -51,7 +51,6 @@ function initializeAuth() {
   setupFormSubmissions();
   setupStepNavigation();
 
-  // Verificar se há parâmetros na URL para determinar qual formulário mostrar
   const urlParams = new URLSearchParams(window.location.search);
   const action = urlParams.get('action');
 
@@ -61,7 +60,6 @@ function initializeAuth() {
     switchToLogin();
   }
 }
-
 
 function setupFormSwitching() {
 
@@ -105,9 +103,7 @@ function setupFormSwitching() {
   };
 }
 
-// ===== NAVEGAÇÃO ENTRE ETAPAS =====
 function setupStepNavigation() {
-  // Botão "Continuar" da etapa 1
   if (elements.nextStepBtn) {
     elements.nextStepBtn.addEventListener('click', function() {
       if (validateStep1()) {
@@ -116,7 +112,6 @@ function setupStepNavigation() {
     });
   }
 
-  // Botão "Voltar" da etapa 2
   if (elements.prevStepBtn) {
     elements.prevStepBtn.addEventListener('click', function() {
       goToStep1();
@@ -129,7 +124,6 @@ function validateStep1() {
   const inputs = form.querySelectorAll('.form-input');
   let isValid = true;
 
-  // Validar todos os campos da etapa 1
   inputs.forEach(input => {
     if (!validateField(input)) {
       isValid = false;
@@ -140,7 +134,6 @@ function validateStep1() {
 }
 
 function goToStep2() {
-  // Salvar dados da etapa 1
   const form = elements.registerFormStep1;
   const formData = new FormData(form);
   
@@ -151,26 +144,16 @@ function goToStep2() {
     birthDate: formData.get('birthDate')
   };
 
-  // Atualizar estado
   authState.currentStep = 2;
-
-  // Alternar formulários
   elements.registerForm.classList.remove('active');
   elements.registerFormStep2.classList.add('active');
-
-  // Preencher dados na etapa 2 se necessário
   populateStep2Data();
 }
 
 function goToStep1() {
-  // Atualizar estado
   authState.currentStep = 1;
-
-  // Alternar formulários
   elements.registerFormStep2.classList.remove('active');
   elements.registerForm.classList.add('active');
-
-  // Restaurar dados da etapa 1
   populateStep1Data();
 }
 
@@ -204,7 +187,6 @@ function populateStep2Data() {
   updatePasswordStrength('');
 }
 
-// ===== TOGGLE DE SENHAS =====
 function setupPasswordToggles() {
   const passwordToggles = document.querySelectorAll('.password-toggle');
 
@@ -227,9 +209,7 @@ function setupPasswordToggles() {
   });
 }
 
-// ===== VALIDAÇÃO DE FORMULÁRIOS =====
 function setupFormValidation() {
-  // Validação em tempo real
   const inputs = document.querySelectorAll('.form-input');
 
   inputs.forEach(input => {
@@ -238,7 +218,7 @@ function setupFormValidation() {
     });
 
     input.addEventListener('input', function () {
-      // Remover erro quando o usuário começar a digitar
+  
       clearFieldError(this);
     });
   });
@@ -250,7 +230,7 @@ function validateField(field) {
   let isValid = true;
   let errorMessage = '';
 
-  // Validações específicas por campo
+
   switch (fieldName) {
     case 'email':
       if (!value) {
@@ -316,7 +296,7 @@ function validateField(field) {
       break;
   }
 
-  // Mostrar ou esconder erro
+
   if (isValid) {
     showFieldSuccess(field);
   } else {
@@ -375,7 +355,6 @@ function clearFormErrors() {
   });
 }
 
-// ===== FORÇA DA SENHA =====
 function setupPasswordStrength() {
   const passwordInput = document.getElementById('registerPassword');
   const strengthBar = document.querySelector('.strength-fill');
@@ -389,7 +368,6 @@ function setupPasswordStrength() {
   }
 }
 
-// ===== MÁSCARA DE CPF =====
 function setupCPFMask() {
   const cpfInput = document.getElementById('cpf');
 
@@ -412,7 +390,7 @@ function setupCPFMask() {
 function calculatePasswordStrength(password) {
   let score = 0;
 
-  // Critérios de força
+
   if (password.length >= 8) {
     score += 1;
   }
@@ -449,7 +427,7 @@ function updatePasswordStrengthUI(strength, strengthBar, strengthText) {
   const levels = ['', 'weak', 'fair', 'good', 'strong'];
   const texts = ['', 'Fraca', 'Regular', 'Boa', 'Forte'];
 
-  // Remover classes anteriores
+
   strengthBar.className = 'strength-fill';
 
   if (strength > 0) {
@@ -462,12 +440,10 @@ function updatePasswordStrengthUI(strength, strengthBar, strengthText) {
   authState.passwordStrength = strength;
 }
 
-// ===== VALIDAÇÃO DE IDADE =====
 function setupAgeValidation() {
   const birthDateInput = document.getElementById('birthDate');
 
   if (birthDateInput) {
-    // Definir data máxima (18 anos atrás)
     const today = new Date();
     const maxDate = new Date(
       today.getFullYear() - 18,
@@ -506,15 +482,13 @@ function validateAge(birthDateInput) {
   }
 }
 
-// ===== SUBMISSÃO DE FORMULÁRIOS =====
 function setupFormSubmissions() {
-  // Login
   elements.loginFormElement.addEventListener('submit', function (e) {
     e.preventDefault();
     handleLogin(this);
   });
 
-  // Registro - apenas o formulário da etapa 2
+
   elements.registerFormElement.addEventListener('submit', function (e) {
     e.preventDefault();
     handleRegister(this);
@@ -533,7 +507,7 @@ async function handleLogin(form) {
     rememberMe: formData.get('rememberMe') === 'on',
   };
 
-  // Validar campos
+
   const emailField = form.querySelector('[name="email"]');
   const passwordField = form.querySelector('[name="password"]');
 
@@ -556,14 +530,14 @@ async function handleLogin(form) {
     return;
   }
 
-  // Mostrar loading
+
   setFormLoading('login', true);
 
   try {
-    // Simular chamada de API
+  
     await simulateAPICall(1000);
 
-    // Verificar credenciais temporárias ou usuários registrados
+  
     const isValidCredentials = 
       (data.email === TEMP_CREDENTIALS.email && data.password === TEMP_CREDENTIALS.password) ||
       tempUsers.some(user => user.email === data.email && user.password === data.password);
@@ -572,7 +546,7 @@ async function handleLogin(form) {
       throw new Error('Credenciais inválidas');
     }
 
-    // Fazer login
+  
     const userData = {
       email: data.email,
       name: data.email === TEMP_CREDENTIALS.email ? 'Administrador' : 
@@ -582,7 +556,7 @@ async function handleLogin(form) {
     
     loginUser(userData);
 
-    // Mostrar sucesso
+  
     setFormSuccess('login');
     showToast(
       'success',
@@ -590,7 +564,7 @@ async function handleLogin(form) {
       'Redirecionando para o dashboard...'
     );
 
-    // Redirecionar após um tempo
+  
     setTimeout(() => {
       window.location.href = './dashboard.html';
     }, 1500);
@@ -654,12 +628,10 @@ async function handleRegister(form) {
     acceptTerms: formData.get('acceptTerms') === 'on'
   };
 
-  // Mostrar loading
+
   setFormLoading('register', true);
 
   try {
-    // Simular chamada de API com dados completos
-
     await simulateAPICall(2000);
 
     // Adicionar usuário à lista temporária
@@ -672,7 +644,7 @@ async function handleRegister(form) {
       registrationDate: new Date().toISOString()
     });
 
-    // Fazer login automático
+    // Login automático
     const userData = {
       email: completeRegistrationData.email,
       name: completeRegistrationData.fullName,
@@ -681,7 +653,7 @@ async function handleRegister(form) {
     
     loginUser(userData);
 
-    // Mostrar sucesso
+  
     setFormSuccess('register');
     showToast('success', 'Conta criada!', 'Redirecionando para o dashboard...');
     
@@ -703,7 +675,6 @@ async function handleRegister(form) {
   }
 }
 
-// ===== ESTADOS DE LOADING =====
 function setFormLoading(formType, isLoading) {
   authState.isLoading = isLoading;
 
@@ -720,14 +691,14 @@ function setFormLoading(formType, isLoading) {
     button.classList.remove('success');
     button.disabled = true;
 
-    // Desabilitar todos os inputs
+
     const inputs = form.querySelectorAll('input, button');
     inputs.forEach(input => (input.disabled = true));
   } else {
     button.classList.remove('loading');
     button.disabled = false;
 
-    // Reabilitar todos os inputs
+
     const inputs = form.querySelectorAll('input, button');
     inputs.forEach(input => (input.disabled = false));
   }
@@ -743,17 +714,16 @@ function setFormSuccess(formType) {
   button.disabled = true;
 }
 
-// ===== SISTEMA DE TOAST =====
 function showToast(type, title, message, duration = 5000) {
   const toast = createToastElement(type, title, message);
   elements.toastContainer.appendChild(toast);
 
-  // Auto remover
+
   setTimeout(() => {
     removeToast(toast);
   }, duration);
 
-  // Remover ao clicar no X
+
   const closeBtn = toast.querySelector('.toast-close');
   closeBtn.addEventListener('click', () => removeToast(toast));
 }
@@ -794,27 +764,25 @@ function removeToast(toast) {
   }, 300);
 }
 
-// ===== UTILITÁRIOS =====
 function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
 
 function isValidCPF(cpf) {
-  // Remove formatação
   cpf = cpf.replace(/[^\d]/g, '');
 
-  // Verifica se tem 11 dígitos
+
   if (cpf.length !== 11) {
     return false;
   }
 
-  // Verifica se todos os dígitos são iguais
+
   if (/^(\d)\1{10}$/.test(cpf)) {
     return false;
   }
 
-  // Validação do primeiro dígito verificador
+
   let sum = 0;
   for (let i = 0; i < 9; i++) {
     sum += parseInt(cpf.charAt(i)) * (10 - i);
@@ -827,7 +795,7 @@ function isValidCPF(cpf) {
     return false;
   }
 
-  // Validação do segundo dígito verificador
+
   sum = 0;
   for (let i = 0; i < 10; i++) {
     sum += parseInt(cpf.charAt(i)) * (11 - i);
@@ -846,7 +814,7 @@ function isValidCPF(cpf) {
 function simulateAPICall(delay) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      // Simular sucesso na maioria das vezes
+
       if (Math.random() > 0.1) {
         resolve();
       } else {
@@ -856,9 +824,7 @@ function simulateAPICall(delay) {
   });
 }
 
-// ===== ANIMAÇÕES ADICIONAIS =====
 
-// Adicionar animação de slide out para toasts
 const style = document.createElement('style');
 style.textContent = `
   @keyframes slideOutRight {
@@ -874,17 +840,15 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// ===== ACESSIBILIDADE =====
 
-// Melhorar navegação por teclado
 document.addEventListener('keydown', e => {
-  // ESC para fechar toasts
+
   if (e.key === 'Escape') {
     const toasts = document.querySelectorAll('.toast');
     toasts.forEach(toast => removeToast(toast));
   }
 
-  // Enter para alternar entre formulários quando focado nos links
+
   if (e.key === 'Enter' && e.target.classList.contains('link-btn')) {
     e.target.click();
   }
