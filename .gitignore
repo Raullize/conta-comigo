@@ -5,6 +5,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+
 # Environment variables
 .env
 .env.local
@@ -139,3 +140,5 @@ test-results/
 *.backup
 *.bak
 *.orig
+
+package-lock.json
