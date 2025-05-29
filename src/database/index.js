@@ -27,5 +27,9 @@ class Database {
       });
   }
 }
+const database = new Database();
 
-module.exports = new Database();
+module.exports = {
+  connection: database.connection,
+  models: database.connection.models,
+};
