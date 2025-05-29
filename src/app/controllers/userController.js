@@ -1,4 +1,5 @@
-const User = require('../models/User');
+const { models } = require('../../database');
+const User = models.User;
 class userController {
   async store(req, res) {
     const userExists = await User.findOne({
