@@ -1,0 +1,438 @@
+type: collection.insomnia.rest/5.0
+name: Requisições
+meta:
+  id: wrk_10adea08422c4f1c876ef257b587c796
+  created: 1744382993702
+  modified: 1744382993702
+collection:
+  - name: Users
+    meta:
+      id: fld_d7ca054e292a4918aef4279111129422
+      created: 1744634073156
+      modified: 1744858918669
+      sortKey: -1744750721029
+    children:
+      - url: http://localhost:3050/usuarios
+        name: Users Store
+        meta:
+          id: req_f66aada902c14138a4feed18e575f1a2
+          created: 1744382996958
+          modified: 1744920102718
+          isPrivate: false
+          sortKey: -1744634076870
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "cpf": "12345678900",
+              "nome": "João Silva"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3050/usuarios/3
+        name: Users index por id
+        meta:
+          id: req_aab5c695d2694b73aec8eeb9cebb4523
+          created: 1744757465188
+          modified: 1744920237879
+          isPrivate: false
+          sortKey: -1744634076720
+        method: GET
+        parameters:
+          - id: pair_5775e2266203451ebd5587158059a468
+            disabled: true
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3050/usuarios/
+        name: Users index all
+        meta:
+          id: req_9f569e41a9e54695bf8b8499e8b64bee
+          created: 1744844538566
+          modified: 1744844543320
+          isPrivate: false
+          sortKey: -1744634076820
+        method: GET
+        parameters:
+          - id: pair_5775e2266203451ebd5587158059a468
+            disabled: true
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Instituiton
+    meta:
+      id: fld_c435cd867dea4f19ba4421acfe6803d0
+      created: 1744648681518
+      modified: 1744858926984
+      sortKey: -1744750721004
+    children:
+      - url: http://localhost:3050/instituicoes
+        name: Instituição Store
+        meta:
+          id: req_c42f69ce99954d889c82f87db42b27d2
+          created: 1744648672682
+          modified: 1744920398674
+          isPrivate: false
+          sortKey: -1744648685668
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            { 
+            	"nome": "Banco Compass",
+              "cnpj": "00000000001000"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3050/instituicoes
+        name: Instituição index
+        meta:
+          id: req_a65d4ec5b7854fd09a7a512fac818a24
+          created: 1744855196135
+          modified: 1744855201255
+          isPrivate: false
+          sortKey: -1744641381244
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3050/instituicoes/2
+        name: Instituição index por id
+        meta:
+          id: req_93717a62cc574bba9e853177a4b8a25a
+          created: 1744914824127
+          modified: 1744914879028
+          isPrivate: false
+          sortKey: -1744637729057
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Contas
+    meta:
+      id: fld_cc778972563a47eb966ff18c6e7898f2
+      created: 1744750720829
+      modified: 1744858922796
+      sortKey: -1744750720979
+    children:
+      - url: http://localhost:3050/usuarios/contas
+        name: Conta Store
+        meta:
+          id: req_59c361ea5d55407d90ce0927d9d5bbfd
+          created: 1744750712803
+          modified: 1744927013688
+          isPrivate: false
+          sortKey: -1744750737123
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "usuario_id": 2,
+              "instituicao_id": 3
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3050/usuarios/contas
+        name: Conta Index
+        meta:
+          id: req_b8347805bcd7415a904e7419a004f2d5
+          created: 1744854775282
+          modified: 1744857440831
+          isPrivate: false
+          sortKey: -1744699711395.5
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3050/usuarios/2/contas
+        name: Conta Index por id
+        meta:
+          id: req_47fc4ca67cf74e6a97bf10357b198103
+          created: 1744857666093
+          modified: 1744857682061
+          isPrivate: false
+          sortKey: -1744674198531.75
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Transacao/extrato
+    meta:
+      id: fld_1c611ec590494b55b5a6784f87e1602f
+      created: 1744843505984
+      modified: 1744858905832
+      sortKey: -1744721558910.75
+    children:
+      - url: http://localhost:3050/usuarios/1/extrato
+        name: User Instituição extrato
+        meta:
+          id: req_e75f2942dbbc4e349f6e04efe619108e
+          created: 1744842268028
+          modified: 1744927337618
+          isPrivate: false
+          sortKey: -1744843512877
+        method: GET
+        parameters:
+          - id: pair_5775e2266203451ebd5587158059a468
+            name: instituicao_id
+            value: "1"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3050/usuarios/1/extrato
+        name: Transacao Extrato
+        meta:
+          id: req_5be18426aff640d2906728a3d60b4aa8
+          created: 1744843497343
+          modified: 1744914694723
+          isPrivate: false
+          sortKey: -1744843512902
+        method: GET
+        parameters:
+          - id: pair_5775e2266203451ebd5587158059a468
+            disabled: true
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3050/usuarios/2/transacoes
+        name: Transacao Store
+        meta:
+          id: req_a8fcb41e707a40e6b6ec963f10a5c380
+          created: 1744844183679
+          modified: 1744927059463
+          isPrivate: false
+          sortKey: -1744843513202
+        method: POST
+        body:
+          mimeType: application/json
+          text: |
+            {
+            	"conta_id" : "2",
+             	"tipo": "transferencia",
+             	"valor": "120",
+             	"descricao" : "Pix pra ajudar no churras dos piá",
+             	"conta_destino_id" : "3"
+            }
+        parameters:
+          - id: pair_5775e2266203451ebd5587158059a468
+            disabled: true
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3050/usuarios/extrato
+        name: Transacao Extrato tudo
+        meta:
+          id: req_78c1334b15314cd290036656c6fcda23
+          created: 1744899630389
+          modified: 1744899635133
+          isPrivate: false
+          sortKey: -1744843512852
+        method: GET
+        parameters:
+          - id: pair_5775e2266203451ebd5587158059a468
+            disabled: true
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Saldo
+    meta:
+      id: fld_700ea156b99342d688e350627b12cc5b
+      created: 1744858707208
+      modified: 1744858913725
+      sortKey: -1744728849390.3125
+    children:
+      - url: http://localhost:3050/usuarios/3/saldo
+        name: Users saldo contas por id
+        meta:
+          id: req_6ff9b4ffc2194925a576e9a1be2ad80e
+          created: 1744760612260
+          modified: 1744858863242
+          isPrivate: false
+          sortKey: -1744858714834
+        method: GET
+        parameters:
+          - id: pair_5775e2266203451ebd5587158059a468
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: http://localhost:3050/usuarios/1/saldo
+        name: Users saldo contas por instituicao
+        meta:
+          id: req_8cd841b6301b498787de7c8e697e376b
+          created: 1744858730058
+          modified: 1744862794650
+          isPrivate: false
+          sortKey: -1744851114018
+        method: GET
+        parameters:
+          - id: pair_5775e2266203451ebd5587158059a468
+            name: instituicao
+            value: "1"
+            disabled: false
+        headers:
+          - name: User-Agent
+            value: insomnia/11.0.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_bb97a75d95c7fc90b95e40b0579e4c9829819338
+    created: 1744382993708
+    modified: 1744382993708
+environments:
+  name: Base Environment
+  meta:
+    id: env_bb97a75d95c7fc90b95e40b0579e4c9829819338
+    created: 1744382993705
+    modified: 1744382993705
+    isPrivate: false

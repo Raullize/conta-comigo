@@ -1,0 +1,40 @@
+# Dependências
+/node_modules
+
+# Variáveis de ambiente
+.env
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/logs
+*.log
+
+# Arquivos de configuração sensíveis (se existirem)
+# Se você tiver arquivos de configuração que contêm credenciais ou chaves API
+# e não são gerenciados por variáveis de ambiente, adicione-os aqui.
+# Por exemplo:
+# /config/credentials.json
+# /config/secrets.js
+
+# Ignorar o arquivo de configuração de exemplo se você usar um (por exemplo, config.example.js)
+# Isso permite que você versionize um modelo sem dados sensíveis
+# config/*.example.js
+
+# Build artifacts
+/dist
+/build
+
+# IDE e arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Arquivos de teste (se gerarem resultados ou dados sensíveis)
+# /coverage
+# /test-results/
+
+# Outros arquivos temporários
+*.tmp
+*.bak

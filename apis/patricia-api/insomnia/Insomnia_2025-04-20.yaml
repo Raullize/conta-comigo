@@ -1,0 +1,430 @@
+type: collection.insomnia.rest/5.0
+name: Modulo01
+meta:
+  id: wrk_b52ff4a566144946a9721d594d20d459
+  created: 1742993940915
+  modified: 1742993940915
+collection:
+  - name: Mini banco central
+    meta:
+      id: fld_c4034babe5d94f57ae8f8cd7ce504d28
+      created: 1744290239018
+      modified: 1744290239018
+      sortKey: -1744290239018
+    children:
+      - name: Users
+        meta:
+          id: fld_7b234209e2484b029fb009f7177c097a
+          created: 1744382929684
+          modified: 1744382939313
+          sortKey: -1744382929684
+        children:
+          - url: "{{ _.baseurl.base_url }}/users"
+            name: Create
+            meta:
+              id: req_7505075a63884c3388581314d7170115
+              created: 1744382941043
+              modified: 1745023081333
+              isPrivate: false
+              sortKey: -1744382941043
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"name": "Elvis",
+                	"cpf": "05949021191",
+                	"password": "123123"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.baseurl.base_url }}/users"
+            name: update
+            meta:
+              id: req_3d5b431a78fb4e1b8e05318306493cc4
+              created: 1744601154308
+              modified: 1745035407348
+              isPrivate: false
+              sortKey: -1744601154308
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                { 
+                	"name": "Elvis ",
+                	"oldPassword": "123123",
+                	"password": "123456",
+                	"confirmPassword": "123456"
+                	
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzQ1MDI0MTg1LCJleHAiOjE3NDU2Mjg5ODV9.8ZEVUf0UoVYKM9oXyQClmS2y53yWMXWmmVbp5e6yeKI
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Session
+        meta:
+          id: fld_e41066a618b84d8ba5df403f84dfea3c
+          created: 1744599722510
+          modified: 1744599722510
+          sortKey: -1744599722510
+        children:
+          - url: "{{ _.baseurl.base_url }}/sessions"
+            name: Session Store
+            meta:
+              id: req_0bad1748dbe34f51a9275d43d7b5092a
+              created: 1744600010343
+              modified: 1745190070343
+              isPrivate: false
+              sortKey: -1744600010343
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"cpf": "05949021189",
+                	"password":"123123"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Instituicao
+        meta:
+          id: fld_c033e7bc3e9342e3b9398b801e3e6c89
+          created: 1744660386411
+          modified: 1744728457244
+          sortKey: -1744660386411
+        children:
+          - url: "{{ _.baseurl.base_url }}/instituicao"
+            name: Create
+            meta:
+              id: req_cb14ee9a41684f46ace1bbc4f4071500
+              created: 1744660411983
+              modified: 1745021374196
+              isPrivate: false
+              sortKey: -1744660411983
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"nome": "banrisul"
+                	
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiaWF0IjoxNzQ0NjM5ODc5LCJleHAiOjE3NDUyNDQ2Nzl9.zGAieKnQYAHwZRopkiRbr5ZT_VI3tDAVL5FoEpjling
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:3333/instituicao
+            name: New Request
+            meta:
+              id: req_fdc6ddd304e6457b854cb0ec37605838
+              created: 1745009928065
+              modified: 1745021383990
+              isPrivate: false
+              sortKey: -1745009928065
+            method: DELETE
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"id": 7
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzQ1MDA3NDI0LCJleHAiOjE3NDU2MTIyMjR9.rpGX6gSY_ZC6rEkE79u77FQjyuICglTWmcSEABDIbH8
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Conta
+        meta:
+          id: fld_249bf992f008429bbae6e79796759631
+          created: 1744660393670
+          modified: 1744660393670
+          sortKey: -1744660393670
+        children:
+          - url: "{{ _.baseurl.base_url }}/conta"
+            name: Create
+            meta:
+              id: req_8e68ad3b85a6431aae906da46019fb86
+              created: 1744809126862
+              modified: 1745021455806
+              isPrivate: false
+              sortKey: -1744809126862
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"numero": "444145",
+                	"instituicao_id": 5
+                	
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzQ1MDIxMzA1LCJleHAiOjE3NDU2MjYxMDV9.Hk1Zlyx5WikyCMn2NGz_BO4OJQad5X_RPdNhYI2LORY
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:3333/contas
+            name: lista contas
+            meta:
+              id: req_53ffee2867064fdd8ebe975bb1b5be19
+              created: 1745011760413
+              modified: 1745036799008
+              isPrivate: false
+              sortKey: -1745011760413
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"usuario_id": 2
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzQ1MDMxNTQyLCJleHAiOjE3NDU2MzYzNDJ9.swT7fYOoKxyUw-vt4lBOR5-LuOgsiU6oSG5IApCChkE
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Transacoes
+        meta:
+          id: fld_5bade16dca884cf6b41b480a3d94eadf
+          created: 1744837357526
+          modified: 1744837357526
+          sortKey: -1744837357526
+        children:
+          - url: "{{ _.baseurl.base_url }}/transacao"
+            name: transacao
+            meta:
+              id: req_b62e80a9fb05401ca95968b797b48f96
+              created: 1744837363918
+              modified: 1745036356968
+              isPrivate: false
+              sortKey: -1744837363918
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"descricao": "salario",
+                  "tipo": "transferencia",
+                  "valor": 1100,
+                  "data": "2025-04-16",
+                  "conta_id": 1,
+                	"destinatario_id":5
+
+                	
+
+                	
+                	
+
+                	
+
+                	
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiaWF0IjoxNzQ1MDMxNTQyLCJleHAiOjE3NDU2MzYzNDJ9.swT7fYOoKxyUw-vt4lBOR5-LuOgsiU6oSG5IApCChkE
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: Servicos
+        meta:
+          id: fld_7944b4519ad24d209d7809fc69586f84
+          created: 1744872676406
+          modified: 1744872676406
+          sortKey: -1744872676406
+        children:
+          - url: http://localhost:3333/extrato/instituicao/nubank
+            name: instituicaoExtrato
+            meta:
+              id: req_453f410ccabc4df39ea73f56a761660f
+              created: 1744872679283
+              modified: 1745190152821
+              isPrivate: false
+              sortKey: -1744872679283
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQ1MTkwMDcxLCJleHAiOjE3NDU3OTQ4NzF9.ExgJLTpikNhOK3mWhO2tp5ZkVVsvkY78rK_aUYZpWd0
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:3333/extrato/total
+            name: extratoTotal
+            meta:
+              id: req_0564aa33c6894c3dbb2d6f1d1c4aa098
+              created: 1744872681337
+              modified: 1745190090304
+              isPrivate: false
+              sortKey: -1744872681337
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQ1MTkwMDcxLCJleHAiOjE3NDU3OTQ4NzF9.ExgJLTpikNhOK3mWhO2tp5ZkVVsvkY78rK_aUYZpWd0
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:3333/saldo/total
+            name: saldoTotal
+            meta:
+              id: req_a58172bd22304dcb862008e94d5bfc36
+              created: 1744872684604
+              modified: 1745190183607
+              isPrivate: false
+              sortKey: -1744872684604
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzQ1MTkwMDcxLCJleHAiOjE3NDU3OTQ4NzF9.ExgJLTpikNhOK3mWhO2tp5ZkVVsvkY78rK_aUYZpWd0
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: http://localhost:3333/saldo/instituicao/itau
+            name: instituicaoSaldo
+            meta:
+              id: req_c7ede05f60054f6b8c2bf5a4dbf5013e
+              created: 1744872686332
+              modified: 1745021834180
+              isPrivate: false
+              sortKey: -1744872686332
+            method: GET
+            headers:
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzQ1MDIxMzA1LCJleHAiOjE3NDU2MjYxMDV9.Hk1Zlyx5WikyCMn2NGz_BO4OJQad5X_RPdNhYI2LORY
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_905c5113fbb98a0738c3638441a42433d50c2b56
+    created: 1742993940931
+    modified: 1742993940931
+environments:
+  name: Base Environment
+  meta:
+    id: env_905c5113fbb98a0738c3638441a42433d50c2b56
+    created: 1742993940925
+    modified: 1744290521114
+    isPrivate: false
+  data:
+    baseurl:
+      base_url: http://localhost:3333
