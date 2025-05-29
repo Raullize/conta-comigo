@@ -7,11 +7,11 @@ module.exports = (sequelize, DataTypes) => {
       Goal.belongsTo(models.User, {
         foreignKey: 'user_id',
         as: 'users'
-      }),
+      });
       Goal.belongsTo(models.Category, {
         foreignKey: 'cetegory_id',
         as: 'category'
-      }),
+      });
     }
   }
   Goal.init(

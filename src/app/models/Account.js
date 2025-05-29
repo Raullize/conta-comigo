@@ -4,16 +4,16 @@ module.exports = (sequelize, DataTypes) => {
   class Account extends Model {
     static associate(models) {
      this.belongsTo(models.User, {
-      foreignKey: 'user_id',
+      foreignKey: 'id',
       as: 'user'
-     }),
+     });
     }
   }
   Account.init({
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: { model: 'User', key: 'id' }
+      references: { model: 'users', key: 'id' }
     },
     institution: {
       type: DataTypes.STRING,

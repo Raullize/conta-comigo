@@ -7,11 +7,11 @@ module.exports = (sequelize, DataTypes) => {
       Investment.belongsTo(models.User, {
         foreignKey: 'user_id',
         as: 'users',
-      }),
+      });
       Investment.belongsTo(models.Category, {
         foreignKey: 'category_id',
         as: 'categories'
-      }),
+      });
     }
   }
   Investment.init(

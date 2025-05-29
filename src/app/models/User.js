@@ -8,12 +8,12 @@ module.exports = (sequelize, DataTypes) => {
       User.hasMany(models.Goal, {
         foreignKey: 'user_id',
         as: 'goals',
-      }),
+      });
 
       User.hasMany(models.Account, {
         foreignKey: 'user_id',
         as: 'accounts',
-      }),
+      });
     }
   }
 
