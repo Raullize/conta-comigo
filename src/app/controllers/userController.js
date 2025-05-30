@@ -15,9 +15,7 @@ class userController {
       email,
     });
 
-   
-
-    
+    as;
   }
 }
 module.exports = new userController();
