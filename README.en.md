@@ -23,6 +23,7 @@
 ## 🛠️ Technologies Used
 
 ### Frontend
+
 - **HTML5** - Semantic structure
 - **CSS3** - Modern styling with CSS variables and animations
 - **JavaScript (ES6+)** - Interactive functionalities
@@ -30,12 +31,14 @@
 - **Google Fonts (Inter)** - Typography
 
 ### Backend (Planned)
+
 - **Node.js** - JavaScript runtime
 - **Express.js** - Web framework
 - **Sequelize** - Database ORM
 - **PostgreSQL** - Database
 
 ### Development Tools
+
 - **ESLint** - Code linting
 - **Prettier** - Code formatting
 - **Git** - Version control
@@ -74,12 +77,72 @@ conta-comigo/
 ## ⚙️ Installation and Setup
 
 ### Prerequisites
+
 - Node.js (version 16 or higher)
 - npm or yarn
 
 ### Installation Steps
 
-- Coming soon...
+#### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/conta-comigo.git
+cd conta-comigo
+```
+
+#### 2. Configure environment variables
+
+```bash
+# Copy the example file and configure your variables
+cp .env.example .env
+```
+
+> ⚠️ **Important**: Edit the `.env` file with your specific configurations
+
+#### 3. Start Docker
+
+- Make sure **Docker Desktop** is installed and running on your machine
+- Docker is required to run the PostgreSQL database
+
+#### 4. Start the database
+
+```bash
+# Start the PostgreSQL container in the background
+docker compose up -d
+```
+
+#### 5. Install dependencies
+
+```bash
+npm install
+```
+
+#### 6. Run database migrations
+
+```bash
+# Create tables in the database
+npx sequelize-cli db:migrate
+```
+
+#### 7. Start the development server
+
+```bash
+npm run dev
+```
+
+#### 8. (Optional) Configure pgAdmin
+
+To view and manage the database:
+
+1. Access pgAdmin in your browser
+2. Register a new server:
+   - **General > Name**: ContaComigo DB
+   - **Connection > Host**: localhost
+   - **Connection > Port**: Use the port defined in `DB_PORT` in your `.env`
+   - **Connection > Username**: Use the value from `DB_USER` in your `.env`
+   - **Connection > Password**: Use the value from `DB_PASS` in your `.env`
+
+> 🎉 **Ready!** The project will be running at `http://localhost:3000`
 
 ### Available Scripts
 
@@ -91,6 +154,7 @@ conta-comigo/
 ## 🌟 Features
 
 ### Landing Page
+
 - Modern and responsive design
 - Smooth animations and micro-interactions
 - Informative sections about benefits
@@ -99,6 +163,7 @@ conta-comigo/
 - "Back to top" button with smooth scroll
 
 ### Authentication
+
 - Login and registration system
 - Real-time validation
 - Password strength indicator
@@ -107,6 +172,7 @@ conta-comigo/
 - Toast system for feedback
 
 ### Dashboard
+
 - Financial overview
 - Interactive charts
 - Expense categorization
