@@ -32,7 +32,7 @@ services:
       POSTGRES_PASSWORD: ${CONTA_COMIGO_DB_PASSWORD}
       POSTGRES_DB: ${CONTA_COMIGO_DB_NAME}
     ports:
-      - "${CONTA_COMIGO_DB_EXT_PORT:-5432}:5432"
+      - "${CONTA_COMIGO_DB_EXT_PORT}:5432"
     volumes:
       - postgres_conta_comigo_data:/var/lib/postgresql/data
     networks:
@@ -71,7 +71,7 @@ services:
       POSTGRES_PASSWORD: ${CAPUTI_DB_PASSWORD}
       POSTGRES_DB: ${CAPUTI_DB_NAME}
     ports:
-      - "${CAPUTI_DB_EXT_PORT:-5433}:5432"
+      - "${CAPUTI_DB_EXT_PORT}:5432"
     volumes:
       - postgres_caputi_data:/var/lib/postgresql/data
     networks:

@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # Certifique-se que sua API no index.js está ouvindo nesta porta
-EXPOSE 3000
+EXPOSE 3002
 
 # Comando para iniciar a sua API quando o contêiner iniciar
 CMD [ "node", "index.js" ]

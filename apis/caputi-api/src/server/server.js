@@ -1,7 +1,7 @@
 import app from '../app.js';
 import database from '../database/db.js';
 
-const port = 3050;
+const port = 3001;
 
 database.sync({alter:true});
 
