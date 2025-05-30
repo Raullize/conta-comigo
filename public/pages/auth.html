@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ContaComigo - Entrar</title>
-    <meta name="description" content="Faça login na sua conta ContaComigo e gerencie suas finanças de forma inteligente.">
+    <meta name="description"
+        content="Faça login na sua conta ContaComigo e gerencie suas finanças de forma inteligente.">
     <link rel="icon" type="image/png" href="../assets/logos/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +15,7 @@
     <link rel="stylesheet" href="../css/globals.css">
     <link rel="stylesheet" href="../css/auth.css">
 </head>
+
 <body>
     <div class="auth-container">
         <div class="auth-background">
@@ -51,15 +54,8 @@
                                 <i class="fas fa-envelope"></i>
                                 E-mail
                             </label>
-                            <input 
-                                type="email" 
-                                id="loginEmail" 
-                                name="email" 
-                                class="form-input" 
-                                placeholder="seu@email.com"
-                                required
-                                autocomplete="email"
-                            >
+                            <input type="email" id="loginEmail" name="email" class="form-input"
+                                placeholder="seu@email.com" required autocomplete="email">
                             <div class="input-error" id="loginEmailError"></div>
                         </div>
 
@@ -69,15 +65,8 @@
                                 Senha
                             </label>
                             <div class="password-input">
-                                <input 
-                                    type="password" 
-                                    id="loginPassword" 
-                                    name="password" 
-                                    class="form-input" 
-                                    placeholder="Digite sua senha"
-                                    required
-                                    autocomplete="current-password"
-                                >
+                                <input type="password" id="loginPassword" name="password" class="form-input"
+                                    placeholder="Digite sua senha" required autocomplete="current-password">
                                 <button type="button" class="password-toggle" data-target="loginPassword" tabindex="-1">
                                     <i class="fas fa-eye"></i>
                                 </button>
@@ -108,7 +97,7 @@
                     </form>
 
                     <div class="form-footer">
-                        <p>Não tem uma conta? 
+                        <p>Não tem uma conta?
                             <button type="button" class="link-btn" onclick="switchToRegister()">Cadastre-se</button>
                         </p>
                     </div>
@@ -138,15 +127,8 @@
                                 <i class="fas fa-user"></i>
                                 Nome Completo
                             </label>
-                            <input 
-                                type="text" 
-                                id="fullName" 
-                                name="fullName" 
-                                class="form-input" 
-                                placeholder="Digite seu nome completo"
-                                required
-                                autocomplete="name"
-                            >
+                            <input type="text" id="fullName" name="fullName" class="form-input"
+                                placeholder="Digite seu nome completo" required autocomplete="name">
                             <div class="input-error" id="fullNameError"></div>
                         </div>
 
@@ -155,15 +137,8 @@
                                 <i class="fas fa-envelope"></i>
                                 E-mail
                             </label>
-                            <input 
-                                type="email" 
-                                id="registerEmail" 
-                                name="email" 
-                                class="form-input" 
-                                placeholder="seu@email.com"
-                                required
-                                autocomplete="email"
-                            >
+                            <input type="email" id="registerEmail" name="email" class="form-input"
+                                placeholder="seu@email.com" required autocomplete="email">
                             <div class="input-error" id="registerEmailError"></div>
                         </div>
 
@@ -172,15 +147,8 @@
                                 <i class="fas fa-id-card"></i>
                                 CPF
                             </label>
-                            <input 
-                                type="text" 
-                                id="cpf" 
-                                name="cpf" 
-                                class="form-input" 
-                                placeholder="000.000.000-00"
-                                required
-                                autocomplete="off"
-                            >
+                            <input type="text" id="cpf" name="cpf" class="form-input" placeholder="000.000.000-00"
+                                required autocomplete="off">
                             <div class="input-error" id="cpfError"></div>
                         </div>
 
@@ -189,14 +157,8 @@
                                 <i class="fas fa-calendar-alt"></i>
                                 Data de Nascimento
                             </label>
-                            <input 
-                                type="date" 
-                                id="birthDate" 
-                                name="birthDate" 
-                                class="form-input" 
-                                required
-                                autocomplete="bday"
-                            >
+                            <input type="date" id="birthDate" name="birthDate" class="form-input" required
+                                autocomplete="bday">
                             <div class="input-error" id="birthDateError"></div>
                         </div>
 
@@ -207,7 +169,7 @@
                     </form>
 
                     <div class="form-footer">
-                        <p>Já tem uma conta? 
+                        <p>Já tem uma conta?
                             <button type="button" class="link-btn" onclick="switchToLogin()">Faça login</button>
                         </p>
                     </div>
@@ -238,16 +200,10 @@
                                 Senha
                             </label>
                             <div class="password-input">
-                                <input 
-                                    type="password" 
-                                    id="registerPassword" 
-                                    name="password" 
-                                    class="form-input" 
-                                    placeholder="Crie uma senha forte"
-                                    required
-                                    autocomplete="new-password"
-                                >
-                                <button type="button" class="password-toggle" data-target="registerPassword" tabindex="-1">
+                                <input type="password" id="registerPassword" name="password" class="form-input"
+                                    placeholder="Crie uma senha forte" required autocomplete="new-password">
+                                <button type="button" class="password-toggle" data-target="registerPassword"
+                                    tabindex="-1">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
@@ -266,16 +222,10 @@
                                 Confirmar Senha
                             </label>
                             <div class="password-input">
-                                <input 
-                                    type="password" 
-                                    id="confirmPassword" 
-                                    name="confirmPassword" 
-                                    class="form-input" 
-                                    placeholder="Confirme sua senha"
-                                    required
-                                    autocomplete="new-password"
-                                >
-                                <button type="button" class="password-toggle" data-target="confirmPassword" tabindex="-1">
+                                <input type="password" id="confirmPassword" name="confirmPassword" class="form-input"
+                                    placeholder="Confirme sua senha" required autocomplete="new-password">
+                                <button type="button" class="password-toggle" data-target="confirmPassword"
+                                    tabindex="-1">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
@@ -287,7 +237,7 @@
                                 <input type="checkbox" id="acceptTerms" name="acceptTerms">
                                 <span class="checkmark"></span>
                                 <span class="checkbox-text">
-                                    Aceito os <a href="#" class="link">Termos de Uso</a> e 
+                                    Aceito os <a href="#" class="link">Termos de Uso</a> e
                                     <a href="#" class="link">Política de Privacidade</a>
                                 </span>
                             </label>
@@ -312,7 +262,7 @@
                     </form>
 
                     <div class="form-footer">
-                        <p>Já tem uma conta? 
+                        <p>Já tem uma conta?
                             <button type="button" class="link-btn" onclick="switchToLogin()">Faça login</button>
                         </p>
                     </div>
@@ -357,14 +307,15 @@
 
                 <div class="testimonial">
                     <div class="testimonial-content">
-                        <p>"O ContaComigo transformou a forma como gerencio meu dinheiro. Agora tenho controle total das minhas finanças!"</p>
+                        <p>"O ContaComigo transformou a forma como gerencio meu dinheiro. Agora tenho controle total das
+                            minhas finanças!"</p>
                     </div>
                     <div class="testimonial-author">
                         <div class="author-avatar">
                             <i class="fas fa-user"></i>
                         </div>
                         <div class="author-info">
-                            <span class="author-name">Lara Lima</span>
+                            <span class="author-name">Lara Bragança</span>
                             <span class="author-role">Usuária desde 2025</span>
                         </div>
                     </div>
@@ -378,4 +329,5 @@
 
     <script src="../js/auth.js"></script>
 </body>
+
 </html>
