@@ -33,6 +33,7 @@ module.exports = sequelize => {
       sequelize,
       modelName: 'User',
       tableName: 'users',
+      freezeTableName: true,
     }
   );
 
