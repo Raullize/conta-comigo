@@ -14,9 +14,6 @@ class userController {
       cpf,
       email,
     });
-<<<<<<< HEAD
-=======
-
   }
 
    async update(req,res){
