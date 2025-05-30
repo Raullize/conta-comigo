@@ -23,6 +23,7 @@ O **ContaComigo** é uma plataforma web inovadora de gerenciamento financeiro pe
 ## 🛠️ Tecnologias Utilizadas
 
 ### Frontend
+
 - **HTML5** - Estrutura semântica
 - **CSS3** - Estilização moderna com variáveis CSS e animações
 - **JavaScript (ES6+)** - Funcionalidades interativas
@@ -30,12 +31,14 @@ O **ContaComigo** é uma plataforma web inovadora de gerenciamento financeiro pe
 - **Google Fonts (Inter)** - Tipografia
 
 ### Backend (Planejado)
+
 - **Node.js** - Runtime JavaScript
 - **Express.js** - Framework web
 - **Sequelize** - ORM para banco de dados
 - **PostgreSQL** - Banco de dados
 
 ### Ferramentas de Desenvolvimento
+
 - **ESLint** - Linting de código
 - **Prettier** - Formatação de código
 - **Git** - Controle de versão
@@ -74,12 +77,72 @@ conta-comigo/
 ## ⚙️ Instalação e Configuração
 
 ### Pré-requisitos
+
 - Node.js (versão 16 ou superior)
 - npm ou yarn
 
 ### Passos para instalação
 
-- Em breve...
+#### 1. Clone o repositório
+
+```bash
+git clone https://github.com/Raullize/conta-comigo.git
+cd conta-comigo
+```
+
+#### 2. Configure as variáveis de ambiente
+
+```bash
+# Copie o arquivo de exemplo e configure suas variáveis
+cp .env.example .env
+```
+
+> ⚠️ **Importante**: Edite o arquivo `.env` com suas configurações específicas
+
+#### 3. Inicie o Docker
+
+- Certifique-se de que o **Docker Desktop** está instalado e em execução na sua máquina
+- O Docker é necessário para executar o banco de dados PostgreSQL
+
+#### 4. Suba o banco de dados
+
+```bash
+# Inicia o container do PostgreSQL em segundo plano
+docker compose up -d
+```
+
+#### 5. Instale as dependências
+
+```bash
+npm install
+```
+
+#### 6. Execute as migrações do banco
+
+```bash
+# Cria as tabelas no banco de dados
+npx sequelize-cli db:migrate
+```
+
+#### 7. Inicie o servidor de desenvolvimento
+
+```bash
+npm run dev
+```
+
+#### 8. (Opcional) Configure o pgAdmin
+
+Para visualizar e gerenciar o banco de dados:
+
+1. Acesse o pgAdmin no navegador
+2. Registre um novo servidor:
+   - **General > Name**: ContaComigo DB
+   - **Connection > Host**: localhost
+   - **Connection > Port**: Use a porta definida em `DB_PORT` no seu `.env`
+   - **Connection > Username**: Use o valor de `DB_USER` do seu `.env`
+   - **Connection > Password**: Use o valor de `DB_PASS` do seu `.env`
+
+> 🎉 **Pronto!** O projeto estará rodando!
 
 ### Scripts Disponíveis
 
@@ -91,6 +154,7 @@ conta-comigo/
 ## 🌟 Funcionalidades
 
 ### Landing Page
+
 - Design moderno e responsivo
 - Animações suaves e micro-interações
 - Seções informativas sobre benefícios
@@ -99,6 +163,7 @@ conta-comigo/
 - Botão "Voltar ao topo" com scroll suave
 
 ### Autenticação
+
 - Sistema de login e cadastro
 - Validação em tempo real
 - Indicador de força da senha
@@ -107,6 +172,7 @@ conta-comigo/
 - Sistema de toast para feedback
 
 ### Dashboard
+
 - Visão geral das finanças
 - Gráficos interativos
 - Categorização de gastos
@@ -174,12 +240,3 @@ Para dúvidas, sugestões ou feedback, entre em contato conosco através dos per
   <p>Desenvolvido com 💙 pela equipe ContaComigo</p>
   <p>🚀 Conectando você ao seu dinheiro</p>
 </div>
-
-
-RODAR O BANCO
-
-ABRA O DOCKER NA SUA MAQUINA (PROGRAMA DO DOCKER)
-CRIE UM .ENV NA PASTA (TA NO WHATSAPP PRONTO, MAS PRA UTILIZADORES DPS TEM O .ENV.EXEMPLE)
-EXECUTE NO TERMINAL docker compose -d (CRIA O CONTAINER)
-apos isso já com o sequelize instalado de (npx sequelize db:migrate) se nao tiver o sequelize use npm install sequelize antes
-agora, rode o codigo
