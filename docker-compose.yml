@@ -12,11 +12,13 @@ services:
       - DB_PASSWORD=${CONTA_COMIGO_DB_PASSWORD}
       - DB_NAME=${CONTA_COMIGO_DB_NAME}
       - DB_PORT=5432
+      # URLs para se comunicar com as outras APIs
       - CAPUTI_API_URL=http://caputi-api:3001
       - DANTE_API_URL=http://dante-api:3002
       - LUCAS_API_URL=http://lucas-api:3003
       - PATRICIA_API_URL=http://patricia-api:3004
       - VITOR_API_URL=http://vitor-api:3005
+      - RAUL_API_URL=http://raul-api:3006 
     depends_on:
       postgres_conta_comigo:
         condition: service_healthy
@@ -25,16 +27,16 @@ services:
 
   postgres_conta_comigo:
     image: postgres:17-alpine
-    container_name: conta_comigo_db
+    container_name: conta_comigo_db 
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${CONTA_COMIGO_DB_USER}
       POSTGRES_PASSWORD: ${CONTA_COMIGO_DB_PASSWORD}
       POSTGRES_DB: ${CONTA_COMIGO_DB_NAME}
     ports:
-      - "${CONTA_COMIGO_DB_EXT_PORT}:5432"
+      - "${CONTA_COMIGO_DB_EXT_PORT:-5432}:5432"
     volumes:
-      - conta_comigo_data:/var/lib/postgresql/data
+      - conta_comigo_data:/var/lib/postgresql/data 
     networks:
       - openfinance_network
     healthcheck:
@@ -46,7 +48,7 @@ services:
   # --- Caputi API e seu Banco de Dados ---
   caputi-api:
     build: ./apis/caputi-api
-    container_name: caputi_api
+    container_name: caputi_api 
     ports:
       - "${CAPUTI_API_EXT_PORT:-4001}:3001"
     environment:
@@ -71,9 +73,9 @@ services:
       POSTGRES_PASSWORD: ${CAPUTI_DB_PASSWORD}
       POSTGRES_DB: ${CAPUTI_DB_NAME}
     ports:
-      - "${CAPUTI_DB_EXT_PORT}:5432"
+      - "${CAPUTI_DB_EXT_PORT:-5433}:5432" 
     volumes:
-      - caputi_data:/var/lib/postgresql/data
+      - caputi_data:/var/lib/postgresql/data 
     networks:
       - openfinance_network
     healthcheck:
@@ -238,7 +240,45 @@ services:
       timeout: 5s
       retries: 5
 
-# --- Volumes para persistência dos dados dos bancos ---
+  # Raul API e seu Banco de Dados
+  raul-api:
+    build: ./apis/raul-api
+    container_name: raul_api
+    ports:
+      - "${RAUL_API_EXT_PORT:-4006}:3006"
+    environment:
+      - PORT=3006 
+      - DB_HOST=postgres_raul
+      - DB_USER=${RAUL_DB_USER}
+      - DB_PASSWORD=${RAUL_DB_PASSWORD}
+      - DB_NAME=${RAUL_DB_NAME}
+      - DB_PORT=5432
+    depends_on:
+      postgres_raul:
+        condition: service_healthy
+    networks:
+      - openfinance_network
+
+  postgres_raul: 
+    image: postgres:17-alpine
+    container_name: raul_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${RAUL_DB_USER}
+      POSTGRES_PASSWORD: ${RAUL_DB_PASSWORD}
+      POSTGRES_DB: ${RAUL_DB_NAME}
+    ports:
+      - "${RAUL_DB_EXT_PORT:-5438}:5432"
+    volumes:
+      - raul_data:/var/lib/postgresql/data 
+    networks:
+      - openfinance_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${RAUL_DB_USER} -d ${RAUL_DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   conta_comigo_data:
   caputi_data:
@@ -246,8 +286,9 @@ volumes:
   lucas_data:
   patricia_data:
   vitor_data:
+  raul_data: 
 
-# --- Rede customizada para comunicação entre os contêineres ---
+
 networks:
   openfinance_network:
     driver: bridge

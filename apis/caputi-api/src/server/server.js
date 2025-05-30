@@ -1,11 +1,12 @@
 import app from '../app.js';
 import database from '../database/db.js';
 
-const port = 3001;
+const Dockerport = 3001;
+const port = 4001;
 
 database.sync({alter:true});
 
-app.listen(port, () => {
+app.listen(Dockerport, () => {
     // eslint-disable-next-line
     console.log(`Server running at http://localhost:${port}/`);
 });

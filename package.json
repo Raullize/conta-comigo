@@ -5,14 +5,15 @@
     "main": "src/app.js",
     "scripts": {
         "start": "node src/server.js",
-        "dev": "nodemon src/server.js",
+        "dev": "docker compose up --build",
         "serve": "cd public && python -m http.server 8000",
         "lint": "eslint src/ public/js/ --ext .js",
         "lint:fix": "eslint src/ public/js/ --ext .js --fix",
         "format": "prettier --write \"src/**/*.js\" \"public/**/*.{html,css,js}\"",
         "format:check": "prettier --check \"src/**/*.js\" \"public/**/*.{html,css,js}\"",
         "migrate": "sequelize-cli db:migrate",
-        "wait-for-db": "node wait-for-db.js"
+        "wait-for-db": "node wait-for-db.js",
+        "down":"docker compose down -v"
     },
     "keywords": [
         "fintech",
