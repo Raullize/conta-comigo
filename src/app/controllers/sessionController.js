@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const {
   models: { User },
 } = require('../../database');
-const authValidators = require('../validators/auth');
+const authValidators = require('../validators/authConfig');
 
 class sessionController {
   async store(req, res) {
