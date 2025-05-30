@@ -1,5 +1,12 @@
+// API URLs
+const USER_URL = '/users';
+
 function isUserLoggedIn() {
-  return localStorage.getItem('isLoggedIn') === 'true';
+  return localStorage.getItem('token') !== null;
+}
+
+function getAuthToken() {
+  return localStorage.getItem('token');
 }
 
 function getUserData() {
@@ -8,26 +15,74 @@ function getUserData() {
 }
 
 function logout() {
-  localStorage.removeItem('isLoggedIn');
+  localStorage.removeItem('token');
   localStorage.removeItem('userData');
   window.location.href = '../pages/auth.html';
 }
 
-function checkAuthentication() {
+async function checkAuthentication() {
   if (!isUserLoggedIn()) {
     window.location.href = '../pages/auth.html';
     return;
   }
 
-  loadUserData();
+  try {
+    await loadUserData();
+  } catch (error) {
+    console.error('Erro ao carregar dados do usuário:', error);
+    // Se houver erro de autenticação, fazer logout
+    if (error.status === 401) {
+      logout();
+    }
+  }
 }
 
-function loadUserData() {
-  const userData = getUserData();
+async function loadUserData() {
   const userNameElement = document.getElementById('userName');
 
-  if (userData && userNameElement) {
-    userNameElement.textContent = userData.name || userData.email || 'Usuário';
+  try {
+    // Primeiro tenta usar os dados do localStorage
+    const cachedUserData = getUserData();
+    if (cachedUserData && userNameElement) {
+      userNameElement.textContent = cachedUserData.name || 'Usuário';
+    }
+
+    // Depois busca dados atualizados da API
+    const token = getAuthToken();
+    if (!token) {
+      throw new Error('Token não encontrado');
+    }
+
+    const response = await fetch(USER_URL, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      const error = new Error('Erro ao buscar dados do usuário');
+      error.status = response.status;
+      throw error;
+    }
+
+    const userData = await response.json();
+
+    // Atualiza o localStorage com os dados mais recentes
+    const currentData = getUserData() || {};
+    const updatedData = { ...currentData, ...userData };
+    localStorage.setItem('userData', JSON.stringify(updatedData));
+
+    // Atualiza a interface
+    if (userNameElement) {
+      userNameElement.textContent = userData.name || 'Usuário';
+    }
+
+    return userData;
+  } catch (error) {
+    console.error('Erro ao carregar dados do usuário:', error);
+    throw error;
   }
 }
 
