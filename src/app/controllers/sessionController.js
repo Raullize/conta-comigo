@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
-const { models: { User } } = require('../../database');
+const {
+  models: { User },
+} = require('../../database');
+const authValidators = require('../validators/auth');
 
 class sessionController {
   async store(req, res) {
@@ -21,8 +24,8 @@ class sessionController {
         name,
         email,
       },
-      token: jwt.sign({ id }, '92f52e6e1014c8041228bdbc7173649f', {
-        expiresIn: '7d',
+      token: jwt.sign({ id }, authValidators.secret, {
+        expiresIn: authValidators.expiresIn,
       }),
     });
   }

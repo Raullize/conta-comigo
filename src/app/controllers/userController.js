@@ -14,6 +14,10 @@ class userController {
       cpf,
       email,
     });
+
+   
+
+    
   }
 }
 module.exports = new userController();
