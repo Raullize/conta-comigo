@@ -1,6 +1,6 @@
 FROM node:18-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 COPY package*.json ./
 RUN npm install
@@ -19,6 +19,4 @@ EXPOSE 3033
 # Define o entrypoint
 ENTRYPOINT ["./entrypoint.sh"]
 
-# O comando padrão que o entrypoint.sh vai executar com "$@"
-# (será o "npm start" ou "node server.js")
 CMD [ "npm", "start" ]

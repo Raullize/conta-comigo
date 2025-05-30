@@ -25,7 +25,7 @@ services:
 
   postgres_conta_comigo:
     image: postgres:17-alpine
-    container_name: postgres_conta_comigo_db
+    container_name: conta_comigo_db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${CONTA_COMIGO_DB_USER}
@@ -34,7 +34,7 @@ services:
     ports:
       - "${CONTA_COMIGO_DB_EXT_PORT}:5432"
     volumes:
-      - postgres_conta_comigo_data:/var/lib/postgresql/data
+      - conta_comigo_data:/var/lib/postgresql/data
     networks:
       - openfinance_network
     healthcheck:
@@ -46,7 +46,7 @@ services:
   # --- Caputi API e seu Banco de Dados ---
   caputi-api:
     build: ./apis/caputi-api
-    container_name: caputi_api_app
+    container_name: caputi_api
     ports:
       - "${CAPUTI_API_EXT_PORT:-4001}:3001"
     environment:
@@ -64,7 +64,7 @@ services:
 
   postgres_caputi:
     image: postgres:17-alpine
-    container_name: postgres_caputi_db
+    container_name: caputi_db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${CAPUTI_DB_USER}
@@ -73,7 +73,7 @@ services:
     ports:
       - "${CAPUTI_DB_EXT_PORT}:5432"
     volumes:
-      - postgres_caputi_data:/var/lib/postgresql/data
+      - caputi_data:/var/lib/postgresql/data
     networks:
       - openfinance_network
     healthcheck:
@@ -85,7 +85,7 @@ services:
   # --- Dante API e seu Banco de Dados ---
   dante-api:
     build: ./apis/dante-api
-    container_name: dante_api_app
+    container_name: dante_api
     ports:
       - "${DANTE_API_EXT_PORT:-4002}:3002"
     environment:
@@ -103,7 +103,7 @@ services:
 
   postgres_dante:
     image: postgres:17-alpine
-    container_name: postgres_dante_db
+    container_name: dante_db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DANTE_DB_USER}
@@ -112,7 +112,7 @@ services:
     ports:
       - "${DANTE_DB_EXT_PORT:-5434}:5432"
     volumes:
-      - postgres_dante_data:/var/lib/postgresql/data
+      - dante_data:/var/lib/postgresql/data
     networks:
       - openfinance_network
     healthcheck:
@@ -124,7 +124,7 @@ services:
   # --- Lucas API e seu Banco de Dados ---
   lucas-api:
     build: ./apis/lucas-api
-    container_name: lucas_api_app
+    container_name: lucas_api
     ports:
       - "${LUCAS_API_EXT_PORT:-4003}:3003"
     environment:
@@ -142,7 +142,7 @@ services:
 
   postgres_lucas:
     image: postgres:17-alpine
-    container_name: postgres_lucas_db
+    container_name: lucas_db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${LUCAS_DB_USER}
@@ -151,7 +151,7 @@ services:
     ports:
       - "${LUCAS_DB_EXT_PORT:-5435}:5432"
     volumes:
-      - postgres_lucas_data:/var/lib/postgresql/data
+      - lucas_data:/var/lib/postgresql/data
     networks:
       - openfinance_network
     healthcheck:
@@ -163,7 +163,7 @@ services:
   # --- Patricia API e seu Banco de Dados ---
   patricia-api:
     build: ./apis/patricia-api
-    container_name: patricia_api_app
+    container_name: patricia_api
     ports:
       - "${PATRICIA_API_EXT_PORT:-4004}:3004"
     environment:
@@ -181,7 +181,7 @@ services:
 
   postgres_patricia:
     image: postgres:17-alpine
-    container_name: postgres_patricia_db
+    container_name: patricia_db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${PATRICIA_DB_USER}
@@ -190,7 +190,7 @@ services:
     ports:
       - "${PATRICIA_DB_EXT_PORT:-5436}:5432"
     volumes:
-      - postgres_patricia_data:/var/lib/postgresql/data
+      - patricia_data:/var/lib/postgresql/data
     networks:
       - openfinance_network
     healthcheck:
@@ -202,7 +202,7 @@ services:
   # --- Vitor API e seu Banco de Dados ---
   vitor-api:
     build: ./apis/vitor-api
-    container_name: vitor_api_app
+    container_name: vitor_api
     ports:
       - "${VITOR_API_EXT_PORT:-4005}:3005"
     environment:
@@ -220,7 +220,7 @@ services:
 
   postgres_vitor:
     image: postgres:17-alpine
-    container_name: postgres_vitor_db
+    container_name: vitor_db
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${VITOR_DB_USER}
@@ -229,7 +229,7 @@ services:
     ports:
       - "${VITOR_DB_EXT_PORT:-5437}:5432"
     volumes:
-      - postgres_vitor_data:/var/lib/postgresql/data
+      - vitor_data:/var/lib/postgresql/data
     networks:
       - openfinance_network
     healthcheck:
@@ -240,12 +240,12 @@ services:
 
 # --- Volumes para persistência dos dados dos bancos ---
 volumes:
-  postgres_conta_comigo_data:
-  postgres_caputi_data:
-  postgres_dante_data:
-  postgres_lucas_data:
-  postgres_patricia_data:
-  postgres_vitor_data:
+  conta_comigo_data:
+  caputi_data:
+  dante_data:
+  lucas_data:
+  patricia_data:
+  vitor_data:
 
 # --- Rede customizada para comunicação entre os contêineres ---
 networks:

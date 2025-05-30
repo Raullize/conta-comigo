@@ -13,6 +13,7 @@
     "sequelize": "^6.37.7"
   },
   "scripts": {
+    "start":"node src/server/server.js",
     "init": "nodemon src/server/server.js",
     "dev": "docker compose up --build",
     "down": "docker compose down -v",

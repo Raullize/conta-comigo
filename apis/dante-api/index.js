@@ -9,7 +9,7 @@ app.use(express.json());
 app.use('/', rotas)
 
 if (require.main === module) {
-    const PORT = 3000
+    const PORT = 3002
     app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
   }
   
