@@ -14,6 +14,11 @@ class userController {
       cpf,
       email,
     });
+<<<<<<< HEAD
+=======
+
+    as;
+>>>>>>> feature/middleware
   }
 }
 module.exports = new userController();
