@@ -1,6 +1,6 @@
-// wait-for-db.js
+// dante-api/wait-for-db.js
 const { Pool } = require('pg');
-const DB_HOST = process.env.DB_HOST || 'localhost';
+const DB_HOST = process.env.DB_HOST;
 const DB_USER = process.env.DB_USER;
 const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_NAME = process.env.DB_NAME;
@@ -16,28 +16,27 @@ const pool = new Pool({
 });
 
 const MAX_RETRIES = 20;
-const RETRY_INTERVAL = 5000; 
-
+const RETRY_INTERVAL = 5000; // 5 segundos
 let retries = 0;
 
 async function checkDbConnection() {
-  console.log(`Tentando conectar ao banco de dados: ${DB_HOST}:${DB_PORT}, database: ${DB_NAME}, user: ${DB_USER}`);
+  
   try {
     const client = await pool.connect();
-    console.log('Banco de dados conectado com sucesso!');
     client.release();
-    process.exit(0); 
+    pool.end();
+    process.exit(0);
   } catch (err) {
     retries++;
-    console.error(`Falha ao conectar ao banco (${retries}/${MAX_RETRIES}):`, err.message);
+    console.error(`DANTE_API (wait-for-db): Falha ao conectar (<span class="math-inline">\{retries\}/</span>{MAX_RETRIES}):`, err.message);
     if (retries < MAX_RETRIES) {
-      console.log(`Nova tentativa em ${RETRY_INTERVAL / 1000} segundos...`);
+      console.log(`DANTE_API (wait-for-db): Nova tentativa em ${RETRY_INTERVAL / 1000} segundos...`);
       setTimeout(checkDbConnection, RETRY_INTERVAL);
     } else {
-      console.error('Número máximo de tentativas atingido. Abortando.');
+      console.error('DANTE_API (wait-for-db): Número máximo de tentativas atingido. Abortando.');
+      pool.end();
       process.exit(1);
     }
   }
 }
-
 checkDbConnection();

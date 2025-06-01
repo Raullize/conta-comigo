@@ -8,5 +8,5 @@ database.sync({alter:true});
 
 app.listen(Dockerport, () => {
     // eslint-disable-next-line
-    console.log(`Server running at http://localhost:${port}/`);
+    console.log(`caputi-api server running at http://localhost:${port}/`);
 });

@@ -1,10 +1,12 @@
 {
-  "name": "banco-central",
+  "name": "dante-api",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "node index.js"
+    "start": "node index.js",
+    "migrate": "sequelize-cli db:migrate",
+    "wait-for-db": "node wait-for-db.js"
   },
   "keywords": [],
   "author": "",

@@ -97,6 +97,7 @@ services:
       - DB_PASSWORD=${DANTE_DB_PASSWORD}
       - DB_NAME=${DANTE_DB_NAME}
       - DB_PORT=5432
+      - NODE_ENV=development
     depends_on:
       postgres_dante:
         condition: service_healthy
