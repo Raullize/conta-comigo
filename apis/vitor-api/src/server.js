@@ -1,5 +1,7 @@
 import app from "./app.js";
 
-app.listen(3005, () => {
-  console.log("Servidor está rodando na porta 3000");
+const DockerPort = 3005;
+const port = 4005;
+app.listen(DockerPort, () => {
+  console.log(`vitor-api server running at http://localhost:${port}/`);
 });

@@ -1,7 +1,7 @@
 import ServicoController from './ServicoController.js'
-import Conta from '../controllers/models/Conta';
+import Conta from '../controllers/models/Conta.js';
 import *as Yup from 'yup';
-import Instituicao from './models/Instituicao';
+import Instituicao from './models/Instituicao.js';
 import User from './models/User.js';
 
 

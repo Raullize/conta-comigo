@@ -3,7 +3,7 @@
 npm run wait-for-db
 
 if [ $? -ne 0 ]; then
-  echo "DANTE_API (entrypoint): Script wait-for-db FALHOU. A aplicação não será iniciada."
+  echo "LUCAS_API (entrypoint): Script wait-for-db FALHOU. A aplicação não será iniciada."
   exit 1
 fi
 

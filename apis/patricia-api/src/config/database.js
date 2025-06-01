@@ -1,12 +1,14 @@
-
-
-module.exports = {
+const config = {
   development: {
-    username: process.env.CONTA_COMIGO_DB_USER,
-    password: process.env.CONTA_COMIGO_DB_PASSWORD,
-    database: process.env.CONTA_COMIGO_DB_NAME,
+    username: process.env.DB_USER,    
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
     host: process.env.DB_HOST,
-    dialect: 'postgres'
+    port: process.env.DB_PORT || 5432,
+    dialect: 'postgres',                
+    logging: false                    
   },
-
+  
 };
+
+export default config;

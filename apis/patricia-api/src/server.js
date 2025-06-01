@@ -1,3 +1,8 @@
-import app from './app';
+import app from './app.js';
 
-app.listen(3004);
+const DockerPort = 3004;
+const port = 4004;
+
+app.listen(DockerPort, () => {
+    console.log(`patricia-api server running at http://localhost:${port}/`);
+});

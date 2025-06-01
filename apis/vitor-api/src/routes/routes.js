@@ -7,6 +7,10 @@ import AccountController from "../app/controllers/AccountController.js";
 import Transaction from "../app/controllers/TransactionController.js";
 import TransactionController from "../app/controllers/TransactionController.js";
 
+router.get('/',(req,res)=>{
+    res.send({message: 'Hello World!'});
+});
+
 router.get("/users/:user_cpf/balance", AccountController.getBalance);
 router.get("/users/:user_cpf/statement", AccountController.getStatement);
 router.get("/listInstitutions", InstitutionController.listInstitutions);
