@@ -28,12 +28,12 @@ async function checkDbConnection() {
     process.exit(0);
   } catch (err) {
     retries++;
-    console.error(`DANTE_API (wait-for-db): Falha ao conectar (<span class="math-inline">\{retries\}/</span>{MAX_RETRIES}):`, err.message);
+    console.error(`LUCAS_API (wait-for-db): Falha ao conectar (<span class="math-inline">\{retries\}/</span>{MAX_RETRIES}):`, err.message);
     if (retries < MAX_RETRIES) {
-      console.log(`DANTE_API (wait-for-db): Nova tentativa em ${RETRY_INTERVAL / 1000} segundos...`);
+      console.log(`LUCAS_API (wait-for-db): Nova tentativa em ${RETRY_INTERVAL / 1000} segundos...`);
       setTimeout(checkDbConnection, RETRY_INTERVAL);
     } else {
-      console.error('DANTE_API (wait-for-db): Número máximo de tentativas atingido. Abortando.');
+      console.error('LUCAS_API (wait-for-db): Número máximo de tentativas atingido. Abortando.');
       pool.end();
       process.exit(1);
     }

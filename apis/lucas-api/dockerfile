@@ -1,20 +1,14 @@
-# Usar uma imagem oficial do Node.js como base
 FROM node:18-alpine
-
-# Definir o diretório de trabalho dentro do contêiner
 WORKDIR /app
-
-# Copiar o package.json e o package-lock.json (ou yarn.lock)
 COPY package*.json ./
-
-# Instalar as dependências do projeto
 RUN npm install
-
-# Copiar o restante dos arquivos da aplicação para o diretório de trabalho
 COPY . .
 
-# Certifique-se que sua API no server.js está ouvindo nesta porta
-EXPOSE 3003
+COPY wait-for-db.js ./
+COPY entrypoint.sh ./
+RUN chmod +x ./entrypoint.sh
 
-# Comando para iniciar a sua API quando o contêiner iniciar
+EXPOSE 3002
+
+ENTRYPOINT ["./entrypoint.sh"]
 CMD [ "node", "server.js" ]
