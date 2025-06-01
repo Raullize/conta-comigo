@@ -1,5 +1,5 @@
 import Sequelize from "sequelize";
-import databaseConfig from "../config/database.cjs";
+import databaseConfigObject from "../config/database.cjs";
 
 import User from "../app/models/User.js";
 import Institution from "../app/models/Institution.js";
@@ -8,13 +8,27 @@ import Transaction from "../app/models/Transaction.js";
 
 const models = [User, Institution, Account, Transaction];
 
-class Database {
-  constructor() {
-    this.init();
-  }
+  class Database {
+    constructor() {
+      this.init();
+    }
+    init() {
 
-  init() {
-    this.connection = new Sequelize(databaseConfig);
+    const env =  'development';
+    
+    const envConfig = databaseConfigObject[env];
+
+    if (!envConfig) {
+      throw new Error(`Configuração para o ambiente "${env}" não encontrada em ../config/database.js. Verifique se a chave "${env}" existe.`);
+    }
+
+    this.connection = new Sequelize(
+      envConfig.database,
+      envConfig.username,
+      envConfig.password,
+      envConfig
+    );
+
 
     models.forEach((model) => model.init(this.connection));
     models.forEach((model) => {

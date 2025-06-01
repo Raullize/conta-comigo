@@ -29,12 +29,12 @@ async function checkDbConnection() {
   } catch (err) {
     retries++;
     
-    console.error(`PATRICIA_API (wait-for-db): Falha ao conectar (${retries}/${MAX_RETRIES}):`, err.message);
+    console.error(`VITOR_API (wait-for-db): Falha ao conectar (${retries}/${MAX_RETRIES}):`, err.message);
     if (retries < MAX_RETRIES) {
-      console.log(`PATRICIA_API (wait-for-db): Nova tentativa em ${RETRY_INTERVAL / 1000} segundos...`);
+      console.log(`VITOR_API (wait-for-db): Nova tentativa em ${RETRY_INTERVAL / 1000} segundos...`);
       setTimeout(checkDbConnection, RETRY_INTERVAL);
     } else {
-      console.error('PATRICIA_API (wait-for-db): Número máximo de tentativas atingido. Abortando.');
+      console.error('VITOR_API (wait-for-db): Número máximo de tentativas atingido. Abortando.');
       pool.end();       
       process.exit(1);  
     }
