@@ -254,6 +254,7 @@ services:
       - DB_PASSWORD=${RAUL_DB_PASSWORD}
       - DB_NAME=${RAUL_DB_NAME}
       - DB_PORT=5432
+      - JWT_SECRET=${JWT_SECRET_RAUL}
     depends_on:
       postgres_raul:
         condition: service_healthy

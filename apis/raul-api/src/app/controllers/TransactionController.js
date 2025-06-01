@@ -1,7 +1,7 @@
 import { Op } from 'sequelize';
 import * as Yup from 'yup';
-import BankAccount from '../models/BankAccount';
-import Transaction from '../models/Transaction';
+import BankAccount from '../models/BankAccount.js';
+import Transaction from '../models/Transaction.js';
 
 class TransactionController {
   async index(req, res) {

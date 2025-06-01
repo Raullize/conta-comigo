@@ -1,25 +1,41 @@
 import 'dotenv/config';
 import Sequelize from 'sequelize';
-import databaseConfig from '../config/database';
+import databaseConfigObject from '../config/database.js';
 
-import BankAccount from '../app/models/BankAccount';
-import Transaction from '../app/models/Transaction';
-import User from '../app/models/User';
+import BankAccount from '../app/models/BankAccount.js';
+import Transaction from '../app/models/Transaction.js';
+import User from '../app/models/User.js';
 
 const models = [User, BankAccount, Transaction];
 
-class Database {
-  constructor() {
-    this.init();
-  }
+  class Database {
+    constructor() {
+      this.init();
+    }
+    init() {
 
-  init() {
-    // databaseConfig é o arquivo de configuração do banco de dados
-    this.connection = new Sequelize(databaseConfig);
+    const env =  'development';
+    
+    const envConfig = databaseConfigObject[env];
 
-    models
-      .map((model) => model.init(this.connection))
-      .map((model) => model.associate && model.associate(this.connection.models));
+    if (!envConfig) {
+      throw new Error(`Configuração para o ambiente "${env}" não encontrada em ../config/database.js. Verifique se a chave "${env}" existe.`);
+    }
+
+    this.connection = new Sequelize(
+      envConfig.database,
+      envConfig.username,
+      envConfig.password,
+      envConfig
+    );
+
+
+    models.forEach((model) => model.init(this.connection));
+    models.forEach((model) => {
+      if (model.associate) {
+        model.associate(this.connection.models);
+      }
+    });
   }
 }
 

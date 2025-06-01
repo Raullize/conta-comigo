@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
-import BankAccount from '../models/BankAccount';
-import Transaction from '../models/Transaction';
+import BankAccount from '../models/BankAccount.js';
+import Transaction from '../models/Transaction.js';
 
 class BalanceController {
   async index(req, res) {

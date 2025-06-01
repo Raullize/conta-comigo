@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import * as Yup from 'yup';
-import BankAccount from '../models/BankAccount';
-import User from '../models/User';
+import BankAccount from '../models/BankAccount.js';
+import User from '../models/User.js';
 
-import authConfig from '../../config/auth';
+import authConfig from '../../config/auth.js';
 
 class SessionController {
   async store(req, res) {

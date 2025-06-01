@@ -1,12 +1,12 @@
 import { Router } from 'express';
 
-import authMiddleware from './app/middlewares/auth';
+import authMiddleware from './app/middlewares/auth.js';
 
-import BalanceController from './app/controllers/BalanceController';
-import BankAccountController from './app/controllers/BankAccountController';
-import SessionController from './app/controllers/SessionController';
-import TransactionController from './app/controllers/TransactionController';
-import UserController from './app/controllers/UserController';
+import BalanceController from './app/controllers/BalanceController.js';
+import BankAccountController from './app/controllers/BankAccountController.js';
+import SessionController from './app/controllers/SessionController.js';
+import TransactionController from './app/controllers/TransactionController.js';
+import UserController from './app/controllers/UserController.js';
 
 const routes = new Router();
 

@@ -1,6 +1,8 @@
 {
+  
   "name": "api-contas-bancarias",
   "version": "1.0.0",
+  "type":"module",
   "description": "API Agregadora de Contas Bancárias",
   "main": "src/server.js",
   "scripts": {
@@ -8,7 +10,9 @@
     "start": "node src/server.js",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "sequelize": "sequelize"
+    "sequelize": "sequelize",
+    "migrate": "sequelize-cli db:migrate",
+    "wait-for-db": "node wait-for-db.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

@@ -9,8 +9,7 @@ if [ $? -ne 0 ]; then
   echo "Script wait-for-db falhou. A iniciar a aplicação pode não funcionar."
 fi
 
-# Executa as migrations
-echo "Executando migrations..."
+
 npm run migrate
 
 # Verifica se as migrations foram bem sucedidas

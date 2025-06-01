@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
-import BankAccount from '../models/BankAccount';
-import User from '../models/User';
+import BankAccount from '../models/BankAccount.js';
+import User from '../models/User.js';
 
 class UserController {
   async index(req, res) {
