@@ -1,4 +1,3 @@
-// src/database/index.js
 const { Sequelize } = require('sequelize');
 const sequelizeConnection = require('./database');
 

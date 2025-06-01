@@ -1,22 +1,18 @@
 #!/bin/sh
 
-# Espera o banco de dados estar pronto
-echo "Aguardando o banco de dados..."
-npm run wait-for-db 
+npm run wait-for-db -s
 
-# Verifica se o wait-for-db foi bem sucedido
 if [ $? -ne 0 ]; then
-  echo "Script wait-for-db falhou. A iniciar a aplicação pode não funcionar."
+  echo "CONTA_COMIGO (entrypoint): Script wait-for-db FALHOU. A aplicação não será iniciada."
+  exit 1
 fi
 
+npm run migrate > /dev/null 2>&1
 
-npm run migrate
-
-# Verifica se as migrations foram bem sucedidas
 if [ $? -ne 0 ]; then
-  echo "Migrations falharam. Verifique os logs."
+  echo "CONTA_COMIGO (entrypoint): Migrations FALHARAM! (Saída suprimida, verifique o código de saída)."
+  echo "CONTA_COMIGO (entrypoint): A aplicação não será iniciada."
+  exit 1
 fi
 
-# Inicia Dockerfile CMD
-echo "Iniciando a aplicação..."
 exec "$@"

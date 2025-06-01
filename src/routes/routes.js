@@ -10,6 +10,11 @@ const accountController = require('../app/controllers/accountController');
 
 const routes = new Router();
 
+// Rota inicial Teste
+routes.get('/',(req,res)=>{
+    res.send({message: 'Hello World!'});
+});
+
 // Rotas públicas
 routes.post('/users', userController.store);
 routes.post('/sessions', sessionController.store);

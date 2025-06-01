@@ -21,20 +21,18 @@ const RETRY_INTERVAL = 5000;
 let retries = 0;
 
 async function checkDbConnection() {
-  console.log(`Tentando conectar ao banco de dados: ${DB_HOST}:${DB_PORT}, database: ${DB_NAME}, user: ${DB_USER}`);
   try {
     const client = await pool.connect();
-    console.log('Banco de dados conectado com sucesso!');
     client.release();
     process.exit(0); 
   } catch (err) {
     retries++;
-    console.error(`Falha ao conectar ao banco (${retries}/${MAX_RETRIES}):`, err.message);
+    console.error(`CONTA COMIGO - API Falha ao conectar ao banco (${retries}/${MAX_RETRIES}):`, err.message);
     if (retries < MAX_RETRIES) {
-      console.log(`Nova tentativa em ${RETRY_INTERVAL / 1000} segundos...`);
+      console.log(`CONTA COMIGO - API Nova tentativa em ${RETRY_INTERVAL / 1000} segundos...`);
       setTimeout(checkDbConnection, RETRY_INTERVAL);
     } else {
-      console.error('Número máximo de tentativas atingido. Abortando.');
+      console.error('CONTA COMIGO - API - Número máximo de tentativas atingido. Abortando.');
       process.exit(1);
     }
   }

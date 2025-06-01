@@ -1,12 +1,12 @@
 services:
   # --- API Principal: conta-comigo ---
-  conta-comigo:
+  conta_comigo:
     build: .
     container_name: conta_comigo
     ports:
-      - "${CONTA_COMIGO_EXT_PORT:-4000}:3000"
+      - "${CONTA_COMIGO_EXT_PORT:-4000}:3033"
     environment:
-      - PORT=3000 
+      - PORT=3033 
       - DB_HOST=postgres_conta_comigo
       - DB_USER=${CONTA_COMIGO_DB_USER}
       - DB_PASSWORD=${CONTA_COMIGO_DB_PASSWORD}
@@ -44,6 +44,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: >
+      postgres
+      -c log_min_messages=ERROR
+      -c client_min_messages=ERROR
+      -c log_statement=none
+      -c log_connections=off
+      -c log_disconnections=off
+      -c log_checkpoints=off
+      -c log_autovacuum_min_duration=-1
+      -c log_replication_commands=off
+      -c log_temp_files=-1
+      -c log_error_verbosity=terse
 
   # --- Caputi API e seu Banco de Dados ---
   caputi-api:
@@ -83,6 +95,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: >
+      postgres
+      -c log_min_messages=ERROR
+      -c client_min_messages=ERROR
+      -c log_statement=none
+      -c log_connections=off
+      -c log_disconnections=off
+      -c log_checkpoints=off
+      -c log_autovacuum_min_duration=-1
+      -c log_replication_commands=off
+      -c log_temp_files=-1
+      -c log_error_verbosity=terse
 
   # --- Dante API e seu Banco de Dados ---
   dante-api:
@@ -123,6 +147,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: >
+      postgres
+      -c log_min_messages=ERROR
+      -c client_min_messages=ERROR
+      -c log_statement=none
+      -c log_connections=off
+      -c log_disconnections=off
+      -c log_checkpoints=off
+      -c log_autovacuum_min_duration=-1
+      -c log_replication_commands=off
+      -c log_temp_files=-1
+      -c log_error_verbosity=terse
 
   # --- Lucas API e seu Banco de Dados ---
   lucas-api:
@@ -162,6 +198,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: >
+      postgres
+      -c log_min_messages=ERROR
+      -c client_min_messages=ERROR
+      -c log_statement=none
+      -c log_connections=off
+      -c log_disconnections=off
+      -c log_checkpoints=off
+      -c log_autovacuum_min_duration=-1
+      -c log_replication_commands=off
+      -c log_temp_files=-1
+      -c log_error_verbosity=terse
 
   # --- Patricia API e seu Banco de Dados ---
   patricia-api:
@@ -201,6 +249,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: >
+      postgres
+      -c log_min_messages=ERROR
+      -c client_min_messages=ERROR
+      -c log_statement=none
+      -c log_connections=off
+      -c log_disconnections=off
+      -c log_checkpoints=off
+      -c log_autovacuum_min_duration=-1
+      -c log_replication_commands=off
+      -c log_temp_files=-1
+      -c log_error_verbosity=terse
 
   # --- Vitor API e seu Banco de Dados ---
   vitor-api:
@@ -240,6 +300,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: >
+      postgres
+      -c log_min_messages=ERROR
+      -c client_min_messages=ERROR
+      -c log_statement=none
+      -c log_connections=off
+      -c log_disconnections=off
+      -c log_checkpoints=off
+      -c log_autovacuum_min_duration=-1
+      -c log_replication_commands=off
+      -c log_temp_files=-1
+      -c log_error_verbosity=terse
 
   # Raul API e seu Banco de Dados
   raul-api:
@@ -280,6 +352,18 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    command: >
+      postgres
+      -c log_min_messages=ERROR
+      -c client_min_messages=ERROR
+      -c log_statement=none
+      -c log_connections=off
+      -c log_disconnections=off
+      -c log_checkpoints=off
+      -c log_autovacuum_min_duration=-1
+      -c log_replication_commands=off
+      -c log_temp_files=-1
+      -c log_error_verbosity=terse
 
 volumes:
   cc_data:

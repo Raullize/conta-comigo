@@ -11,4 +11,4 @@ RUN chmod +x ./entrypoint.sh
 EXPOSE 3033
 
 ENTRYPOINT ["./entrypoint.sh"]
-CMD [ "npm", "start" ]
+CMD [ "npm", "start", "-s" ]

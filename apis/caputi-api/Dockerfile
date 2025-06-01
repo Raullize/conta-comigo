@@ -15,4 +15,4 @@ COPY --from=builder /app/src ./src
 
 EXPOSE 3001
 
-CMD ["node", "src/server/server.js"]
+CMD ["node", "src/server/server.js", "-s"]

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-npm run wait-for-db
+npm run wait-for-db -s
 
 if [ $? -ne 0 ]; then
   echo "PATRICIA_API (entrypoint): Script wait-for-db FALHOU. A aplicação não será iniciada."

@@ -2,6 +2,6 @@
 
 set -e
 
-node src/seeders/seed.js
+node src/seeders/seed.js -s
 
 exec "$@"

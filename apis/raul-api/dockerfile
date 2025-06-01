@@ -11,4 +11,4 @@ RUN chmod +x ./entrypoint.sh
 EXPOSE 3006
 
 ENTRYPOINT ["./entrypoint.sh"]
-CMD [ "node", "src/server.js" ]
+CMD [ "node", "src/server.js", "-s" ]
