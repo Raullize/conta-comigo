@@ -86,7 +86,7 @@ conta-comigo/
 #### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/conta-comigo.git
+git clone https://github.com/Raullize/conta-comigo.git
 cd conta-comigo
 ```
 
@@ -99,38 +99,49 @@ cp .env.example .env
 
 > ⚠️ **Important**: Edit the `.env` file with your specific configurations
 
-#### 3. Start Docker
+#### 3. Installation with Docker (Recommended)
 
 - Make sure **Docker Desktop** is installed and running on your machine
-- Docker is required to run the PostgreSQL database
-
-#### 4. Start the database
-
-```bash
-# Start the PostgreSQL container in the background
-docker compose up -d
-```
-
-#### 5. Install dependencies
+- Docker automates several steps of the installation process, including:
+  - PostgreSQL database configuration
+  - Dependencies installation (npm install)
+  - Database migrations
+  - Initialization of all APIs and services
 
 ```bash
-npm install
-```
-
-#### 6. Run database migrations
-
-```bash
-# Create tables in the database
-npx sequelize-cli db:migrate
-```
-
-#### 7. Start the development server
-
-```bash
+# Start all services in Docker containers
 npm run dev
 ```
 
-#### 8. (Optional) Configure pgAdmin
+> 💡 **Tip**: After starting the services, you can access:
+> - **ContaComigo**: http://localhost:4000
+> - **Caputi API**: http://localhost:4001
+> - **Dante API**: http://localhost:4002
+> - **Lucas API**: http://localhost:4003
+> - **Patricia API**: http://localhost:4004
+> - **Vitor API**: http://localhost:4005
+> - **Raul API**: http://localhost:4006
+
+#### 4. Manual Installation (Alternative)
+
+If you prefer not to use Docker, you'll need to:
+
+```bash
+# Install dependencies
+npm install
+
+# Configure and start PostgreSQL databases manually
+
+# Run migrations
+npm run migrate
+
+# Start the development server
+npm start
+```
+
+> ⚠️ **Attention**: Manual installation requires more work and additional configuration for each database.
+
+#### 5. (Optional) Configure pgAdmin
 
 To view and manage the database:
 
@@ -142,14 +153,19 @@ To view and manage the database:
    - **Connection > Username**: Use the value from `DB_USER` in your `.env`
    - **Connection > Password**: Use the value from `DB_PASS` in your `.env`
 
-> 🎉 **Ready!** The project will be running at `http://localhost:3000`
+> 🎉 **Ready!** The project will be running!
 
 ### Available Scripts
 
-- `npm start` - Starts the development server
-- `npm run build` - Generates production build
+- `npm start` - Starts the development server (without Docker)
+- `npm run dev` - Starts all services using Docker (recommended)
+- `npm run serve` - Starts a simple HTTP server for static files
 - `npm run lint` - Runs code linting
+- `npm run lint:fix` - Runs linting and fixes issues automatically
 - `npm run format` - Formats code with Prettier
+- `npm run format:check` - Checks if code is properly formatted
+- `npm run migrate` - Runs database migrations
+- `npm run down` - Stops all Docker containers and removes volumes
 
 ## 🌟 Features
 

@@ -99,38 +99,49 @@ cp .env.example .env
 
 > ⚠️ **Importante**: Edite o arquivo `.env` com suas configurações específicas
 
-#### 3. Inicie o Docker
+#### 3. Instalação com Docker (Recomendado)
 
 - Certifique-se de que o **Docker Desktop** está instalado e em execução na sua máquina
-- O Docker é necessário para executar o banco de dados PostgreSQL
-
-#### 4. Suba o banco de dados
-
-```bash
-# Inicia o container do PostgreSQL em segundo plano
-docker compose up -d
-```
-
-#### 5. Instale as dependências
+- O Docker automatiza diversas etapas do processo de instalação, incluindo:
+  - Configuração dos bancos de dados PostgreSQL
+  - Instalação de dependências (npm install)
+  - Execução de migrações do banco de dados
+  - Inicialização de todas as APIs e serviços
 
 ```bash
-npm install
-```
-
-#### 6. Execute as migrações do banco
-
-```bash
-# Cria as tabelas no banco de dados
-npx sequelize-cli db:migrate
-```
-
-#### 7. Inicie o servidor de desenvolvimento
-
-```bash
+# Inicia todos os serviços em containers Docker
 npm run dev
 ```
 
-#### 8. (Opcional) Configure o pgAdmin
+> 💡 **Dica**: Após iniciar os serviços, você pode acessar:
+> - **ContaComigo**: http://localhost:4000
+> - **API Caputi**: http://localhost:4001
+> - **API Dante**: http://localhost:4002
+> - **API Lucas**: http://localhost:4003
+> - **API Patricia**: http://localhost:4004
+> - **API Vitor**: http://localhost:4005
+> - **API Raul**: http://localhost:4006
+
+#### 4. Instalação Manual (Alternativa)
+
+Se preferir não usar Docker, você precisará:
+
+```bash
+# Instalar dependências
+npm install
+
+# Configurar e iniciar bancos de dados PostgreSQL manualmente
+
+# Executar migrações
+npm run migrate
+
+# Iniciar o servidor de desenvolvimento
+npm start
+```
+
+> ⚠️ **Atenção**: A instalação manual é mais trabalhosa e requer configuração adicional de cada banco de dados.
+
+#### 5. (Opcional) Configure o pgAdmin
 
 Para visualizar e gerenciar o banco de dados:
 
@@ -146,10 +157,15 @@ Para visualizar e gerenciar o banco de dados:
 
 ### Scripts Disponíveis
 
-- `npm start` - Inicia o servidor de desenvolvimento
-- `npm run build` - Gera build de produção
+- `npm start` - Inicia o servidor de desenvolvimento (sem Docker)
+- `npm run dev` - Inicia todos os serviços usando Docker (recomendado)
+- `npm run serve` - Inicia um servidor HTTP simples para os arquivos estáticos
 - `npm run lint` - Executa linting do código
+- `npm run lint:fix` - Executa linting e corrige problemas automaticamente
 - `npm run format` - Formata o código com Prettier
+- `npm run format:check` - Verifica se o código está formatado corretamente
+- `npm run migrate` - Executa migrações do banco de dados
+- `npm run down` - Para todos os containers Docker e remove volumes
 
 ## 🌟 Funcionalidades
 
