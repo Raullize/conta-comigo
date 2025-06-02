@@ -11,7 +11,7 @@ services:
       - DB_USER=${CONTA_COMIGO_DB_USER}
       - DB_PASSWORD=${CONTA_COMIGO_DB_PASSWORD}
       - DB_NAME=${CONTA_COMIGO_DB_NAME}
-      - DB_PORT=${CONTA_COMIGO_DB_EXT_PORT}
+      - DB_PORT=5432
       # URLs para se comunicar com as outras APIs
       - CAPUTI_API_URL=http://caputi-api:3001
       - DANTE_API_URL=http://dante-api:3002
@@ -34,7 +34,7 @@ services:
       POSTGRES_PASSWORD: ${CONTA_COMIGO_DB_PASSWORD}
       POSTGRES_DB: ${CONTA_COMIGO_DB_NAME}
     ports:
-      - "${CONTA_COMIGO_DB_EXT_PORT:-5432}:5432"
+      - "${CONTA_COMIGO_DB_EXT_PORT:-1230}:5432"
     volumes:
       - cc_data:/var/lib/postgresql/data 
     networks:
