@@ -13,6 +13,9 @@ class BankAccount extends Model {
       },
       {
         sequelize,
+        tableName:"bank_accounts",
+        timestamps: true,       
+        underscored: true
       }
     );
 

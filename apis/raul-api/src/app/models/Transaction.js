@@ -12,6 +12,9 @@ class Transaction extends Model {
       },
       {
         sequelize,
+        tableName:"transactions",
+        timestamps: true,       
+        underscored: true
       }
     );
 
