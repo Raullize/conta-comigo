@@ -1,8 +1,8 @@
 {
   "name": "patricia-api", 
-  "version": "1.0.0",
-  "type": "module",             
-  "main": "index.js",           
+  "version": "1.0.0",            
+  "main": "index.js",     
+  "type": "module",      
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",

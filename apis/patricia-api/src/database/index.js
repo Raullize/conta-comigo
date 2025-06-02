@@ -16,9 +16,8 @@
     
     const envConfig = databaseConfigObject[env];
 
-    if (!envConfig) {
-      throw new Error(`Configuração para o ambiente "${env}" não encontrada em ../config/database.js. Verifique se a chave "${env}" existe.`);
-    }
+
+    
 
     this.connection = new Sequelize(
       envConfig.database,

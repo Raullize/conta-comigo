@@ -11,6 +11,9 @@ class Conta extends Model {
       {
         sequelize,
         tableName: 'contas',
+        modelName: 'Conta',
+        timestamps: true,       
+        underscored: true
       }
     );
     return this;

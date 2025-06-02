@@ -12,6 +12,10 @@ class User extends Model {
       },
       {
         sequelize,
+        modelName: 'User',
+        tableName: 'users',
+        timestamps: true,       
+        underscored: true,
       }
     );
     this.addHook('beforeSave', async(user)=> {
