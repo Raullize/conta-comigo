@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-const {promisify} = require ('util');
-const authValidators = require('../validators/auth');
+const { promisify } = require('util');
+const authValidators = require('../validators/authConfig');
 
 
 module.exports = async (req, res, next) => {
@@ -12,13 +12,13 @@ module.exports = async (req, res, next) => {
 
   const [, token] = authHeader.split(' ');
 
-  try{
-      const decoded = await promisify(jwt.verify)(token, authValidators.secret);
-      
-      req.userId = decoded.id;
+  try {
+    const decoded = await promisify(jwt.verify)(token, authValidators.secret);
 
-      return next();
-  }catch (err){
+    req.userId = decoded.id;
+
+    return next();
+  } catch (err) {
     return res.status(401).json({ error: "Token invalid " });
   }
   return next();

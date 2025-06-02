@@ -6,25 +6,27 @@ const authState = {
   registrationData: {},
 };
 
-const TEMP_CREDENTIALS = {
-  email: 'admin@contacomigo.com',
-  password: '12345678',
-};
-
-const tempUsers = [];
+// API URLs
+const LOGIN_URL = '/sessions';
+const REGISTER_URL = '/users';
+const USER_URL = '/users';
 
 function isUserLoggedIn() {
-  return localStorage.getItem('isLoggedIn') === 'true';
+  return localStorage.getItem('token') !== null;
 }
 
-function loginUser(userData) {
-  localStorage.setItem('isLoggedIn', 'true');
+function getAuthToken() {
+  return localStorage.getItem('token');
+}
+
+function loginUser(userData, token) {
   localStorage.setItem('userData', JSON.stringify(userData));
+  localStorage.setItem('token', token);
 }
 
 function logoutUser() {
-  localStorage.removeItem('isLoggedIn');
   localStorage.removeItem('userData');
+  localStorage.removeItem('token');
 }
 
 const elements = {
@@ -523,30 +525,33 @@ async function handleLogin(form) {
   setFormLoading('login', true);
 
   try {
-    await simulateAPICall(1000);
+    const response = await fetch(LOGIN_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+      }),
+    });
 
-    const isValidCredentials =
-      (data.email === TEMP_CREDENTIALS.email &&
-        data.password === TEMP_CREDENTIALS.password) ||
-      tempUsers.some(
-        user => user.email === data.email && user.password === data.password
-      );
+    const result = await response.json();
 
-    if (!isValidCredentials) {
-      throw new Error('Credenciais inválidas');
+    if (!response.ok) {
+      throw new Error(result.error || 'Erro no login');
     }
 
     const userData = {
-      email: data.email,
-      name:
-        data.email === TEMP_CREDENTIALS.email
-          ? 'Administrador'
-          : tempUsers.find(user => user.email === data.email)?.fullName ||
-            'Usuário',
+      id: result.user.id,
+      name: result.user.name,
+      email: result.user.email,
+      cpf: result.user.cpf,
+      birth_date: result.user.birth_date,
       loginTime: new Date().toISOString(),
     };
 
-    loginUser(userData);
+    loginUser(userData, result.token);
 
     setFormSuccess('login');
     showToast(
@@ -559,7 +564,8 @@ async function handleLogin(form) {
       window.location.href = './dashboard.html';
     }, 1500);
   } catch (error) {
-    showToast('error', 'Erro no login', 'E-mail ou senha incorretos.');
+    console.error('Erro no login:', error);
+    showToast('error', 'Erro no login', error.message || 'E-mail ou senha incorretos.');
   } finally {
     setFormLoading('login', false);
   }
@@ -621,26 +627,54 @@ async function handleRegister(form) {
   setFormLoading('register', true);
 
   try {
-    await simulateAPICall(2000);
-
-    // Adicionar usuário à lista temporária
-    tempUsers.push({
-      email: completeRegistrationData.email,
-      password: completeRegistrationData.password,
-      fullName: completeRegistrationData.fullName,
-      cpf: completeRegistrationData.cpf,
-      birthDate: completeRegistrationData.birthDate,
-      registrationDate: new Date().toISOString(),
+    const response = await fetch(REGISTER_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: completeRegistrationData.fullName,
+        email: completeRegistrationData.email,
+        cpf: completeRegistrationData.cpf,
+        birth_date: completeRegistrationData.birthDate,
+        password: completeRegistrationData.password,
+      }),
     });
 
-    // Login automático
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || 'Erro no cadastro');
+    }
+
+    // Fazer login automático após o cadastro
+    const loginResponse = await fetch(LOGIN_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: completeRegistrationData.email,
+        password: completeRegistrationData.password,
+      }),
+    });
+
+    const loginResult = await loginResponse.json();
+
+    if (!loginResponse.ok) {
+      throw new Error(loginResult.error || 'Erro no login automático');
+    }
+
     const userData = {
-      email: completeRegistrationData.email,
-      name: completeRegistrationData.fullName,
+      id: loginResult.user.id,
+      name: loginResult.user.name,
+      email: loginResult.user.email,
+      cpf: loginResult.user.cpf,
+      birth_date: loginResult.user.birth_date,
       loginTime: new Date().toISOString(),
     };
 
-    loginUser(userData);
+    loginUser(userData, loginResult.token);
 
     setFormSuccess('register');
     showToast('success', 'Conta criada!', 'Redirecionando para o dashboard...');
@@ -653,10 +687,11 @@ async function handleRegister(form) {
       window.location.href = './dashboard.html';
     }, 1500);
   } catch (error) {
+    console.error('Erro no cadastro:', error);
     showToast(
       'error',
       'Erro no cadastro',
-      'Tente novamente em alguns instantes.'
+      error.message || 'Tente novamente em alguns instantes.'
     );
   } finally {
     setFormLoading('register', false);

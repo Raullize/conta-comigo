@@ -1,10 +1,11 @@
 const app = require('./app.js');
 const database = require('./database/database.js');
 
-const PORT = process.env.PORT || 3033;
+const DockerPort = process.env.PORT ;
+const port = 4000;
 
 database.sync({ alter: true });
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}/`);
+app.listen(DockerPort, () => {
+  console.log(`ContaComigo-api Server running at http://localhost:${port}/`);
 });
