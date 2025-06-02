@@ -3,12 +3,12 @@ const User = require('../models/User');
 
 module.exports = {
     async createAccount(req, res){
-        const user_id = req.user_id;
+        const userId = req.userId;
         const {
                 institution,
             } = req.body;
 
-            if(!user_id){
+            if(!userId){
                 return res.status(404).json({error: "The user doesn't exists"});
             }
 
@@ -17,23 +17,23 @@ module.exports = {
             }
 
         try {
-            const account_exists = await Account.findOne({
+            const accountExists = await Account.findOne({
                 where: {
-                    user_id,
+                    userId,
                     institution,
                 }
             });
 
-            if(account_exists){
+            if(accountExists){
                 return res.status(400).json({ error: 'This account already exists for this user.'});
             }
 
-            const new_account = await Account.create({
-                user_id,
+            const newAccount = await Account.create({
+                userId,
                 institution,
             });
 
-            return res.status(201).json(new_account);
+            return res.status(201).json(newAccount);
 
         } catch (error) {
             return res.status(500).json({erro: 'Erro ao criar conta.', detalhe: error.message });
