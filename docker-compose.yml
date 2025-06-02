@@ -11,7 +11,7 @@ services:
       - DB_USER=${CONTA_COMIGO_DB_USER}
       - DB_PASSWORD=${CONTA_COMIGO_DB_PASSWORD}
       - DB_NAME=${CONTA_COMIGO_DB_NAME}
-      - DB_PORT=5432
+      - DB_PORT=${CONTA_COMIGO_DB_EXT_PORT}
       # URLs para se comunicar com as outras APIs
       - CAPUTI_API_URL=http://caputi-api:3001
       - DANTE_API_URL=http://dante-api:3002
