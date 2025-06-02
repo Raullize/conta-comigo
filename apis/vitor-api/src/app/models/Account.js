@@ -11,6 +11,8 @@ class Account extends Model {
       {
         sequelize,
         tableName: "accounts",
+        timestamps: true,       
+        underscored: true
       }
     );
   }

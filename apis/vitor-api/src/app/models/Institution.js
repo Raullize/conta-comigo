@@ -9,6 +9,8 @@ class Institution extends Model {
       {
         sequelize,
         tableName: "institutions",
+        timestamps: true,       
+        underscored: true
       }
     );
   }
