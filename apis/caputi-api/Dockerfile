@@ -1,18 +1,23 @@
-FROM node:18 AS builder
+FROM node:18-alpine AS deps
 WORKDIR /app
 
 COPY package*.json ./
 
-RUN npm install
-COPY . .
+RUN npm install --omit=dev --production
 
-FROM node:18-alpine
+FROM node:18-alpine AS runtime
 WORKDIR /app
 
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/src ./src
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-EXPOSE 3001
+COPY --from=deps /app/node_modules ./node_modules
 
-CMD ["node", "src/server/server.js", "-s"]
+COPY package.json ./
+
+COPY . .
+
+USER appuser
+
+EXPOSE 3003
+
+CMD [ "npm", "start", "-s" ]

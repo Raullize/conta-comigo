@@ -12,6 +12,7 @@ services:
       - DB_PASSWORD=${CONTA_COMIGO_DB_PASSWORD}
       - DB_NAME=${CONTA_COMIGO_DB_NAME}
       - DB_PORT=5432
+      - NODE_OPTIONS=--max-old-space-size=512
       # URLs para se comunicar com as outras APIs
       - CAPUTI_API_URL=http://caputi-api:3001
       - DANTE_API_URL=http://dante-api:3002
@@ -26,7 +27,7 @@ services:
       - openfinance_network
 
   postgres_conta_comigo:
-    image: postgres:17-alpine
+    image: postgres:17.5-alpine3.22
     container_name: conta_comigo_db 
     restart: unless-stopped
     environment:
@@ -56,6 +57,10 @@ services:
       -c log_replication_commands=off
       -c log_temp_files=-1
       -c log_error_verbosity=terse
+      -c shared_buffers=32MB          
+      -c work_mem=1MB                 
+      -c maintenance_work_mem=16MB    
+      -c max_connections=20
 
   # --- Caputi API e seu Banco de Dados ---
   caputi-api:
@@ -70,6 +75,7 @@ services:
       - DB_PASSWORD=${CAPUTI_DB_PASSWORD}
       - DB_NAME=${CAPUTI_DB_NAME}
       - DB_PORT=5432
+      - NODE_OPTIONS=--max-old-space-size=256
     depends_on:
       postgres_caputi:
         condition: service_healthy
@@ -77,7 +83,7 @@ services:
       - openfinance_network
 
   postgres_caputi:
-    image: postgres:17-alpine
+    image: postgres:17.5-alpine3.22
     container_name: caputi_db
     restart: unless-stopped
     environment:
@@ -107,6 +113,10 @@ services:
       -c log_replication_commands=off
       -c log_temp_files=-1
       -c log_error_verbosity=terse
+      -c shared_buffers=32MB          
+      -c work_mem=1MB                 
+      -c maintenance_work_mem=16MB    
+      -c max_connections=20
 
   # --- Dante API e seu Banco de Dados ---
   dante-api:
@@ -122,6 +132,7 @@ services:
       - DB_NAME=${DANTE_DB_NAME}
       - DB_PORT=5432
       - NODE_ENV=development
+      - NODE_OPTIONS=--max-old-space-size=256
     depends_on:
       postgres_dante:
         condition: service_healthy
@@ -129,7 +140,7 @@ services:
       - openfinance_network
 
   postgres_dante:
-    image: postgres:17-alpine
+    image: postgres:17.5-alpine3.22
     container_name: dante_db
     restart: unless-stopped
     environment:
@@ -159,6 +170,10 @@ services:
       -c log_replication_commands=off
       -c log_temp_files=-1
       -c log_error_verbosity=terse
+      -c shared_buffers=32MB          
+      -c work_mem=1MB                 
+      -c maintenance_work_mem=16MB    
+      -c max_connections=20
 
   # --- Lucas API e seu Banco de Dados ---
   lucas-api:
@@ -173,6 +188,7 @@ services:
       - DB_PASSWORD=${LUCAS_DB_PASSWORD}
       - DB_NAME=${LUCAS_DB_NAME}
       - DB_PORT=5432
+      - NODE_OPTIONS=--max-old-space-size=256
     depends_on:
       postgres_lucas:
         condition: service_healthy
@@ -180,7 +196,7 @@ services:
       - openfinance_network
 
   postgres_lucas:
-    image: postgres:17-alpine
+    image: postgres:17.5-alpine3.22
     container_name: lucas_db
     restart: unless-stopped
     environment:
@@ -210,6 +226,10 @@ services:
       -c log_replication_commands=off
       -c log_temp_files=-1
       -c log_error_verbosity=terse
+      -c shared_buffers=32MB          
+      -c work_mem=1MB                 
+      -c maintenance_work_mem=16MB    
+      -c max_connections=20
 
   # --- Patricia API e seu Banco de Dados ---
   patricia-api:
@@ -224,6 +244,7 @@ services:
       - DB_PASSWORD=${PATRICIA_DB_PASSWORD}
       - DB_NAME=${PATRICIA_DB_NAME}
       - DB_PORT=5432
+      - NODE_OPTIONS=--max-old-space-size=256
     depends_on:
       postgres_patricia:
         condition: service_healthy
@@ -231,7 +252,7 @@ services:
       - openfinance_network
 
   postgres_patricia:
-    image: postgres:17-alpine
+    image: postgres:17.5-alpine3.22
     container_name: patricia_db
     restart: unless-stopped
     environment:
@@ -261,6 +282,10 @@ services:
       -c log_replication_commands=off
       -c log_temp_files=-1
       -c log_error_verbosity=terse
+      -c shared_buffers=32MB          
+      -c work_mem=1MB                 
+      -c maintenance_work_mem=16MB    
+      -c max_connections=20
 
   # --- Vitor API e seu Banco de Dados ---
   vitor-api:
@@ -275,6 +300,7 @@ services:
       - DB_PASSWORD=${VITOR_DB_PASSWORD}
       - DB_NAME=${VITOR_DB_NAME}
       - DB_PORT=5432
+      - NODE_OPTIONS=--max-old-space-size=256
     depends_on:
       postgres_vitor:
         condition: service_healthy
@@ -282,7 +308,7 @@ services:
       - openfinance_network
 
   postgres_vitor:
-    image: postgres:17-alpine
+    image: postgres:17.5-alpine3.22
     container_name: vitor_db
     restart: unless-stopped
     environment:
@@ -312,6 +338,10 @@ services:
       -c log_replication_commands=off
       -c log_temp_files=-1
       -c log_error_verbosity=terse
+      -c shared_buffers=32MB          
+      -c work_mem=1MB                 
+      -c maintenance_work_mem=16MB    
+      -c max_connections=20
 
   # Raul API e seu Banco de Dados
   raul-api:
@@ -326,7 +356,7 @@ services:
       - DB_PASSWORD=${RAUL_DB_PASSWORD}
       - DB_NAME=${RAUL_DB_NAME}
       - DB_PORT=5432
-      - JWT_SECRET=${JWT_SECRET_RAUL}
+      - NODE_OPTIONS=--max-old-space-size=256
     depends_on:
       postgres_raul:
         condition: service_healthy
@@ -334,7 +364,7 @@ services:
       - openfinance_network
 
   postgres_raul: 
-    image: postgres:17-alpine
+    image: postgres:17.5-alpine3.22
     container_name: raul_db
     restart: unless-stopped
     environment:
@@ -364,6 +394,10 @@ services:
       -c log_replication_commands=off
       -c log_temp_files=-1
       -c log_error_verbosity=terse
+      -c shared_buffers=32MB          
+      -c work_mem=1MB                 
+      -c maintenance_work_mem=16MB    
+      -c max_connections=20
 
 volumes:
   cc_data:

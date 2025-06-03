@@ -1,4 +1,3 @@
-require("dotenv").config();
 const express = require('express');
 const router = express.Router();
 const pool = require('./bd')
@@ -11,16 +10,12 @@ router.get('/', (req,res)=>{
 router.get('/bd', async (req, res) => {
     try {
       const result = await pool.query('SELECT NOW()');
-      console.log(result.rows)
       res.json(result.rows);
     } catch (error) {
-      console.error('Erro ao executar query:', error);
       res.status(500).send('Erro no servidor');
     }
   });
   
-
-
 
 //POST
 const instituicaoController = require('./bd/controllers/instituicaoController');
@@ -42,7 +37,6 @@ router.get('/teste', testeController.cadastrarUsuarioTeste);
 router.get('/usuarios/:id/saldo', usuarioController.getSaldoTotal);
 
 router.get('/usuarios/:id/extrato', usuarioController.getExtrato);
-
 
 //PUT
 router.put('/usuarios/:id', usuarioController.atualizarUsuario);

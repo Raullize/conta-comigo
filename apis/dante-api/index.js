@@ -1,7 +1,5 @@
-//require("dotenv").config(); 
 const express = require("express");
 const rotas = require('./rotas');
-const db = require('./bd/models');
 
 const app = express();
 app.use(express.json());

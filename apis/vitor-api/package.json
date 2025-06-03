@@ -4,9 +4,9 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "sequelize-cli db:migrate",
-    "wait-for-db": "node wait-for-db.js"
+    "wait-for-db": "node wait-for-db.js",
+    "start": "node src/server.js"
   },
   "repository": {
     "type": "git",
@@ -22,12 +22,11 @@
   "description": "",
   "dependencies": {
     "express": "^5.1.0",
-    "nodemon": "^3.1.9",
     "pg": "^8.14.1",
     "sequelize": "^6.37.7",
-    "sucrase": "^3.35.0"
+    "sucrase": "^3.35.0",
+    "sequelize-cli": "^6.6.3"
   },
   "devDependencies": {
-    "sequelize-cli": "^6.6.2"
   }
 }
