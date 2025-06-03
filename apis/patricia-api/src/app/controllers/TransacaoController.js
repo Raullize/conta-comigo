@@ -1,6 +1,8 @@
+/* eslint-disable */
 import *as Yup from 'yup';
 import Transacao from '../controllers/models/Transacao.js';
 import Conta from '../controllers/models/Conta.js';
+import User from '../controllers/models/User.js';
 
 
 class TransacaoController {
@@ -28,6 +30,17 @@ class TransacaoController {
     if (conta.usuario_id !== req.userId) {
       return res.status(403).json({ error: 'Você não tem permissão para operar nesta conta.' });
     }
+
+    let cpfDoUser = "CPF não encontrado";
+    if (conta.usuario_id){
+      const usuarioDaConta = await Usuario.findByPk(conta.usuario_id);
+      if (usuarioDaConta && usuarioDaConta.cpf){
+        cpfDoUser = usuarioDaConta.cpf;
+      }else {
+        console.warn ('Cpf não encontrado para o user id');
+      }
+    }
+    const id_banco = conta.id_banco_placeholder || "Id de banco não configurada"
 
     if(tipo === 'transferencia'){
       if (!destinatario_id){
@@ -77,29 +90,51 @@ class TransacaoController {
       descricao,
       tipo,
       valor,
-      data,
+      data: data || new Date(),
       conta_id,
       destinatario_id: tipo === 'transferencia' ? destinatario_id: null,
-     })
+     });
 
-     const formDate = (date) => {return date.toISOString().split('T')[0];
-    };
+     let tipoResposta;
+     if (transacao.tipo === 'credito'){
+      tipoResposta = 'deposito';
+     } else if (transacao.tipo === 'debito' || transacao.tipo === 'transferencia'){
+      tipoResposta = 'saque';
+     }else {
+      tipoResposta= transacao.tipo; 
+     }
 
-     return res.json({
+     const formDate = (dateValue) => {
+      if (!dateValue) return null;
+      try{
+        return new Date(dateValue).toISOString().split('T')[0];
+      } catch (e){
+        console.error("Erro ao formatar data", dataValue, e);
+        return String(dateValue); 
+      }
+     };
+
+     const dataFormatada = formDate(transacao.createdAt);
+               
+    const responseBody = {
       message: 'Operação realizada com sucesso.',
       transacao: {
-        descricao: transacao.descricao,
-        tipo: transacao.tipo,
-        valor: Number(transacao.valor),
-        data: formDate(transacao.data),
-        conta_id: transacao.conta_id,
-        destinatario_id: transacao.destinatario_id,
+       id_banco: id_banco,
+       cpf: cpfDoUser,
+       tipo: tipoResposta,
+       data: dataFormatada,
+       descricao: transacao.descricao,
       },
-    });
+    };
+
+    return res.status(201).json(responseBody);
 
     }catch (err) {
       console.error('Erro ao realizar transação', err);
-      return res.status(500).json({ error: 'Erro interno ao realizar a transação'});
+      if (err.name === 'SequelizeValidationError'|| err.name === 'SequelizeUniqueConstraintError'){ 
+        return res.status(400).json({ error: 'Erro de validação nos dados da transação'});
+      }
+        return res.status(500).json({ error: 'Erro interno ao realizar a transação'});
     }
   }
     }

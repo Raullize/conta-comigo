@@ -1,7 +1,7 @@
 const app = require('./app.js');
 const database = require('./database/database.js');
 
-const DockerPort = process.env.PORT ;
+const DockerPort = process.env.PORT;
 const port = 4000;
 
 database.sync({ alter: true });

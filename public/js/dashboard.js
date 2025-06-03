@@ -56,9 +56,9 @@ async function loadUserData() {
     const response = await fetch(USER_URL, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
     });
 
     if (!response.ok) {

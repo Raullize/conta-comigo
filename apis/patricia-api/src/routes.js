@@ -20,6 +20,9 @@ routes.post('/users',UserController.store);
 
 routes.post('/sessions',SessionController.store);
 
+//rota open finance
+
+
 //precisa autenticar.
 
 routes.use(authMiddleware);
