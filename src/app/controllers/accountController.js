@@ -1,6 +1,5 @@
 const { where } = require('sequelize');
-const Account = require('../models/Account');   
-const { alternatives } = require('joi');
+const Account = require('../models/Account');
 
 module.exports = {
     async createAccount(req, res){
