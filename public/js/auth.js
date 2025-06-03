@@ -565,7 +565,11 @@ async function handleLogin(form) {
     }, 1500);
   } catch (error) {
     console.error('Erro no login:', error);
-    showToast('error', 'Erro no login', error.message || 'E-mail ou senha incorretos.');
+    showToast(
+      'error',
+      'Erro no login',
+      error.message || 'E-mail ou senha incorretos.'
+    );
   } finally {
     setFormLoading('login', false);
   }

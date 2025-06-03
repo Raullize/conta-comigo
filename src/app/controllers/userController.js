@@ -12,7 +12,9 @@ class userController {
       });
 
       if (userExistsByEmail) {
-        return res.status(400).json({ error: 'Usuário já existe com este e-mail.' });
+        return res
+          .status(400)
+          .json({ error: 'Usuário já existe com este e-mail.' });
       }
 
       // Verificar se o usuário já existe por CPF
@@ -21,7 +23,9 @@ class userController {
       });
 
       if (userExistsByCpf) {
-        return res.status(400).json({ error: 'Usuário já existe com este CPF.' });
+        return res
+          .status(400)
+          .json({ error: 'Usuário já existe com este CPF.' });
       }
 
       // Criar o usuário
