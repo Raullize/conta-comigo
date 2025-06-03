@@ -276,10 +276,34 @@ function displaySavingsCard(savingsData) {
 }
 
 function setupUIEvents() {
-    // Configurar evento de logout no ícone do usuário
-    document.querySelector('.user-avatar').addEventListener('click', function() {
-        showLogoutModal();
+    // Configurar evento de dropdown no ícone do usuário
+    const userAvatar = document.querySelector('.user-avatar');
+    const userDropdown = document.getElementById('userDropdown');
+    const dropdownLogoutBtn = document.getElementById('dropdownLogoutBtn');
+    
+    if (userAvatar && userDropdown) {
+        userAvatar.addEventListener('click', function(e) {
+            e.stopPropagation(); // Evita que o clique se propague para o document
+            userDropdown.classList.toggle('show');
+        });
+    }
+    
+    // Fechar dropdown ao clicar fora dele
+    document.addEventListener('click', function(e) {
+        if (userDropdown && userDropdown.classList.contains('show') && 
+            !userDropdown.contains(e.target) && 
+            !userAvatar.contains(e.target)) {
+            userDropdown.classList.remove('show');
+        }
     });
+    
+    // Configurar evento para o botão de logout no dropdown
+    if (dropdownLogoutBtn) {
+        dropdownLogoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showLogoutModal();
+        });
+    }
     
     // Configurar evento para o botão de notificações
     document.querySelector('.notification-btn').addEventListener('click', function() {

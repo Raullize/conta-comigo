@@ -28,33 +28,40 @@
             <nav class="sidebar-nav">
                 <a href="#" class="nav-item active">
                     <i class="fas fa-chart-pie"></i>
-                    <span>Dashboard</span>
+                    <span class="full-text">Dashboard</span>
+                    <span class="short-text">Dashboard</span>
                 </a>
                 <a href="#" class="nav-item">
                     <i class="fas fa-wallet"></i>
-                    <span>Meus Gastos</span>
+                    <span class="full-text">Meus Gastos</span>
+                    <span class="short-text">Gastos</span>
                 </a>
                 <a href="#" class="nav-item">
                     <i class="fas fa-university"></i>
-                    <span>Minhas Instituições</span>
+                    <span class="full-text">Minhas Instituições</span>
+                    <span class="short-text">Instituições</span>
                 </a>
                 <a href="#" class="nav-item">
                     <i class="fas fa-chart-line"></i>
-                    <span>Meus Investimentos</span>
+                    <span class="full-text">Meus Investimentos</span>
+                    <span class="short-text">Investimentos</span>
                 </a>
                 <a href="#" class="nav-item">
                     <i class="fas fa-calculator"></i>
-                    <span>Simular Investimentos</span>
+                    <span class="full-text">Simular Investimentos</span>
+                    <span class="short-text">Simular</span>
                 </a>
                 <a href="#" class="nav-item">
                     <i class="fas fa-cog"></i>
-                    <span>Configurações</span>
+                    <span class="full-text">Configurações</span>
+                    <span class="short-text">Config</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
                 <a href="#" class="nav-item" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span>Sair</span>
+                    <span class="full-text">Sair</span>
+                    <span class="short-text">Sair</span>
                 </a>
             </div>
         </aside>
@@ -75,6 +82,17 @@
                     <div class="user-profile">
                         <div class="user-avatar">
                             <i class="fas fa-user"></i>
+                        </div>
+                        <!-- Menu dropdown do usuário -->
+                        <div class="user-dropdown" id="userDropdown">
+                            <a href="#" class="dropdown-item">
+                                <i class="fas fa-cog"></i>
+                                <span>Configurações</span>
+                            </a>
+                            <a href="#" class="dropdown-item" id="dropdownLogoutBtn">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Sair</span>
+                            </a>
                         </div>
                     </div>
                 </div>
