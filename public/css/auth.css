@@ -5,13 +5,11 @@
   overflow: hidden;
 }
 
-
 @media (min-width: 768px) {
   .auth-container {
     height: 100vh;
   }
 }
-
 
 .auth-background {
   position: absolute;
