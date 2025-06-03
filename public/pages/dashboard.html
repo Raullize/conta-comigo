@@ -4,14 +4,286 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ContaComigo - Dashboard</title>
+    <meta name="description" content="Gerencie suas finanças de forma inteligente com o ContaComigo.">
     <link rel="icon" type="image/png" href="../assets/logos/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/globals.css">
     <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
-    <h1>Olá, <span id="userName">Carregando...</span>!</h1>
-    <button id="logoutBtn">Sair</button>
-    
-    <script src="../js/dashboard.js"></script>
+    <div class="dashboard-container">
+        <!-- Sidebar de Navegação -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <img src="../assets/logos/logo.png" alt="ContaComigo Logo" class="sidebar-logo-img">
+                    <span class="logo-text">
+                        <span class="logo-conta">Conta</span><span class="logo-comigo">Comigo</span>
+                    </span>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-wallet"></i>
+                    <span>Meus Gastos</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-university"></i>
+                    <span>Minhas Instituições</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Meus Investimentos</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-calculator"></i>
+                    <span>Simular Investimentos</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="nav-item" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-content">
+            <!-- Header do Dashboard -->
+            <header class="dashboard-header">
+                <div class="welcome-section">
+                    <h1>Olá, <span id="userName">Carregando...</span>!</h1>
+                    <p>Bem-vindo ao seu painel financeiro</p>
+                </div>
+                <div class="header-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Grid de Cards -->
+            <div class="dashboard-grid">
+                <!-- Saldo Geral -->
+                <div class="card balance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Saldo Geral</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                    </div>
+                    <div class="balance-value">R$ 12.450,75</div>
+                    <div class="balance-change balance-positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>2,5% desde o mês passado</span>
+                    </div>
+                </div>
+
+                <!-- Gastos do Mês -->
+                <div class="card expenses-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Gastos do Mês</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+                    <div class="balance-value">R$ 3.280,45</div>
+                    <div class="balance-change balance-negative">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>5,2% desde o mês passado</span>
+                    </div>
+                </div>
+
+                <!-- Investimentos -->
+                <div class="card investments-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Investimentos</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="balance-value">R$ 45.750,00</div>
+                    <div class="balance-change balance-positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>3,8% desde o mês passado</span>
+                    </div>
+                </div>
+
+                <!-- Economia -->
+                <div class="card savings-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Economia</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                    </div>
+                    <div class="balance-value">R$ 1.850,30</div>
+                    <div class="balance-change balance-positive">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12% desde o mês passado</span>
+                    </div>
+                </div>
+
+                <!-- Transações Recentes -->
+                <div class="card transactions-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Transações Recentes</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                    </div>
+                    <div class="transaction-list">
+                        <div class="transaction-item transaction-expense">
+                            <div class="transaction-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-title">Restaurante Sabor Caseiro</div>
+                                <div class="transaction-category">Alimentação</div>
+                            </div>
+                            <div class="transaction-info">
+                                <div class="transaction-amount">- R$ 89,90</div>
+                                <div class="transaction-date">Hoje</div>
+                            </div>
+                        </div>
+                        <div class="transaction-item transaction-expense">
+                            <div class="transaction-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-title">Shopping Center Norte</div>
+                                <div class="transaction-category">Compras</div>
+                            </div>
+                            <div class="transaction-info">
+                                <div class="transaction-amount">- R$ 235,50</div>
+                                <div class="transaction-date">Ontem</div>
+                            </div>
+                        </div>
+                        <div class="transaction-item transaction-income">
+                            <div class="transaction-icon">
+                                <i class="fas fa-money-check-alt"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-title">Salário</div>
+                                <div class="transaction-category">Receita</div>
+                            </div>
+                            <div class="transaction-info">
+                                <div class="transaction-amount">+ R$ 5.800,00</div>
+                                <div class="transaction-date">15/05/2023</div>
+                            </div>
+                        </div>
+                        <div class="transaction-item transaction-expense">
+                            <div class="transaction-icon">
+                                <i class="fas fa-home"></i>
+                            </div>
+                            <div class="transaction-details">
+                                <div class="transaction-title">Aluguel</div>
+                                <div class="transaction-category">Moradia</div>
+                            </div>
+                            <div class="transaction-info">
+                                <div class="transaction-amount">- R$ 1.500,00</div>
+                                <div class="transaction-date">10/05/2023</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="view-all">Ver todas as transações</a>
+                </div>
+
+                <!-- Orçamento Mensal -->
+                <div class="card budget-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Orçamento Mensal</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-thermometer-half"></i>
+                        </div>
+                    </div>
+                    <div class="budget-progress">
+                        <div class="budget-category">
+                            <div class="budget-category-header">
+                                <div class="budget-category-name">Alimentação</div>
+                                <div class="budget-category-values">
+                                    <span class="budget-category-spent">R$ 850,30</span> / R$ 1.000,00
+                                </div>
+                            </div>
+                            <div class="budget-bar">
+                                <div class="budget-progress-bar budget-safe" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="budget-category">
+                            <div class="budget-category-header">
+                                <div class="budget-category-name">Transporte</div>
+                                <div class="budget-category-values">
+                                    <span class="budget-category-spent">R$ 420,75</span> / R$ 600,00
+                                </div>
+                            </div>
+                            <div class="budget-bar">
+                                <div class="budget-progress-bar budget-safe" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        <div class="budget-category">
+                            <div class="budget-category-header">
+                                <div class="budget-category-name">Lazer</div>
+                                <div class="budget-category-values">
+                                    <span class="budget-category-spent">R$ 580,00</span> / R$ 700,00
+                                </div>
+                            </div>
+                            <div class="budget-bar">
+                                <div class="budget-progress-bar budget-warning" style="width: 83%"></div>
+                            </div>
+                        </div>
+                        <div class="budget-category">
+                            <div class="budget-category-header">
+                                <div class="budget-category-name">Compras</div>
+                                <div class="budget-category-values">
+                                    <span class="budget-category-spent">R$ 950,00</span> / R$ 800,00
+                                </div>
+                            </div>
+                            <div class="budget-bar">
+                                <div class="budget-progress-bar budget-danger" style="width: 118%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="view-all">Ver orçamento completo</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+<!-- Modal de Confirmação de Logout -->
+<div class="modal" id="logoutModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>Confirmação</h4>
+            <button class="modal-close" id="closeLogoutModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Tem certeza que deseja sair?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancelLogout">Cancelar</button>
+            <button class="btn btn-primary" id="confirmLogout">Sim, sair</button>
+        </div>
+    </div>
+</div>
+
+<script src="../js/dashboard.js"></script>
 </body>
 </html>
