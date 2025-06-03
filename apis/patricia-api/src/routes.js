@@ -20,6 +20,13 @@ routes.post('/users',UserController.store);
 
 routes.post('/sessions',SessionController.store);
 
+//rota open finance
+
+
+//precisa autenticar.
+
+routes.use(authMiddleware);
+
 routes.put('/users',UserController.update);
 
 //rotas da conta
