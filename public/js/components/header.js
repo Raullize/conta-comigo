@@ -1,3 +1,8 @@
+/**
+ * Header Component - Componente de cabeçalho para o dashboard
+ */
+import { showLogoutModal, getUserData } from '../auth-utils.js';
+
 class HeaderComponent {
   constructor(options = {}) {
     this.showNotifications = options.showNotifications !== false;
@@ -54,7 +59,7 @@ class HeaderComponent {
   init(container) {
     container.innerHTML = this.render();
     this.bindEvents();
-    // Usa a função getUserData do auth-utils.js para exibir o nome do usuário
+    // Uses getUserData function from auth-utils.js to display user name
     this.updateUserName();
   }
 
@@ -105,7 +110,7 @@ class HeaderComponent {
     const notificationBtn = document.querySelector('.notification-btn');
     if (notificationBtn) {
       notificationBtn.addEventListener('click', () => {
-        // Implementar funcionalidade de notificações
+        // TODO: Implement notifications functionality
       });
     }
   }
@@ -124,5 +129,4 @@ class HeaderComponent {
   }
 }
 
-// Exporta o componente para uso global
-window.HeaderComponent = HeaderComponent;
+export default HeaderComponent;

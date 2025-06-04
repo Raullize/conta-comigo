@@ -1,3 +1,8 @@
+/**
+ * Sidebar Component - Componente de barra lateral de navegação
+ */
+import { showLogoutModal } from '../auth-utils.js';
+
 class SidebarComponent {
   constructor() {
     this.currentPage = this.getCurrentPage();
@@ -83,5 +88,4 @@ class SidebarComponent {
   }
 }
 
-// Exporta o componente para uso global
-window.SidebarComponent = SidebarComponent;
+export default SidebarComponent;
