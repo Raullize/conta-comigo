@@ -1,0 +1,113 @@
+/* Sidebar Styles */
+
+.sidebar {
+  width: 280px;
+  background-color: var(--white);
+  border-right: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+  z-index: var(--z-fixed);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-header {
+  padding: var(--spacing-lg);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: 700;
+  font-size: var(--font-size-lg);
+}
+
+.sidebar-logo-img {
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: contain;
+}
+
+.logo-conta {
+  color: var(--primary-green);
+}
+
+.logo-comigo {
+  color: var(--primary-blue);
+}
+
+.sidebar-nav {
+  padding: var(--spacing-lg) 0;
+  flex-grow: 1;
+}
+
+.sidebar-footer {
+  padding: var(--spacing-md) 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  margin-top: auto;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all var(--transition-fast);
+  border-left: 3px solid transparent;
+  font-weight: 500;
+  gap: var(--spacing-md);
+}
+
+/* By default, show only full text */
+.nav-item span.full-text {
+  display: inline;
+}
+
+.nav-item span.short-text {
+  display: none;
+}
+
+.nav-item:hover {
+  background-color: rgba(54, 179, 126, 0.05);
+  color: var(--primary-green);
+}
+
+.nav-item.active {
+  background-color: rgba(54, 179, 126, 0.1);
+  border-left: 3px solid var(--primary-green);
+  color: var(--primary-green);
+}
+
+.nav-item i {
+  width: 20px;
+  text-align: center;
+  font-size: var(--font-size-lg);
+}
+
+.sidebar-footer .nav-item {
+  color: #e74c3c;
+}
+
+.sidebar-footer .nav-item:hover {
+  background-color: rgba(231, 76, 60, 0.05);
+  color: #e74c3c;
+}
+
+/* Responsive styles for sidebar */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    height: 100vh;
+  }
+  
+  .sidebar.show {
+    left: 0;
+  }
+}

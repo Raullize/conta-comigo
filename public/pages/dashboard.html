@@ -4,14 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ContaComigo - Dashboard</title>
+    <meta name="description" content="Gerencie suas finanças de forma inteligente com o ContaComigo.">
     <link rel="icon" type="image/png" href="../assets/logos/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/globals.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/components/sidebar.css">
+    <link rel="stylesheet" href="../css/components/header.css">
     <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
-    <h1>Olá, <span id="userName">Carregando...</span>!</h1>
-    <button id="logoutBtn">Sair</button>
-    
-    <script src="../js/dashboard.js"></script>
+    <div class="dashboard-container">
+        <!-- Sidebar will be injected here -->
+        <div id="sidebar-container"></div>
+        
+        <main class="main-content">
+            <!-- Header will be injected here -->
+            <div id="header-container"></div>
+
+            <!-- Dashboard Cards Grid -->
+            <div class="dashboard-grid">
+                <!-- General Balance -->
+                <div class="card balance-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Saldo Geral</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                    </div>
+                    <div class="balance-value"></div>
+                    <div class="balance-change">
+                        <i class="fas"></i>
+                        <span></span>
+                    </div>
+                </div>
+
+                <!-- Monthly Expenses -->
+                <div class="card expenses-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Gastos do Mês</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+                    <div class="balance-value"></div>
+                    <div class="balance-change">
+                        <i class="fas"></i>
+                        <span></span>
+                    </div>
+                </div>
+
+                <!-- Investments -->
+                <div class="card investments-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Investimentos</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                    <div class="balance-value"></div>
+                    <div class="balance-change">
+                        <i class="fas"></i>
+                        <span></span>
+                    </div>
+                </div>
+
+                <!-- Savings -->
+                <div class="card savings-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Economia</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                    </div>
+                    <div class="balance-value"></div>
+                    <div class="balance-change">
+                        <i class="fas"></i>
+                        <span></span>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="card transactions-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Transações Recentes</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                    </div>
+                    <div class="transaction-list">
+                        <!-- Transactions will be populated by JavaScript -->
+                    </div>
+                    <a href="#" class="view-all">Ver todas as transações</a>
+                </div>
+
+                <!-- Monthly Budget -->
+                <div class="card budget-card">
+                    <div class="card-header">
+                        <h3 class="card-title">Orçamento Mensal</h3>
+                        <div class="card-icon">
+                            <i class="fas fa-thermometer-half"></i>
+                        </div>
+                    </div>
+                    <div class="budget-progress">
+                        <!-- Budget categories will be populated by JavaScript -->
+                    </div>
+                    <a href="#" class="view-all">Ver orçamento completo</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Logout Modal -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Saída</h3>
+                <span class="close" id="closeLogoutModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja sair?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelLogoutBtn">Cancelar</button>
+                <button class="btn btn-primary" id="confirmLogoutBtn">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import SidebarComponent from '../js/components/sidebar.js';
+        import HeaderComponent from '../js/components/header.js';
+        import { checkAuthentication } from '../js/auth-utils.js';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize components
+            const sidebar = new SidebarComponent();
+            const header = new HeaderComponent({
+                pageTitle: 'Dashboard',
+                pageSubtitle: 'Bem-vindo ao seu painel financeiro'
+            });
+            
+            // Render components
+            sidebar.init(document.getElementById('sidebar-container'));
+            header.init(document.getElementById('header-container'));
+            
+            // Check authentication
+            checkAuthentication();
+        });
+    </script>
+    <script type="module" src="../js/dashboard.js"></script>
 </body>
 </html>

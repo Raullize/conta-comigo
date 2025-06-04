@@ -47,39 +47,122 @@ O **ContaComigo** é uma plataforma web inovadora de gerenciamento financeiro pe
 
 ```
 conta-comigo/
-├── public/                 # Arquivos estáticos
-│   ├── assets/            # Recursos (imagens, logos, vídeos)
+├── public/                 # Arquivos estáticos (Frontend)
+│   ├── assets/            # Recursos estáticos
+│   │   ├── images/        # Imagens utilizadas no site
+│   │   ├── logos/         # Logotipos da aplicação
+│   │   └── videos/        # Vídeos para apresentações
 │   ├── css/               # Folhas de estilo
-│   │   ├── globals.css    # Estilos globais
+│   │   ├── globals.css    # Variáveis CSS e estilos globais
+│   │   ├── common.css     # Estilos compartilhados entre páginas
 │   │   ├── landing.css    # Estilos da landing page
-│   │   ├── auth.css       # Estilos de autenticação
-│   │   └── dashboard.css  # Estilos do dashboard
+│   │   ├── login.css      # Estilos da página de login
+│   │   ├── dashboard.css  # Estilos do dashboard
+│   │   ├── expenses.css   # Estilos da página de despesas
+│   │   ├── investments.css # Estilos da página de investimentos
+│   │   ├── institutions.css # Estilos da página de instituições
+│   │   ├── simulator.css  # Estilos da página de simulador
+│   │   ├── settings.css   # Estilos da página de configurações
+│   │   └── components/    # Componentes CSS reutilizáveis
+│   │       ├── header.css # Estilos do cabeçalho
+│   │       └── sidebar.css # Estilos da barra lateral
 │   ├── js/                # Scripts JavaScript
-│   │   ├── landing.js     # Funcionalidades da landing
-│   │   ├── auth.js        # Autenticação
-│   │   └── dashboard.js   # Dashboard
+│   │   ├── auth-utils.js  # Utilitários de autenticação
+│   │   ├── utils.js       # Funções utilitárias gerais
+│   │   ├── landing.js     # Funcionalidades da landing page
+│   │   ├── login.js       # Funcionalidades de login
+│   │   ├── dashboard.js   # Funcionalidades do dashboard
+│   │   ├── expenses.js    # Funcionalidades da página de despesas
+│   │   ├── investments.js # Funcionalidades da página de investimentos
+│   │   ├── institutions.js # Funcionalidades da página de instituições
+│   │   ├── simulator.js   # Funcionalidades da página de simulador
+│   │   ├── settings.js    # Funcionalidades da página de configurações
+│   │   └── components/    # Componentes JavaScript reutilizáveis
+│   │       ├── header.js  # Componente de cabeçalho
+│   │       └── sidebar.js # Componente de barra lateral
 │   ├── pages/             # Páginas HTML
-│   │   ├── auth.html      # Login/Cadastro
-│   │   └── dashboard.html # Dashboard principal
+│   │   ├── login.html     # Página de login/cadastro
+│   │   ├── dashboard.html # Dashboard principal
+│   │   ├── expenses.html  # Página de despesas
+│   │   ├── investments.html # Página de investimentos
+│   │   ├── institutions.html # Página de instituições
+│   │   ├── simulator.html # Página de simulador
+│   │   └── settings.html  # Página de configurações
 │   └── index.html         # Landing page
-├── src/                   # Código fonte do backend
+├── src/                   # Código fonte do backend principal
 │   ├── app/               # Aplicação principal
-│   ├── config/            # Configurações
-│   ├── database/          # Configuração do banco
-│   ├── routes/            # Rotas da API
-│   └── utils/             # Utilitários
-├── config/                # Configurações do projeto
+│   │   ├── controllers/   # Controladores de rotas
+│   │   ├── middlewares/   # Middlewares de autenticação e validação
+│   │   ├── models/        # Modelos de dados (Sequelize)
+│   │   └── validators/    # Validadores de entrada
+│   ├── database/          # Configuração do banco de dados
+│   │   ├── migrations/    # Migrações do banco de dados
+│   │   ├── seeders/       # Dados iniciais para o banco
+│   │   ├── config.js      # Configurações de conexão
+│   │   ├── database.js    # Instância do banco de dados
+│   │   └── index.js       # Ponto de entrada para o banco
+│   ├── routes/            # Definição de rotas da API
+│   │   └── routes.js      # Arquivo principal de rotas
+│   ├── app.js             # Configuração da aplicação Express
+│   └── server.js          # Servidor HTTP
+├── apis/                  # Microserviços de API (6 APIs independentes)
+├── docker-compose.yml     # Configuração do Docker Compose
+├── dockerfile             # Configuração Docker principal
 ├── .env.example           # Exemplo de variáveis de ambiente
-├── package.json           # Dependências e scripts
-└── README.md              # Documentação
+├── package.json           # Dependências e scripts do projeto
+├── .eslintrc.js           # Configuração do ESLint
+├── .prettierrc            # Configuração do Prettier
+├── .gitignore             # Arquivos ignorados pelo Git
+├── README.md              # Documentação em português
+├── README.en.md           # Documentação em inglês
+└── wait-for-db.js         # Script de espera para o banco de dados
 ```
+
+## 🏗️ Arquitetura do Projeto
+
+O ContaComigo segue uma arquitetura moderna baseada em microserviços, com uma clara separação entre frontend e backend:
+
+### Frontend
+
+A interface do usuário é construída com HTML, CSS e JavaScript vanilla, seguindo uma abordagem de componentes reutilizáveis. O frontend está organizado em:
+
+- **Páginas**: Cada página HTML representa uma funcionalidade principal do sistema
+- **Componentes**: Elementos reutilizáveis como cabeçalho e barra lateral
+- **Estilos**: Organização modular de CSS com variáveis globais para consistência visual
+- **Scripts**: Funcionalidades específicas para cada página e componentes compartilhados
+
+### Backend
+
+O backend segue uma arquitetura de microserviços, onde cada API é responsável por um domínio específico:
+
+- **API Principal**: Gerencia a orquestração entre os microserviços e serve o frontend
+- **Microserviços**:
+  - **Serviço de Autenticação** (caputi-api): Gerencia login, registro e tokens JWT
+  - **Serviço de Transações** (dante-api): Processa transações financeiras e categorização
+  - **Serviço de Instituições** (lucas-api): Gerencia conexões com instituições financeiras
+  - **Serviço de Categorias** (patricia-api): Administra categorias de despesas e receitas
+  - **Serviço de Usuários** (raul-api): Gerencia perfis de usuários e preferências
+  - **Serviço de Investimentos** (vitor-api): Processa dados de investimentos e simulações
+
+### Comunicação
+
+- **API Gateway**: O servidor principal atua como gateway, redirecionando requisições para os microserviços apropriados
+- **Banco de Dados**: Cada microserviço possui seu próprio banco de dados PostgreSQL
+- **Autenticação**: Baseada em tokens JWT para comunicação segura entre frontend e backend
+
+### Infraestrutura
+
+- **Docker**: Cada componente é containerizado para facilitar desenvolvimento e implantação
+- **Docker Compose**: Orquestra todos os serviços, garantindo comunicação adequada entre eles
 
 ## ⚙️ Instalação e Configuração
 
 ### Pré-requisitos
 
-- Node.js (versão 16 ou superior)
-- npm ou yarn
+- Docker Desktop (recomendado)
+- Docker Compose
+- Node.js (versão 16 ou superior) - apenas para instalação manual
+- npm - apenas para instalação manual
 
 ### Passos para instalação
 
