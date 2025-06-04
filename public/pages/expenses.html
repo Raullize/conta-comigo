@@ -49,16 +49,17 @@
         </div>
     </div>
 
-    <script src="../js/components/sidebar.js"></script>
-    <script src="../js/components/header.js"></script>
-    <script src="../js/auth-utils.js"></script>
-    <script>
+    <script type="module">
+        import SidebarComponent from '../js/components/sidebar.js';
+        import HeaderComponent from '../js/components/header.js';
+        import { checkAuthentication } from '../js/auth-utils.js';
+        
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize components
             const sidebar = new SidebarComponent();
             const header = new HeaderComponent({
                 pageTitle: 'Meus Gastos',
-                pageSubtitle: 'Controle e monitore seus gastos'
+                pageSubtitle: 'Gerencie suas despesas e categorias'
             });
             
             // Render components
