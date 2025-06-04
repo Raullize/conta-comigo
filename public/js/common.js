@@ -97,20 +97,20 @@ async function loadUserData() {
 
     // Busca dados do usuário da API
     let userData;
-    
+
     try {
       const response = await fetch('/api/users/me', {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       });
-      
+
       if (!response.ok) {
         throw new Error(`Erro ao buscar dados do usuário: ${response.status}`);
       }
-      
+
       userData = await response.json();
     } catch (error) {
       console.error('Erro ao buscar dados do usuário:', error);
@@ -118,18 +118,21 @@ async function loadUserData() {
       userData = {
         id: '123',
         name: 'Usuário',
-        email: 'usuario@exemplo.com'
+        email: 'usuario@exemplo.com',
       };
     }
-    
+
     // Dados do usuário obtidos com sucesso
 
     // Mescla e atualiza os dados no localStorage
-    const updatedData = { ...cachedUserData || {}, ...userData };
+    const updatedData = { ...(cachedUserData || {}), ...userData };
     localStorage.setItem('userData', JSON.stringify(updatedData));
 
     // Atualiza a interface se os dados forem diferentes dos em cache
-    if (userNameElement && (!cachedUserData || cachedUserData.name !== userData.name)) {
+    if (
+      userNameElement &&
+      (!cachedUserData || cachedUserData.name !== userData.name)
+    ) {
       userNameElement.textContent = userData.name || 'Usuário';
     }
 
@@ -145,12 +148,12 @@ async function loadUserData() {
  */
 function setupEventListeners() {
   const logoutBtn = document.getElementById('logoutBtn');
-  
+
   // Configura o botão de logout
   if (logoutBtn) {
     logoutBtn.addEventListener('click', showLogoutModal);
   }
-  
+
   // Inicializa os eventos do modal de logout
   initLogoutModalEvents();
 }
@@ -177,7 +180,7 @@ function initLogoutModalEvents() {
   }
 
   // Fecha o modal ao clicar fora dele
-  window.addEventListener('click', function(event) {
+  window.addEventListener('click', event => {
     if (event.target === logoutModal) {
       hideLogoutModal();
     }
@@ -188,9 +191,9 @@ function initLogoutModalEvents() {
  * Inicializa a aplicação quando o DOM estiver carregado
  */
 document.addEventListener('DOMContentLoaded', () => {
-    // Verifica autenticação do usuário
-    checkAuthentication();
-    
-    // Configura eventos básicos da interface
-    setupEventListeners();
+  // Verifica autenticação do usuário
+  checkAuthentication();
+
+  // Configura eventos básicos da interface
+  setupEventListeners();
 });

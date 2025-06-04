@@ -2,24 +2,24 @@
  * Componente de barra lateral para navegação
  */
 class SidebarComponent {
-    constructor() {
-        this.currentPage = this.getCurrentPage();
-    }
+  constructor() {
+    this.currentPage = this.getCurrentPage();
+  }
 
-    /**
-     * Determina a página atual com base na URL
-     */
-    getCurrentPage() {
-        const path = window.location.pathname;
-        const page = path.split('/').pop().replace('.html', '');
-        return page || 'dashboard';
-    }
+  /**
+   * Determina a página atual com base na URL
+   */
+  getCurrentPage() {
+    const path = window.location.pathname;
+    const page = path.split('/').pop().replace('.html', '');
+    return page || 'dashboard';
+  }
 
-    /**
-     * Renderiza o HTML da barra lateral
-     */
-    render() {
-        return `
+  /**
+   * Renderiza o HTML da barra lateral
+   */
+  render() {
+    return `
             <aside class="sidebar">
                 <div class="sidebar-header">
                     <div class="sidebar-logo">
@@ -70,41 +70,41 @@ class SidebarComponent {
                 </div>
             </aside>
         `;
-    }
+  }
 
-    /**
-     * Inicializa o componente no container especificado
-     */
-    init(container) {
-        container.innerHTML = this.render();
-        this.bindEvents();
-    }
+  /**
+   * Inicializa o componente no container especificado
+   */
+  init(container) {
+    container.innerHTML = this.render();
+    this.bindEvents();
+  }
 
-    /**
-     * Vincula eventos aos elementos do componente
-     */
-    bindEvents() {
-        const logoutBtn = document.getElementById('logoutBtn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.handleLogout();
-            });
-        }
+  /**
+   * Vincula eventos aos elementos do componente
+   */
+  bindEvents() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', e => {
+        e.preventDefault();
+        this.handleLogout();
+      });
     }
+  }
 
-    /**
-     * Gerencia o processo de logout
-     */
-    handleLogout() {
-        if (typeof showLogoutModal === 'function') {
-            showLogoutModal();
-        } else {
-            localStorage.removeItem('token');
-            localStorage.removeItem('userData');
-            window.location.href = '../pages/auth.html';
-        }
+  /**
+   * Gerencia o processo de logout
+   */
+  handleLogout() {
+    if (typeof showLogoutModal === 'function') {
+      showLogoutModal();
+    } else {
+      localStorage.removeItem('token');
+      localStorage.removeItem('userData');
+      window.location.href = '../pages/auth.html';
     }
+  }
 }
 
 // Exporta o componente para uso global
