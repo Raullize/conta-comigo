@@ -11,8 +11,7 @@ const LOGIN_URL = '/sessions';
 const REGISTER_URL = '/users';
 const USER_URL = '/users';
 
-// Removidas as funções duplicadas: isUserLoggedIn, getAuthToken, loginUser, logoutUser
-// Essas funções agora são importadas do auth-utils.js
+// Importa funções de autenticação do auth-utils.js
 
 const elements = {
   loginForm: document.getElementById('loginForm'),

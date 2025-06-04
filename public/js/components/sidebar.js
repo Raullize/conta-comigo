@@ -1,23 +1,14 @@
-/**
- * Componente de barra lateral para navegação
- */
 class SidebarComponent {
   constructor() {
     this.currentPage = this.getCurrentPage();
   }
 
-  /**
-   * Determina a página atual com base na URL
-   */
   getCurrentPage() {
     const path = window.location.pathname;
     const page = path.split('/').pop().replace('.html', '');
     return page || 'dashboard';
   }
 
-  /**
-   * Renderiza o HTML da barra lateral
-   */
   render() {
     return `
             <aside class="sidebar">
@@ -72,17 +63,11 @@ class SidebarComponent {
         `;
   }
 
-  /**
-   * Inicializa o componente no container especificado
-   */
   init(container) {
     container.innerHTML = this.render();
     this.bindEvents();
   }
 
-  /**
-   * Vincula eventos aos elementos do componente
-   */
   bindEvents() {
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
@@ -93,11 +78,7 @@ class SidebarComponent {
     }
   }
 
-  /**
-   * Gerencia o processo de logout usando a função showLogoutModal do auth-utils.js
-   */
   handleLogout() {
-    // Usa a função showLogoutModal do auth-utils.js
     showLogoutModal();
   }
 }

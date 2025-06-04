@@ -1,98 +1,66 @@
-/**
- * Auth Utils - Funções de autenticação e gerenciamento de usuário
- */
-
-/**
- * Verifica se o usuário está logado
- * @returns {boolean} True se o usuário estiver logado, false caso contrário
- */
 function isUserLoggedIn() {
   return localStorage.getItem('token') !== null;
 }
 
-/**
- * Obtém o token de autenticação do usuário
- * @returns {string|null} Token de autenticação ou null se não existir
- */
 function getAuthToken() {
   return localStorage.getItem('token');
 }
 
-/**
- * Obtém os dados do usuário armazenados localmente
- * @returns {Object|null} Dados do usuário ou null se não existir
- */
 function getUserData() {
   const userData = localStorage.getItem('userData');
   return userData ? JSON.parse(userData) : null;
 }
 
-/**
- * Realiza o login do usuário, armazenando seus dados e token
- * @param {Object} userData - Dados do usuário
- * @param {string} token - Token de autenticação
- */
-function loginUser(userData, token) {
-  localStorage.setItem('userData', JSON.stringify(userData));
+function loginUser(userData, token, redirectUrl = '../pages/dashboard.html') {
   localStorage.setItem('token', token);
+  localStorage.setItem('userData', JSON.stringify(userData));
+  window.location.href = redirectUrl;
 }
 
-/**
- * Realiza o logout do usuário
- */
-function logoutUser() {
-  localStorage.removeItem('userData');
+function logoutUser(redirectUrl = '../pages/login.html') {
   localStorage.removeItem('token');
-  window.location.href = '../pages/login.html';
+  localStorage.removeItem('userData');
+  window.location.href = redirectUrl;
 }
 
-/**
- * Exibe o modal de confirmação de logout
- */
 function showLogoutModal() {
-  const modal = document.getElementById('logoutModal');
-  if (modal) {
-    modal.classList.add('show');
-  } else {
-    // Fallback caso o modal não exista
-    logoutUser();
-  }
-}
-
-/**
- * Esconde o modal de confirmação de logout
- */
-function hideLogoutModal() {
-  const modal = document.getElementById('logoutModal');
-  if (modal) {
-    modal.classList.remove('show');
-  }
-}
-
-/**
- * Inicializa os eventos do modal de logout
- */
-function initLogoutModalEvents() {
   const logoutModal = document.getElementById('logoutModal');
-  const closeLogoutModal = document.getElementById('closeLogoutModal');
-  const cancelLogout = document.getElementById('cancelLogout');
-  const confirmLogout = document.getElementById('confirmLogout');
-
-  if (closeLogoutModal) {
-    closeLogoutModal.addEventListener('click', hideLogoutModal);
-  }
-
-  if (cancelLogout) {
-    cancelLogout.addEventListener('click', hideLogoutModal);
-  }
-
-  if (confirmLogout) {
-    confirmLogout.addEventListener('click', logoutUser);
-  }
-
-  // Fecha o modal ao clicar fora dele
   if (logoutModal) {
-    window.addEventListener('click', event => {
+    logoutModal.classList.add('show');
+    logoutModal.style.display = 'block';
+  } else {
+    if (confirm('Deseja realmente sair?')) {
+      logoutUser();
+    }
+  }
+}
+
+function hideLogoutModal() {
+  const logoutModal = document.getElementById('logoutModal');
+  if (logoutModal) {
+    logoutModal.classList.remove('show');
+    logoutModal.style.display = 'none';
+  }
+}
+
+function initLogoutModalEvents() {
+  const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
+  const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+  const logoutModal = document.getElementById('logoutModal');
+
+  if (confirmLogoutBtn) {
+    confirmLogoutBtn.addEventListener('click', () => {
+      hideLogoutModal();
+      logoutUser();
+    });
+  }
+
+  if (cancelLogoutBtn) {
+    cancelLogoutBtn.addEventListener('click', hideLogoutModal);
+  }
+
+  if (logoutModal) {
+    logoutModal.addEventListener('click', (event) => {
       if (event.target === logoutModal) {
         hideLogoutModal();
       }
@@ -100,25 +68,16 @@ function initLogoutModalEvents() {
   }
 }
 
-/**
- * Carrega os dados do usuário do localStorage e da API
- */
 async function loadUserData() {
-    // Primeiro, carrega dados do localStorage para exibição rápida
-    const cachedUserData = getUserData();
     const userNameElement = document.getElementById('userName');
+    const cachedUserData = getUserData();
     
     if (cachedUserData && userNameElement) {
-        const displayName = cachedUserData.name || 'Usuário';
-        userNameElement.textContent = displayName;
+        userNameElement.textContent = cachedUserData.name || 'Usuário';
     }
 
-    // Em seguida, busca dados atualizados do servidor
-    const token = localStorage.getItem('token');
-    if (!token) {
-        console.warn('Token não encontrado');
-        return;
-    }
+    const token = getAuthToken();
+    if (!token) return;
 
     try {
         const response = await fetch('/api/users', {
@@ -131,14 +90,10 @@ async function loadUserData() {
 
         if (response.ok) {
             const userData = await response.json();
-            
-            // Atualiza localStorage com dados reais do servidor
             localStorage.setItem('userData', JSON.stringify(userData));
             
-            // Atualiza o elemento userName com o nome real do banco
             if (userNameElement) {
-                const displayName = userData.name || 'Usuário';
-                userNameElement.textContent = displayName;
+                userNameElement.textContent = userData.name || 'Usuário';
             }
         } else {
             console.error('Erro ao carregar dados do usuário:', response.status);
@@ -148,10 +103,6 @@ async function loadUserData() {
     }
 }
 
-/**
- * Verifica a autenticação do usuário e carrega seus dados
- * Redireciona para a página de login se não estiver autenticado
- */
 async function checkAuthentication() {
   if (!isUserLoggedIn()) {
     window.location.href = '../pages/login.html';
@@ -168,17 +119,10 @@ async function checkAuthentication() {
   }
 }
 
-/**
- * Configura os eventos básicos da interface relacionados à autenticação
- */
 function setupAuthEventListeners() {
   const logoutBtn = document.getElementById('logoutBtn');
-
-  // Configura o botão de logout
   if (logoutBtn) {
     logoutBtn.addEventListener('click', showLogoutModal);
   }
-
-  // Inicializa os eventos do modal de logout
   initLogoutModalEvents();
 }

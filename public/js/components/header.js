@@ -1,14 +1,4 @@
-/**
- * Componente de cabeçalho para as páginas do dashboard
- */
 class HeaderComponent {
-  /**
-   * @param {Object} options - Opções de configuração
-   * @param {boolean} [options.showNotifications=true] - Exibir ou não o botão de notificações
-   * @param {boolean} [options.showUserProfile=true] - Exibir ou não o perfil do usuário
-   * @param {string} [options.pageTitle='Dashboard'] - Título da página
-   * @param {string} [options.pageSubtitle='Bem-vindo ao seu painel financeiro'] - Subtítulo da página
-   */
   constructor(options = {}) {
     this.showNotifications = options.showNotifications !== false;
     this.showUserProfile = options.showUserProfile !== false;
@@ -17,9 +7,6 @@ class HeaderComponent {
       options.pageSubtitle || 'Bem-vindo ao seu painel financeiro';
   }
 
-  /**
-   * Renderiza o HTML completo do cabeçalho
-   */
   render() {
     return `
             <header class="dashboard-header">
@@ -35,9 +22,6 @@ class HeaderComponent {
         `;
   }
 
-  /**
-   * Renderiza o componente de notificações
-   */
   renderNotifications() {
     return `
             <button class="notification-btn">
@@ -47,9 +31,6 @@ class HeaderComponent {
         `;
   }
 
-  /**
-   * Renderiza o componente de perfil do usuário
-   */
   renderUserProfile() {
     return `
             <div class="user-profile">
@@ -70,9 +51,6 @@ class HeaderComponent {
         `;
   }
 
-  /**
-   * Inicializa o componente no container especificado
-   */
   init(container) {
     container.innerHTML = this.render();
     this.bindEvents();
@@ -80,9 +58,6 @@ class HeaderComponent {
     this.updateUserName();
   }
 
-  /**
-   * Vincula eventos aos elementos do componente
-   */
   bindEvents() {
     this.bindUserProfileEvents();
     this.bindNotificationEvents();
@@ -135,28 +110,16 @@ class HeaderComponent {
     }
   }
 
-  /**
-   * Atualiza o nome do usuário usando a função getUserData do auth-utils.js
-   * Usa o campo 'name' diretamente do banco de dados
-   */
   updateUserName() {
-    const userData = getUserData();
-    const userNameElement = document.getElementById('userName');
-    
-    if (userNameElement && userData) {
-      // Usa o campo 'name' diretamente do banco de dados
-      const displayName = userData.name || 'Usuário';
-      userNameElement.textContent = displayName;
-    } else if (userNameElement) {
-      userNameElement.textContent = 'Usuário';
-    }
+  const userData = getUserData();
+  const userNameElement = document.getElementById('userName');
+  
+  if (userNameElement) {
+    userNameElement.textContent = userData?.name || 'Usuário';
   }
+}
 
-  /**
-   * Gerencia o processo de logout usando a função showLogoutModal do auth-utils.js
-   */
   handleLogout() {
-    // Usa a função showLogoutModal do auth-utils.js
     showLogoutModal();
   }
 }
