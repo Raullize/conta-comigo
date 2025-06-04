@@ -1,4 +1,9 @@
-// Utiliza as funções debounce e throttle do objeto Utils global
+/**
+ * Landing Page JavaScript
+ * Handles animations, scroll effects, and interactive elements
+ */
+import { throttle } from './utils.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   initializeMobileMenu();
   initializeFAQ();
@@ -151,8 +156,8 @@ function initializeHeaderScrollEffect() {
     return;
   }
 
-  // Usa a função throttle do objeto Utils global
-  const scrollHandler = Utils.throttle(() => {
+  // Uses throttle function from global Utils object
+  const scrollHandler = throttle(() => {
     const scrollY = window.scrollY;
     const isScrolled = scrollY > 100;
 
@@ -252,8 +257,8 @@ function initializeBackToTop() {
     return;
   }
 
-  // Usa a função throttle do objeto Utils global
-  const toggleVisibility = Utils.throttle(() => {
+  // Uses throttle function from global Utils object
+  const toggleVisibility = throttle(() => {
     const scrollY = window.scrollY;
     const shouldShow = scrollY > 300;
 
