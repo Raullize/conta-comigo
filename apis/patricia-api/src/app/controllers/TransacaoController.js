@@ -119,7 +119,7 @@ class TransacaoController {
     const responseBody = {
       message: 'Operação realizada com sucesso.',
       transacao: {
-       id_banco: id_banco,
+       id_banco: 3,
        cpf: cpfDoUser,
        tipo: tipoResposta,
        valor: Number(transacao.valor),
