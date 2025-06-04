@@ -105,44 +105,17 @@ conta-comigo/
 │   │   └── routes.js      # Arquivo principal de rotas
 │   ├── app.js             # Configuração da aplicação Express
 │   └── server.js          # Servidor HTTP
-├── apis/                  # Microserviços de API
-│   ├── caputi-api/        # API de Thiago Caputi - Serviço de Autenticação
-│   │   ├── src/           # Código fonte da API
-│   │   ├── Dockerfile     # Configuração Docker
-│   │   └── package.json   # Dependências e scripts
-│   ├── dante-api/         # API de Dante Alsino - Serviço de Transações
-│   │   ├── src/           # Código fonte da API
-│   │   ├── dockerfile     # Configuração Docker
-│   │   └── package.json   # Dependências e scripts
-│   ├── lucas-api/         # API de Lucas Guidotti - Serviço de Instituições
-│   │   ├── src/           # Código fonte da API
-│   │   ├── config/        # Configurações
-│   │   ├── models/        # Modelos de dados
-│   │   ├── migrations/    # Migrações do banco de dados
-│   │   ├── dockerfile     # Configuração Docker
-│   │   └── package.json   # Dependências e scripts
-│   ├── patricia-api/      # API de Patricia Quiroz - Serviço de Categorias
-│   │   ├── src/           # Código fonte da API
-│   │   ├── dockerfile     # Configuração Docker
-│   │   └── package.json   # Dependências e scripts
-│   ├── raul-api/          # API de Raul Lize - Serviço de Usuários
-│   │   ├── src/           # Código fonte da API
-│   │   ├── dockerfile     # Configuração Docker
-│   │   └── package.json   # Dependências e scripts
-│   └── vitor-api/         # API de Vitor Marmitt - Serviço de Investimentos
-│       ├── src/           # Código fonte da API
-│       ├── dockerfile     # Configuração Docker
-│       └── package.json   # Dependências e scripts
-├── docker-compose.yml     # Configuração Docker Compose para todos os serviços
-├── dockerfile             # Configuração Docker para o serviço principal
-├── entrypoint.sh          # Script de inicialização para Docker
-├── wait-for-db.js         # Script para aguardar conexão com banco de dados
+├── apis/                  # Microserviços de API (6 APIs independentes)
+├── docker-compose.yml     # Configuração do Docker Compose
+├── dockerfile             # Configuração Docker principal
 ├── .env.example           # Exemplo de variáveis de ambiente
-├── package.json           # Dependências e scripts do projeto principal
+├── package.json           # Dependências e scripts do projeto
 ├── .eslintrc.js           # Configuração do ESLint
 ├── .prettierrc            # Configuração do Prettier
-├── .sequelizerc           # Configuração do Sequelize
-└── README.md              # Documentação do projeto
+├── .gitignore             # Arquivos ignorados pelo Git
+├── README.md              # Documentação em português
+├── README.en.md           # Documentação em inglês
+└── wait-for-db.js         # Script de espera para o banco de dados
 ```
 
 ## 🏗️ Arquitetura do Projeto

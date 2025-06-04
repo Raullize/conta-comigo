@@ -47,37 +47,41 @@
 
 ```
 conta-comigo/
-├── public/                 # Static files
-│   ├── assets/            # Resources (images, logos, videos)
+├── public/                 # Static files (Frontend)
+│   ├── assets/            # Static resources
+│   │   ├── images/        # Images used on the site
+│   │   ├── logos/         # Application logos
+│   │   └── videos/        # Videos for presentations
 │   ├── css/               # Stylesheets
-│   │   ├── globals.css    # Variables and base styles
+│   │   ├── globals.css    # CSS variables and global styles
 │   │   ├── common.css     # Shared styles between pages
 │   │   ├── landing.css    # Landing page styles
-│   │   ├── auth.css       # Authentication styles
+│   │   ├── login.css      # Login page styles
 │   │   ├── dashboard.css  # Dashboard styles
 │   │   ├── expenses.css   # Expenses page styles
 │   │   ├── investments.css # Investments page styles
 │   │   ├── institutions.css # Institutions page styles
 │   │   ├── simulator.css  # Simulator page styles
 │   │   ├── settings.css   # Settings page styles
-│   │   └── components/    # Reusable components
+│   │   └── components/    # Reusable CSS components
 │   │       ├── header.css # Header styles
 │   │       └── sidebar.css # Sidebar styles
 │   ├── js/                # JavaScript scripts
-│   │   ├── landing.js     # Landing functionalities
-│   │   ├── auth.js        # Authentication
-│   │   ├── common.js      # Shared functions
-│   │   ├── dashboard.js   # Dashboard
-│   │   ├── expenses.js    # Expenses page
-│   │   ├── investments.js # Investments page
-│   │   ├── institutions.js # Institutions page
-│   │   ├── simulator.js   # Simulator page
-│   │   ├── settings.js    # Settings page
-│   │   └── components/    # Reusable components
+│   │   ├── auth-utils.js  # Authentication utilities
+│   │   ├── utils.js       # General utility functions
+│   │   ├── landing.js     # Landing page functionalities
+│   │   ├── login.js       # Login functionalities
+│   │   ├── dashboard.js   # Dashboard functionalities
+│   │   ├── expenses.js    # Expenses page functionalities
+│   │   ├── investments.js # Investments page functionalities
+│   │   ├── institutions.js # Institutions page functionalities
+│   │   ├── simulator.js   # Simulator page functionalities
+│   │   ├── settings.js    # Settings page functionalities
+│   │   └── components/    # Reusable JavaScript components
 │   │       ├── header.js  # Header component
 │   │       └── sidebar.js # Sidebar component
 │   ├── pages/             # HTML pages
-│   │   ├── auth.html      # Login/Register
+│   │   ├── login.html     # Login/registration page
 │   │   ├── dashboard.html # Main dashboard
 │   │   ├── expenses.html  # Expenses page
 │   │   ├── investments.html # Investments page
@@ -85,30 +89,33 @@ conta-comigo/
 │   │   ├── simulator.html # Simulator page
 │   │   └── settings.html  # Settings page
 │   └── index.html         # Landing page
-├── src/                   # Backend source code
+├── src/                   # Main backend source code
 │   ├── app/               # Main application
-│   │   ├── controllers/   # Controllers
-│   │   ├── middlewares/   # Middlewares
-│   │   ├── models/        # Data models
-│   │   └── validators/    # Validators
+│   │   ├── controllers/   # Route controllers
+│   │   ├── middlewares/   # Authentication and validation middlewares
+│   │   ├── models/        # Data models (Sequelize)
+│   │   └── validators/    # Input validators
 │   ├── database/          # Database configuration
-│   │   ├── migrations/    # Migrations
-│   │   └── seeders/       # Initial data
-│   ├── routes/            # API routes
-│   ├── app.js             # Application configuration
-│   └── server.js          # Server
-├── apis/                  # Microservices APIs
-│   ├── caputi-api/        # Thiago Caputi's API
-│   ├── dante-api/         # Dante Alsino's API
-│   ├── lucas-api/         # Lucas Guidotti's API
-│   ├── patricia-api/      # Patricia Quiroz's API
-│   ├── raul-api/          # Raul Lize's API
-│   └── vitor-api/         # Vitor Marmitt's API
+│   │   ├── migrations/    # Database migrations
+│   │   ├── seeders/       # Initial data for the database
+│   │   ├── config.js      # Connection configurations
+│   │   ├── database.js    # Database instance
+│   │   └── index.js       # Database entry point
+│   ├── routes/            # API route definitions
+│   │   └── routes.js      # Main routes file
+│   ├── app.js             # Express application configuration
+│   └── server.js          # HTTP server
+├── apis/                  # API microservices (6 independent APIs)
 ├── docker-compose.yml     # Docker Compose configuration
-├── dockerfile             # Docker configuration
+├── dockerfile             # Main Docker configuration
 ├── .env.example           # Environment variables example
-├── package.json           # Dependencies and scripts
-└── README.md              # Documentation
+├── package.json           # Project dependencies and scripts
+├── .eslintrc.js           # ESLint configuration
+├── .prettierrc            # Prettier configuration
+├── .gitignore             # Files ignored by Git
+├── README.md              # Portuguese documentation
+├── README.en.md           # English documentation
+└── wait-for-db.js         # Database wait script
 ```
 
 ## ⚙️ Installation and Setup
