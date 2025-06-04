@@ -11,23 +11,8 @@ const LOGIN_URL = '/sessions';
 const REGISTER_URL = '/users';
 const USER_URL = '/users';
 
-function isUserLoggedIn() {
-  return localStorage.getItem('token') !== null;
-}
-
-function getAuthToken() {
-  return localStorage.getItem('token');
-}
-
-function loginUser(userData, token) {
-  localStorage.setItem('userData', JSON.stringify(userData));
-  localStorage.setItem('token', token);
-}
-
-function logoutUser() {
-  localStorage.removeItem('userData');
-  localStorage.removeItem('token');
-}
+// Removidas as funções duplicadas: isUserLoggedIn, getAuthToken, loginUser, logoutUser
+// Essas funções agora são importadas do auth-utils.js
 
 const elements = {
   loginForm: document.getElementById('loginForm'),
