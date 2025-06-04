@@ -87,7 +87,7 @@
   grid-column: span 3;
 }
 
-/* Transações Recentes */
+/* Recent Transactions */
 .transactions-card {
   grid-column: span 6;
   grid-row: span 2;
@@ -171,7 +171,7 @@
   font-weight: 500;
 }
 
-/* Orçamento Mensal */
+/* Monthly Budget */
 .budget-card {
   grid-column: span 6;
   grid-row: span 2;
@@ -291,7 +291,7 @@
     font-size: var(--font-size-xl);
   }
   
-  /* Ocultar textos completos e mostrar versões curtas em dispositivos móveis */
+  /* Hide full text and show short versions on mobile devices */
   .nav-item span.full-text {
     display: none;
   }
@@ -300,7 +300,7 @@
     display: inline;
   }
   
-  /* Estilos específicos do dashboard para telas menores */
+  /* Dashboard specific styles for smaller screens */
   
   .sidebar-footer {
     display: none;

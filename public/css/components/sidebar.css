@@ -64,7 +64,7 @@
   gap: var(--spacing-md);
 }
 
-/* Por padrão, mostrar apenas o texto completo */
+/* By default, show only full text */
 .nav-item span.full-text {
   display: inline;
 }

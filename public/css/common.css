@@ -7,19 +7,19 @@
   background-color: var(--light-gray);
 }
 
-/* Conteúdo Principal */
+/* Main Content */
 .main-content {
   flex: 1;
   padding: var(--spacing-xl);
   overflow-y: auto;
 }
 
-/* Conteúdo da Página */
+/* Page Content */
 .page-content {
   padding: var(--spacing-lg);
 }
 
-/* Modal de Confirmação */
+/* Confirmation Modal */
 .modal {
   display: flex;
   position: fixed;
