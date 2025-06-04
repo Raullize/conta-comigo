@@ -50,25 +50,62 @@ conta-comigo/
 ├── public/                 # Static files
 │   ├── assets/            # Resources (images, logos, videos)
 │   ├── css/               # Stylesheets
-│   │   ├── globals.css    # Global styles
+│   │   ├── globals.css    # Variables and base styles
+│   │   ├── common.css     # Shared styles between pages
 │   │   ├── landing.css    # Landing page styles
 │   │   ├── auth.css       # Authentication styles
-│   │   └── dashboard.css  # Dashboard styles
+│   │   ├── dashboard.css  # Dashboard styles
+│   │   ├── expenses.css   # Expenses page styles
+│   │   ├── investments.css # Investments page styles
+│   │   ├── institutions.css # Institutions page styles
+│   │   ├── simulator.css  # Simulator page styles
+│   │   ├── settings.css   # Settings page styles
+│   │   └── components/    # Reusable components
+│   │       ├── header.css # Header styles
+│   │       └── sidebar.css # Sidebar styles
 │   ├── js/                # JavaScript scripts
 │   │   ├── landing.js     # Landing functionalities
 │   │   ├── auth.js        # Authentication
-│   │   └── dashboard.js   # Dashboard
+│   │   ├── common.js      # Shared functions
+│   │   ├── dashboard.js   # Dashboard
+│   │   ├── expenses.js    # Expenses page
+│   │   ├── investments.js # Investments page
+│   │   ├── institutions.js # Institutions page
+│   │   ├── simulator.js   # Simulator page
+│   │   ├── settings.js    # Settings page
+│   │   └── components/    # Reusable components
+│   │       ├── header.js  # Header component
+│   │       └── sidebar.js # Sidebar component
 │   ├── pages/             # HTML pages
 │   │   ├── auth.html      # Login/Register
-│   │   └── dashboard.html # Main dashboard
+│   │   ├── dashboard.html # Main dashboard
+│   │   ├── expenses.html  # Expenses page
+│   │   ├── investments.html # Investments page
+│   │   ├── institutions.html # Institutions page
+│   │   ├── simulator.html # Simulator page
+│   │   └── settings.html  # Settings page
 │   └── index.html         # Landing page
 ├── src/                   # Backend source code
 │   ├── app/               # Main application
-│   ├── config/            # Configurations
+│   │   ├── controllers/   # Controllers
+│   │   ├── middlewares/   # Middlewares
+│   │   ├── models/        # Data models
+│   │   └── validators/    # Validators
 │   ├── database/          # Database configuration
+│   │   ├── migrations/    # Migrations
+│   │   └── seeders/       # Initial data
 │   ├── routes/            # API routes
-│   └── utils/             # Utilities
-├── config/                # Project configurations
+│   ├── app.js             # Application configuration
+│   └── server.js          # Server
+├── apis/                  # Microservices APIs
+│   ├── caputi-api/        # Thiago Caputi's API
+│   ├── dante-api/         # Dante Alsino's API
+│   ├── lucas-api/         # Lucas Guidotti's API
+│   ├── patricia-api/      # Patricia Quiroz's API
+│   ├── raul-api/          # Raul Lize's API
+│   └── vitor-api/         # Vitor Marmitt's API
+├── docker-compose.yml     # Docker Compose configuration
+├── dockerfile             # Docker configuration
 ├── .env.example           # Environment variables example
 ├── package.json           # Dependencies and scripts
 └── README.md              # Documentation
@@ -78,8 +115,10 @@ conta-comigo/
 
 ### Prerequisites
 
-- Node.js (version 16 or higher)
-- npm or yarn
+- Docker Desktop (recommended)
+- Docker Compose
+- Node.js (version 16 or higher) - only for manual installation
+- npm - only for manual installation
 
 ### Installation Steps
 

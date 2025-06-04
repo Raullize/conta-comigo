@@ -50,25 +50,62 @@ conta-comigo/
 ├── public/                 # Arquivos estáticos
 │   ├── assets/            # Recursos (imagens, logos, vídeos)
 │   ├── css/               # Folhas de estilo
-│   │   ├── globals.css    # Estilos globais
+│   │   ├── globals.css    # Variáveis e estilos base
+│   │   ├── common.css     # Estilos compartilhados entre páginas
 │   │   ├── landing.css    # Estilos da landing page
 │   │   ├── auth.css       # Estilos de autenticação
-│   │   └── dashboard.css  # Estilos do dashboard
+│   │   ├── dashboard.css  # Estilos do dashboard
+│   │   ├── expenses.css   # Estilos da página de despesas
+│   │   ├── investments.css # Estilos da página de investimentos
+│   │   ├── institutions.css # Estilos da página de instituições
+│   │   ├── simulator.css  # Estilos da página de simulador
+│   │   ├── settings.css   # Estilos da página de configurações
+│   │   └── components/    # Componentes reutilizáveis
+│   │       ├── header.css # Estilos do cabeçalho
+│   │       └── sidebar.css # Estilos da barra lateral
 │   ├── js/                # Scripts JavaScript
 │   │   ├── landing.js     # Funcionalidades da landing
 │   │   ├── auth.js        # Autenticação
-│   │   └── dashboard.js   # Dashboard
+│   │   ├── common.js      # Funções compartilhadas
+│   │   ├── dashboard.js   # Dashboard
+│   │   ├── expenses.js    # Página de despesas
+│   │   ├── investments.js # Página de investimentos
+│   │   ├── institutions.js # Página de instituições
+│   │   ├── simulator.js   # Página de simulador
+│   │   ├── settings.js    # Página de configurações
+│   │   └── components/    # Componentes reutilizáveis
+│   │       ├── header.js  # Componente de cabeçalho
+│   │       └── sidebar.js # Componente de barra lateral
 │   ├── pages/             # Páginas HTML
 │   │   ├── auth.html      # Login/Cadastro
-│   │   └── dashboard.html # Dashboard principal
+│   │   ├── dashboard.html # Dashboard principal
+│   │   ├── expenses.html  # Página de despesas
+│   │   ├── investments.html # Página de investimentos
+│   │   ├── institutions.html # Página de instituições
+│   │   ├── simulator.html # Página de simulador
+│   │   └── settings.html  # Página de configurações
 │   └── index.html         # Landing page
 ├── src/                   # Código fonte do backend
 │   ├── app/               # Aplicação principal
-│   ├── config/            # Configurações
+│   │   ├── controllers/   # Controladores
+│   │   ├── middlewares/   # Middlewares
+│   │   ├── models/        # Modelos de dados
+│   │   └── validators/    # Validadores
 │   ├── database/          # Configuração do banco
+│   │   ├── migrations/    # Migrações
+│   │   └── seeders/       # Dados iniciais
 │   ├── routes/            # Rotas da API
-│   └── utils/             # Utilitários
-├── config/                # Configurações do projeto
+│   ├── app.js             # Configuração da aplicação
+│   └── server.js          # Servidor
+├── apis/                  # APIs microserviços
+│   ├── caputi-api/        # API de Thiago Caputi
+│   ├── dante-api/         # API de Dante Alsino
+│   ├── lucas-api/         # API de Lucas Guidotti
+│   ├── patricia-api/      # API de Patricia Quiroz
+│   ├── raul-api/          # API de Raul Lize
+│   └── vitor-api/         # API de Vitor Marmitt
+├── docker-compose.yml     # Configuração Docker Compose
+├── dockerfile             # Configuração Docker
 ├── .env.example           # Exemplo de variáveis de ambiente
 ├── package.json           # Dependências e scripts
 └── README.md              # Documentação
@@ -78,8 +115,10 @@ conta-comigo/
 
 ### Pré-requisitos
 
-- Node.js (versão 16 ou superior)
-- npm ou yarn
+- Docker Desktop (recomendado)
+- Docker Compose
+- Node.js (versão 16 ou superior) - apenas para instalação manual
+- npm - apenas para instalação manual
 
 ### Passos para instalação
 
