@@ -11,6 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/globals.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/components/sidebar.css">
+    <link rel="stylesheet" href="../css/components/header.css">
     <link rel="stylesheet" href="../css/dashboard.css">
 </head>
 <body>
@@ -32,10 +35,10 @@
                             <i class="fas fa-wallet"></i>
                         </div>
                     </div>
-                    <div class="balance-value">R$ 12.450,75</div>
-                    <div class="balance-change balance-positive">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>2,5% desde o mês passado</span>
+                    <div class="balance-value"></div>
+                    <div class="balance-change">
+                        <i class="fas"></i>
+                        <span></span>
                     </div>
                 </div>
 
@@ -47,10 +50,10 @@
                             <i class="fas fa-shopping-cart"></i>
                         </div>
                     </div>
-                    <div class="balance-value">R$ 3.280,45</div>
-                    <div class="balance-change balance-negative">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>5,2% desde o mês passado</span>
+                    <div class="balance-value"></div>
+                    <div class="balance-change">
+                        <i class="fas"></i>
+                        <span></span>
                     </div>
                 </div>
 
@@ -62,10 +65,10 @@
                             <i class="fas fa-chart-line"></i>
                         </div>
                     </div>
-                    <div class="balance-value">R$ 45.750,00</div>
-                    <div class="balance-change balance-positive">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>3,8% desde o mês passado</span>
+                    <div class="balance-value"></div>
+                    <div class="balance-change">
+                        <i class="fas"></i>
+                        <span></span>
                     </div>
                 </div>
 
@@ -77,10 +80,10 @@
                             <i class="fas fa-piggy-bank"></i>
                         </div>
                     </div>
-                    <div class="balance-value">R$ 1.850,30</div>
-                    <div class="balance-change balance-positive">
-                        <i class="fas fa-arrow-up"></i>
-                        <span>12% desde o mês passado</span>
+                    <div class="balance-value"></div>
+                    <div class="balance-change">
+                        <i class="fas"></i>
+                        <span></span>
                     </div>
                 </div>
 
@@ -93,58 +96,7 @@
                         </div>
                     </div>
                     <div class="transaction-list">
-                        <div class="transaction-item transaction-expense">
-                            <div class="transaction-icon">
-                                <i class="fas fa-utensils"></i>
-                            </div>
-                            <div class="transaction-details">
-                                <div class="transaction-title">Restaurante Sabor Caseiro</div>
-                                <div class="transaction-category">Alimentação</div>
-                            </div>
-                            <div class="transaction-info">
-                                <div class="transaction-amount">- R$ 89,90</div>
-                                <div class="transaction-date">Hoje</div>
-                            </div>
-                        </div>
-                        <div class="transaction-item transaction-expense">
-                            <div class="transaction-icon">
-                                <i class="fas fa-shopping-bag"></i>
-                            </div>
-                            <div class="transaction-details">
-                                <div class="transaction-title">Shopping Center Norte</div>
-                                <div class="transaction-category">Compras</div>
-                            </div>
-                            <div class="transaction-info">
-                                <div class="transaction-amount">- R$ 235,50</div>
-                                <div class="transaction-date">Ontem</div>
-                            </div>
-                        </div>
-                        <div class="transaction-item transaction-income">
-                            <div class="transaction-icon">
-                                <i class="fas fa-money-check-alt"></i>
-                            </div>
-                            <div class="transaction-details">
-                                <div class="transaction-title">Salário</div>
-                                <div class="transaction-category">Receita</div>
-                            </div>
-                            <div class="transaction-info">
-                                <div class="transaction-amount">+ R$ 5.800,00</div>
-                                <div class="transaction-date">15/05/2023</div>
-                            </div>
-                        </div>
-                        <div class="transaction-item transaction-expense">
-                            <div class="transaction-icon">
-                                <i class="fas fa-home"></i>
-                            </div>
-                            <div class="transaction-details">
-                                <div class="transaction-title">Aluguel</div>
-                                <div class="transaction-category">Moradia</div>
-                            </div>
-                            <div class="transaction-info">
-                                <div class="transaction-amount">- R$ 1.500,00</div>
-                                <div class="transaction-date">10/05/2023</div>
-                            </div>
-                        </div>
+                        <!-- Transactions will be populated by JavaScript -->
                     </div>
                     <a href="#" class="view-all">Ver todas as transações</a>
                 </div>
@@ -158,50 +110,7 @@
                         </div>
                     </div>
                     <div class="budget-progress">
-                        <div class="budget-category">
-                            <div class="budget-category-header">
-                                <div class="budget-category-name">Alimentação</div>
-                                <div class="budget-category-values">
-                                    <span class="budget-category-spent">R$ 850,30</span> / R$ 1.000,00
-                                </div>
-                            </div>
-                            <div class="budget-bar">
-                                <div class="budget-progress-bar budget-safe" style="width: 85%"></div>
-                            </div>
-                        </div>
-                        <div class="budget-category">
-                            <div class="budget-category-header">
-                                <div class="budget-category-name">Transporte</div>
-                                <div class="budget-category-values">
-                                    <span class="budget-category-spent">R$ 420,75</span> / R$ 600,00
-                                </div>
-                            </div>
-                            <div class="budget-bar">
-                                <div class="budget-progress-bar budget-safe" style="width: 70%"></div>
-                            </div>
-                        </div>
-                        <div class="budget-category">
-                            <div class="budget-category-header">
-                                <div class="budget-category-name">Lazer</div>
-                                <div class="budget-category-values">
-                                    <span class="budget-category-spent">R$ 580,00</span> / R$ 700,00
-                                </div>
-                            </div>
-                            <div class="budget-bar">
-                                <div class="budget-progress-bar budget-warning" style="width: 83%"></div>
-                            </div>
-                        </div>
-                        <div class="budget-category">
-                            <div class="budget-category-header">
-                                <div class="budget-category-name">Compras</div>
-                                <div class="budget-category-values">
-                                    <span class="budget-category-spent">R$ 950,00</span> / R$ 800,00
-                                </div>
-                            </div>
-                            <div class="budget-bar">
-                                <div class="budget-progress-bar budget-danger" style="width: 118%"></div>
-                            </div>
-                        </div>
+                        <!-- Budget categories will be populated by JavaScript -->
                     </div>
                     <a href="#" class="view-all">Ver orçamento completo</a>
                 </div>
@@ -228,6 +137,7 @@
 
     <script src="../js/components/sidebar.js"></script>
     <script src="../js/components/header.js"></script>
+    <script src="../js/common.js"></script>
     <script src="../js/dashboard.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

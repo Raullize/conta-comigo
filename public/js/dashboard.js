@@ -1,154 +1,18 @@
-// Constantes e configurações
-// Nota: URLs de API serão adicionadas quando a integração com backend for implementada
+/**
+ * Dashboard - Funções específicas para a página de dashboard
+ */
 
-function isUserLoggedIn() {
-  return localStorage.getItem('token') !== null;
-}
-
-function getAuthToken() {
-  return localStorage.getItem('token');
-}
-
-function getUserData() {
-  const userData = localStorage.getItem('userData');
-  return userData ? JSON.parse(userData) : null;
-}
-
-function logout() {
-  // Primeiro esconde o modal
-  hideLogoutModal();
-  
-  // Depois faz o logout
-  localStorage.removeItem('token');
-  localStorage.removeItem('userData');
-  window.location.href = '../pages/auth.html';
-}
-
-function showLogoutModal() {
-  const modal = document.getElementById('logoutModal');
-  modal.classList.add('show');
-}
-
-function hideLogoutModal() {
-  const modal = document.getElementById('logoutModal');
-  modal.classList.remove('show');
-}
-
-async function checkAuthentication() {
-  // Redireciona para a página de autenticação se não estiver logado
-  if (!isUserLoggedIn()) {
-    window.location.href = '../pages/auth.html';
-    return;
-  }
-
-  try {
-    await loadUserData();
-  } catch (error) {
-    console.error('Erro ao carregar dados do usuário:', error);
-    // Se houver erro de autenticação (401), faz logout automático
-    if (error.status === 401) {
-      logout();
-    }
-  }
-}
-
-async function loadUserData() {
-  const userNameElement = document.getElementById('userName');
-
-  try {
-    // Primeiro usa os dados do localStorage para exibição rápida
-    const cachedUserData = getUserData();
-    if (cachedUserData && userNameElement) {
-      userNameElement.textContent = cachedUserData.name || 'Usuário';
-    }
-
-    // Verifica se há token para buscar dados atualizados
-    const token = getAuthToken();
-    if (!token) {
-      throw new Error('Token não encontrado');
-    }
-
-    // Simulação de busca de dados da API (será substituída pela API real)
-    // Usando setTimeout para simular uma chamada assíncrona
-    const userData = await new Promise(resolve => {
-      setTimeout(() => {
-        resolve({
-          id: '123',
-          name: 'Usuário Demo',
-          email: 'usuario@exemplo.com'
-        });
-      }, 300);
-    });
-    
-    // Quando a API estiver pronta, substituir pelo código abaixo:
-    /*
-    const response = await fetch('/api/users/me', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      const error = new Error('Erro ao buscar dados do usuário');
-      error.status = response.status;
-      throw error;
-    }
-
-    const userData = await response.json();
-    */
-
-    // Mescla e atualiza os dados no localStorage
-    const updatedData = { ...cachedUserData || {}, ...userData };
-    localStorage.setItem('userData', JSON.stringify(updatedData));
-
-    // Atualiza a interface se os dados forem diferentes dos em cache
-    if (userNameElement && (!cachedUserData || cachedUserData.name !== userData.name)) {
-      userNameElement.textContent = userData.name || 'Usuário';
-    }
-
-    return userData;
-  } catch (error) {
-    console.error('Erro ao carregar dados do usuário:', error);
-    throw error;
-  }
-}
-
-function setupEventListeners() {
-  const logoutBtn = document.getElementById('logoutBtn');
-  const closeLogoutModal = document.getElementById('closeLogoutModal');
-  const cancelLogout = document.getElementById('cancelLogout');
-  const confirmLogout = document.getElementById('confirmLogout');
-
-  // Verifica se todos os elementos necessários existem antes de configurar os event listeners
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', showLogoutModal);
-  }
-
-  if (closeLogoutModal) {
-    closeLogoutModal.addEventListener('click', hideLogoutModal);
-  }
-
-  if (cancelLogout) {
-    cancelLogout.addEventListener('click', hideLogoutModal);
-  }
-
-  if (confirmLogout) {
-    confirmLogout.addEventListener('click', logout);
-  }
-}
-
+/**
+ * Inicializa a aplicação quando o DOM estiver carregado
+ */
 document.addEventListener('DOMContentLoaded', () => {
-    checkAuthentication();
-    setupEventListeners();
-    
-    // Carregar dados financeiros temporários
+    // Carrega dados financeiros temporários
     loadFinancialData();
     
-    // Configurar eventos de UI adicionais
+    // Configura eventos de UI adicionais
     setupUIEvents();
 });
+
 
 // Dados financeiros temporários
 function loadFinancialData() {
@@ -301,74 +165,185 @@ function displayFinancialData(data) {
 function updateBalanceCard(balance) {
     if (!balance) return;
     
-    const totalElement = document.querySelector('.balance-card .balance-total');
-    const incomeElement = document.querySelector('.balance-card .balance-income .value');
-    const expensesElement = document.querySelector('.balance-card .balance-expenses .value');
+    const valueElement = document.querySelector('.balance-card .balance-value');
+    const changeElement = document.querySelector('.balance-card .balance-change');
+    const iconElement = document.querySelector('.balance-card .balance-change i');
+    const spanElement = document.querySelector('.balance-card .balance-change span');
     
-    if (totalElement) totalElement.textContent = balance.total || 'R$ 0,00';
-    if (incomeElement) incomeElement.textContent = balance.income || 'R$ 0,00';
-    if (expensesElement) expensesElement.textContent = balance.expenses || 'R$ 0,00';
+    if (valueElement) valueElement.textContent = balance.total || 'R$ 0,00';
+    
+    // Adicionar classe de estilo com base no valor (positivo/negativo)
+    if (changeElement) {
+        const isPositive = !balance.total.includes('-');
+        changeElement.className = 'balance-change ' + (isPositive ? 'balance-positive' : 'balance-negative');
+        
+        if (iconElement) {
+            iconElement.className = 'fas ' + (isPositive ? 'fa-arrow-up' : 'fa-arrow-down');
+        }
+        
+        if (spanElement) {
+            spanElement.textContent = '2,5% desde o mês passado'; // Valor fixo para demonstração
+        }
+    }
 }
 
 function updateExpensesCard(expenses) {
     if (!expenses) return;
     
-    const totalElement = document.querySelector('.expenses-card .expenses-total');
-    if (totalElement) totalElement.textContent = expenses.total || 'R$ 0,00';
+    const valueElement = document.querySelector('.expenses-card .balance-value');
+    const changeElement = document.querySelector('.expenses-card .balance-change');
+    const iconElement = document.querySelector('.expenses-card .balance-change i');
+    const spanElement = document.querySelector('.expenses-card .balance-change span');
     
-    // Implementar atualização das categorias quando necessário
+    if (valueElement) valueElement.textContent = expenses.total || 'R$ 0,00';
+    
+    // Adicionar classe de estilo (sempre negativo para despesas)
+    if (changeElement) {
+        changeElement.className = 'balance-change balance-negative';
+        
+        if (iconElement) {
+            iconElement.className = 'fas fa-arrow-up';
+        }
+        
+        if (spanElement) {
+            spanElement.textContent = '5,2% desde o mês passado'; // Valor fixo para demonstração
+        }
+    }
 }
 
 function updateInvestmentsCard(investments) {
     if (!investments) return;
     
-    const totalElement = document.querySelector('.investments-card .investments-total');
-    const growthElement = document.querySelector('.investments-card .investments-growth');
+    const valueElement = document.querySelector('.investments-card .balance-value');
+    const changeElement = document.querySelector('.investments-card .balance-change');
+    const iconElement = document.querySelector('.investments-card .balance-change i');
+    const spanElement = document.querySelector('.investments-card .balance-change span');
     
-    if (totalElement) totalElement.textContent = investments.total || 'R$ 0,00';
-    if (growthElement) growthElement.textContent = investments.growth || '0%';
+    if (valueElement) valueElement.textContent = investments.total || 'R$ 0,00';
     
-    // Implementar atualização dos detalhes quando necessário
+    // Adicionar classe de estilo com base no crescimento
+    if (changeElement && investments.growth) {
+        const isPositive = investments.growth.includes('+');
+        changeElement.className = 'balance-change ' + (isPositive ? 'balance-positive' : 'balance-negative');
+        
+        if (iconElement) {
+            iconElement.className = 'fas ' + (isPositive ? 'fa-arrow-up' : 'fa-arrow-down');
+        }
+        
+        if (spanElement) {
+            spanElement.textContent = investments.growth + ' desde o mês passado';
+        }
+    }
 }
 
 function updateSavingsCard(savings) {
     if (!savings) return;
     
-    const totalElement = document.querySelector('.savings-card .savings-total');
-    const goalElement = document.querySelector('.savings-card .savings-goal');
-    const percentageElement = document.querySelector('.savings-card .savings-percentage');
-    const progressElement = document.querySelector('.savings-card .progress-bar');
+    const valueElement = document.querySelector('.savings-card .balance-value');
+    const changeElement = document.querySelector('.savings-card .balance-change');
+    const iconElement = document.querySelector('.savings-card .balance-change i');
+    const spanElement = document.querySelector('.savings-card .balance-change span');
     
-    if (totalElement) totalElement.textContent = savings.total || 'R$ 0,00';
-    if (goalElement) goalElement.textContent = savings.goal || 'R$ 0,00';
-    if (percentageElement) percentageElement.textContent = savings.percentage || '0%';
-    if (progressElement) progressElement.style.width = savings.percentage || '0%';
+    if (valueElement) valueElement.textContent = savings.total || 'R$ 0,00';
+    
+    // Adicionar classe de estilo (sempre positivo para economia)
+    if (changeElement) {
+        changeElement.className = 'balance-change balance-positive';
+        
+        if (iconElement) {
+            iconElement.className = 'fas fa-arrow-up';
+        }
+        
+        if (spanElement) {
+            spanElement.textContent = savings.percentage + ' desde o mês passado';
+        }
+    }
 }
 
 function updateTransactions(transactions) {
     if (!transactions || !transactions.length) return;
     
-    const transactionsList = document.querySelector('.transactions-list');
+    const transactionsList = document.querySelector('.transaction-list');
     if (!transactionsList) return;
     
     // Limpar lista atual
-    // transactionsList.innerHTML = '';
+    transactionsList.innerHTML = '';
     
-    // Implementar atualização das transações quando necessário
-    // Esta função será expandida conforme o desenvolvimento avançar
+    // Adicionar as transações mais recentes (limitado a 4)
+    const recentTransactions = transactions.slice(0, 4);
+    
+    recentTransactions.forEach(transaction => {
+        // Determinar o ícone com base na categoria
+        let icon = 'fa-receipt';
+        if (transaction.category === 'Alimentação') icon = 'fa-utensils';
+        else if (transaction.category === 'Transporte') icon = 'fa-car';
+        else if (transaction.category === 'Moradia') icon = 'fa-home';
+        else if (transaction.category === 'Compras') icon = 'fa-shopping-bag';
+        else if (transaction.category === 'Receita' || transaction.category === 'Receita Extra') icon = 'fa-money-check-alt';
+        
+        // Criar o elemento da transação
+        const transactionItem = document.createElement('div');
+        transactionItem.className = `transaction-item transaction-${transaction.type}`;
+        
+        transactionItem.innerHTML = `
+            <div class="transaction-icon">
+                <i class="fas ${icon}"></i>
+            </div>
+            <div class="transaction-details">
+                <div class="transaction-title">${transaction.description}</div>
+                <div class="transaction-category">${transaction.category}</div>
+            </div>
+            <div class="transaction-info">
+                <div class="transaction-amount">${transaction.type === 'income' ? '+ ' : '- '}${transaction.value}</div>
+                <div class="transaction-date">${transaction.date}</div>
+            </div>
+        `;
+        
+        transactionsList.appendChild(transactionItem);
+    });
 }
 
 function updateBudget(budget) {
     if (!budget || !budget.length) return;
     
-    const budgetList = document.querySelector('.budget-list');
-    if (!budgetList) return;
+    const budgetProgress = document.querySelector('.budget-progress');
+    if (!budgetProgress) return;
     
     // Limpar lista atual
-    // budgetList.innerHTML = '';
+    budgetProgress.innerHTML = '';
     
-    // Implementar atualização do orçamento quando necessário
-    // Esta função será expandida conforme o desenvolvimento avançar
+    // Adicionar as categorias de orçamento
+    budget.forEach(category => {
+        // Determinar o status da barra de progresso
+        let statusClass = 'budget-safe';
+        if (category.percentage > 100) {
+            statusClass = 'budget-danger';
+        } else if (category.percentage > 80) {
+            statusClass = 'budget-warning';
+        }
+        
+        // Formatar valores monetários
+        const spentFormatted = `R$ ${category.spent.toFixed(2).replace('.', ',')}`;
+        const limitFormatted = `R$ ${category.limit.toFixed(2).replace('.', ',')}`;
+        
+        // Criar o elemento da categoria de orçamento
+        const budgetCategory = document.createElement('div');
+        budgetCategory.className = 'budget-category';
+        
+        budgetCategory.innerHTML = `
+            <div class="budget-category-header">
+                <div class="budget-category-name">${category.category}</div>
+                <div class="budget-category-values">
+                    <span class="budget-category-spent">${spentFormatted}</span> / ${limitFormatted}
+                </div>
+            </div>
+            <div class="budget-bar">
+                <div class="budget-progress-bar ${statusClass}" style="width: ${Math.min(category.percentage, 100)}%"></div>
+            </div>
+        `;
+        
+        budgetProgress.appendChild(budgetCategory);
+    });
 }
 
 function setupUIEvents() {
