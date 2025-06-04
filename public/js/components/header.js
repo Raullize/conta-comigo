@@ -76,7 +76,8 @@ class HeaderComponent {
   init(container) {
     container.innerHTML = this.render();
     this.bindEvents();
-    this.loadUserData();
+    // Usa a função getUserData do auth-utils.js para exibir o nome do usuário
+    this.updateUserName();
   }
 
   /**
@@ -135,35 +136,28 @@ class HeaderComponent {
   }
 
   /**
-   * Carrega os dados do usuário do localStorage
+   * Atualiza o nome do usuário usando a função getUserData do auth-utils.js
+   * Usa o campo 'name' diretamente do banco de dados
    */
-  loadUserData() {
-    const userData = localStorage.getItem('userData');
+  updateUserName() {
+    const userData = getUserData();
     const userNameElement = document.getElementById('userName');
-
-    if (userData && userNameElement) {
-      try {
-        const user = JSON.parse(userData);
-        userNameElement.textContent = user.name || user.email || 'Usuário';
-      } catch (error) {
-        userNameElement.textContent = 'Usuário';
-      }
+    
+    if (userNameElement && userData) {
+      // Usa o campo 'name' diretamente do banco de dados
+      const displayName = userData.name || 'Usuário';
+      userNameElement.textContent = displayName;
     } else if (userNameElement) {
       userNameElement.textContent = 'Usuário';
     }
   }
 
   /**
-   * Gerencia o processo de logout
+   * Gerencia o processo de logout usando a função showLogoutModal do auth-utils.js
    */
   handleLogout() {
-    if (typeof showLogoutModal === 'function') {
-      showLogoutModal();
-    } else {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userData');
-      window.location.href = '../pages/auth.html';
-    }
+    // Usa a função showLogoutModal do auth-utils.js
+    showLogoutModal();
   }
 }
 

@@ -51,16 +51,14 @@
 
     <script src="../js/components/sidebar.js"></script>
     <script src="../js/components/header.js"></script>
-    <script src="../js/common.js"></script>
+    <script src="../js/auth-utils.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize components
             const sidebar = new SidebarComponent();
             const header = new HeaderComponent({
                 pageTitle: 'Configurações',
-                pageSubtitle: 'Gerencie as configurações da sua conta',
-                showNotifications: false, // Não mostrar notificações na página de configurações
-                showUserProfile: false // Não mostrar perfil do usuário na página de configurações
+                pageSubtitle: 'Personalize sua experiência'
             });
             
             // Render components

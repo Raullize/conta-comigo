@@ -1,3 +1,5 @@
+import { debounce, throttle } from './utils.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   initializeMobileMenu();
   initializeFAQ();
@@ -150,6 +152,7 @@ function initializeHeaderScrollEffect() {
     return;
   }
 
+  // Usa a função throttle importada do utils.js
   const scrollHandler = throttle(() => {
     const scrollY = window.scrollY;
     const isScrolled = scrollY > 100;
@@ -225,25 +228,6 @@ function initializeHeroAnimation() {
   heroSection?.classList.add('fade-in-up');
 }
 
-const debounce = (func, wait) => {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
-};
-
-const throttle = (func, limit) => {
-  let inThrottle;
-  return function (...args) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
-    }
-  };
-};
-
 function initializeAccessibility() {
   document.addEventListener('keydown', e => {
     if (e.key === 'Tab') {
@@ -269,6 +253,7 @@ function initializeBackToTop() {
     return;
   }
 
+  // Usa a função throttle importada do utils.js
   const toggleVisibility = throttle(() => {
     const scrollY = window.scrollY;
     const shouldShow = scrollY > 300;

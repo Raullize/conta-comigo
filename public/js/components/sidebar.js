@@ -94,16 +94,11 @@ class SidebarComponent {
   }
 
   /**
-   * Gerencia o processo de logout
+   * Gerencia o processo de logout usando a função showLogoutModal do auth-utils.js
    */
   handleLogout() {
-    if (typeof showLogoutModal === 'function') {
-      showLogoutModal();
-    } else {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userData');
-      window.location.href = '../pages/auth.html';
-    }
+    // Usa a função showLogoutModal do auth-utils.js
+    showLogoutModal();
   }
 }
 
