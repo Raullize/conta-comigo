@@ -1,3 +1,7 @@
+/**
+ * Authentication - Functions for managing authentication and user data
+ */
+
 function isUserLoggedIn() {
   return localStorage.getItem('token') !== null;
 }
@@ -11,8 +15,7 @@ function getUserData() {
   return userData ? JSON.parse(userData) : null;
 }
 
-// Função exportada globalmente para ser usada em outros arquivos
-window.loginUser = function (
+function loginUser(
   userData,
   token,
   redirectUrl = '../pages/dashboard.html'
@@ -20,7 +23,7 @@ window.loginUser = function (
   localStorage.setItem('token', token);
   localStorage.setItem('userData', JSON.stringify(userData));
   window.location.href = redirectUrl;
-};
+}
 
 function logoutUser(redirectUrl = '../pages/login.html') {
   localStorage.removeItem('token');
@@ -28,8 +31,7 @@ function logoutUser(redirectUrl = '../pages/login.html') {
   window.location.href = redirectUrl;
 }
 
-// Função exportada globalmente para ser usada em outros arquivos
-window.showLogoutModal = function () {
+function showLogoutModal() {
   const logoutModal = document.getElementById('logoutModal');
   if (logoutModal) {
     logoutModal.classList.add('show');
@@ -38,7 +40,7 @@ window.showLogoutModal = function () {
       logoutUser();
     }
   }
-};
+}
 
 function hideLogoutModal() {
   const logoutModal = document.getElementById('logoutModal');
@@ -80,7 +82,6 @@ function initLogoutModalEvents() {
     });
   }
 
-  // Adiciona evento para fechar o modal ao pressionar ESC
   document.addEventListener('keydown', event => {
     if (
       event.key === 'Escape' &&
@@ -127,15 +128,14 @@ async function loadUserData() {
         userNameElement.textContent = userData.name || 'Usuário';
       }
     } else {
-      // Erro ao carregar dados do usuário
+      // Error loading user data
     }
   } catch (error) {
-    // Erro na requisição
+    // Request error
   }
 }
 
-// Função exportada globalmente para ser usada em outros arquivos
-window.checkAuthentication = async function () {
+async function checkAuthentication() {
   if (!isUserLoggedIn()) {
     window.location.href = '../pages/login.html';
     return;
@@ -144,9 +144,11 @@ window.checkAuthentication = async function () {
   try {
     await loadUserData();
   } catch (error) {
-    // Erro ao carregar dados do usuário
+    // Error loading user data
     if (error.status === 401) {
       logoutUser();
     }
   }
-};
+}
+
+export { isUserLoggedIn as isAuthenticated, getAuthToken, getUserData, loginUser, logoutUser, showLogoutModal, hideLogoutModal, initLogoutModalEvents, checkAuthentication, loadUserData };
