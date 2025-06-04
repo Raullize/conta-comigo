@@ -105,19 +105,19 @@ class HeaderComponent {
     const notificationBtn = document.querySelector('.notification-btn');
     if (notificationBtn) {
       notificationBtn.addEventListener('click', () => {
-        console.log('Notifications clicked');
+        // Implementar funcionalidade de notificações
       });
     }
   }
 
   updateUserName() {
-  const userData = getUserData();
-  const userNameElement = document.getElementById('userName');
-  
-  if (userNameElement) {
-    userNameElement.textContent = userData?.name || 'Usuário';
+    const userData = getUserData();
+    const userNameElement = document.getElementById('userName');
+
+    if (userNameElement) {
+      userNameElement.textContent = userData?.name || 'Usuário';
+    }
   }
-}
 
   handleLogout() {
     showLogoutModal();

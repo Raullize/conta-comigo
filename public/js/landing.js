@@ -1,5 +1,4 @@
-import { debounce, throttle } from './utils.js';
-
+// Utiliza as funções debounce e throttle do objeto Utils global
 document.addEventListener('DOMContentLoaded', () => {
   initializeMobileMenu();
   initializeFAQ();
@@ -152,8 +151,8 @@ function initializeHeaderScrollEffect() {
     return;
   }
 
-  // Usa a função throttle importada do utils.js
-  const scrollHandler = throttle(() => {
+  // Usa a função throttle do objeto Utils global
+  const scrollHandler = Utils.throttle(() => {
     const scrollY = window.scrollY;
     const isScrolled = scrollY > 100;
 
@@ -253,8 +252,8 @@ function initializeBackToTop() {
     return;
   }
 
-  // Usa a função throttle importada do utils.js
-  const toggleVisibility = throttle(() => {
+  // Usa a função throttle do objeto Utils global
+  const toggleVisibility = Utils.throttle(() => {
     const scrollY = window.scrollY;
     const shouldShow = scrollY > 300;
 

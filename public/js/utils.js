@@ -94,27 +94,27 @@ function validateCPF(cpf) {
   let remainder;
 
   for (let i = 1; i <= 9; i++) {
-    sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+    sum += parseInt(cpf.substring(i - 1, i), 10) * (11 - i);
   }
 
   remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) {
     remainder = 0;
   }
-  if (remainder !== parseInt(cpf.substring(9, 10))) {
+  if (remainder !== parseInt(cpf.substring(9, 10), 10)) {
     return false;
   }
 
   sum = 0;
   for (let i = 1; i <= 10; i++) {
-    sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+    sum += parseInt(cpf.substring(i - 1, i), 10) * (12 - i);
   }
 
   remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) {
     remainder = 0;
   }
-  if (remainder !== parseInt(cpf.substring(10, 11))) {
+  if (remainder !== parseInt(cpf.substring(10, 11), 10)) {
     return false;
   }
 
@@ -167,8 +167,8 @@ function truncateText(text, maxLength) {
   return text.substring(0, maxLength) + '...';
 }
 
-// Exporta as funções para uso em outros arquivos
-export {
+// Exporta as funções para uso global
+window.Utils = {
   debounce,
   throttle,
   formatCurrency,

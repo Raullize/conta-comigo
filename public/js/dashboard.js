@@ -6,26 +6,20 @@
  * Inicializa a aplicação quando o DOM estiver carregado
  */
 document.addEventListener('DOMContentLoaded', () => {
-  // Carrega dados financeiros temporários
   loadFinancialData();
-
-  // Configura eventos de UI adicionais
   setupUIEvents();
 });
 
 // Dados financeiros temporários
 function loadFinancialData() {
-  // Verifica se já existem dados no localStorage
   const existingData = localStorage.getItem('financialData');
 
   if (existingData) {
-    // Se existirem dados, usa-os
     const financialData = JSON.parse(existingData);
     displayFinancialData(financialData);
     return financialData;
   }
 
-  // Dados temporários para o dashboard (apenas para demonstração)
   const financialData = {
     balance: {
       total: 'R$ 5.750,00',
@@ -135,32 +129,17 @@ function loadFinancialData() {
 
 function displayFinancialData(data) {
   if (!data) {
-    console.error('Dados financeiros não disponíveis');
     return;
   }
 
-  console.log('Exibindo dados financeiros');
-
-  // Atualiza o card de saldo
   updateBalanceCard(data.balance);
-
-  // Atualiza o card de despesas
   updateExpensesCard(data.expenses);
-
-  // Atualiza o card de investimentos
   updateInvestmentsCard(data.investments);
-
-  // Atualiza o card de economia
   updateSavingsCard(data.savings);
-
-  // Atualiza as transações recentes
   updateTransactions(data.transactions);
-
-  // Atualiza o orçamento mensal
   updateBudget(data.budget);
 }
 
-// Funções auxiliares para atualizar cada seção do dashboard
 function updateBalanceCard(balance) {
   if (!balance) {
     return;
@@ -177,7 +156,6 @@ function updateBalanceCard(balance) {
     valueElement.textContent = balance.total || 'R$ 0,00';
   }
 
-  // Adicionar classe de estilo com base no valor (positivo/negativo)
   if (changeElement) {
     const isPositive = !balance.total.includes('-');
     changeElement.className =
@@ -215,7 +193,6 @@ function updateExpensesCard(expenses) {
     valueElement.textContent = expenses.total || 'R$ 0,00';
   }
 
-  // Adicionar classe de estilo (sempre negativo para despesas)
   if (changeElement) {
     changeElement.className = 'balance-change balance-negative';
 
@@ -251,7 +228,6 @@ function updateInvestmentsCard(investments) {
     valueElement.textContent = investments.total || 'R$ 0,00';
   }
 
-  // Adicionar classe de estilo com base no crescimento
   if (changeElement && investments.growth) {
     const isPositive = investments.growth.includes('+');
     changeElement.className =
@@ -285,7 +261,6 @@ function updateSavingsCard(savings) {
     valueElement.textContent = savings.total || 'R$ 0,00';
   }
 
-  // Adicionar classe de estilo (sempre positivo para economia)
   if (changeElement) {
     changeElement.className = 'balance-change balance-positive';
 
@@ -309,14 +284,11 @@ function updateTransactions(transactions) {
     return;
   }
 
-  // Limpar lista atual
   transactionsList.innerHTML = '';
 
-  // Adicionar as transações mais recentes (limitado a 4)
   const recentTransactions = transactions.slice(0, 4);
 
   recentTransactions.forEach(transaction => {
-    // Determinar o ícone com base na categoria
     let icon = 'fa-receipt';
     if (transaction.category === 'Alimentação') {
       icon = 'fa-utensils';
@@ -365,12 +337,9 @@ function updateBudget(budget) {
     return;
   }
 
-  // Limpar lista atual
   budgetProgress.innerHTML = '';
 
-  // Adicionar as categorias de orçamento
   budget.forEach(category => {
-    // Determinar o status da barra de progresso
     let statusClass = 'budget-safe';
     if (category.percentage > 100) {
       statusClass = 'budget-danger';
@@ -378,11 +347,9 @@ function updateBudget(budget) {
       statusClass = 'budget-warning';
     }
 
-    // Formatar valores monetários
     const spentFormatted = `R$ ${category.spent.toFixed(2).replace('.', ',')}`;
     const limitFormatted = `R$ ${category.limit.toFixed(2).replace('.', ',')}`;
 
-    // Criar o elemento da categoria de orçamento
     const budgetCategory = document.createElement('div');
     budgetCategory.className = 'budget-category';
 
@@ -428,7 +395,6 @@ function setupUIEvents() {
     });
   }
 
-  // Configurar evento para o botão de logout no dropdown
   if (dropdownLogoutBtn) {
     dropdownLogoutBtn.addEventListener('click', e => {
       e.preventDefault();
@@ -436,14 +402,12 @@ function setupUIEvents() {
     });
   }
 
-  // Configurar evento para o botão de notificações
   if (notificationBtn) {
     notificationBtn.addEventListener('click', () => {
       alert('Funcionalidade de notificações em desenvolvimento!');
     });
   }
 
-  // Configurar eventos para os links "Ver todos"
   const viewAllLinks = document.querySelectorAll('.view-all');
   if (viewAllLinks.length > 0) {
     viewAllLinks.forEach(link => {
@@ -454,7 +418,6 @@ function setupUIEvents() {
     });
   }
 
-  // Configurar eventos para os itens da sidebar
   const navItems = document.querySelectorAll('.sidebar-nav .nav-item');
   if (navItems.length > 0) {
     navItems.forEach(item => {

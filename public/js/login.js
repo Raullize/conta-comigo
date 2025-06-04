@@ -9,7 +9,6 @@ const authState = {
 // API URLs
 const LOGIN_URL = '/sessions';
 const REGISTER_URL = '/users';
-const USER_URL = '/users';
 
 // Importa funções de autenticação do auth-utils.js
 
@@ -104,7 +103,7 @@ function validateStep1() {
   const inputs = form.querySelectorAll('.form-input');
   let isValid = true;
 
-  inputs.forEach(input => {
+  inputs.forEach((input) => {
     if (!validateField(input)) {
       isValid = false;
     }
@@ -173,7 +172,7 @@ function populateStep2Data() {
 function setupPasswordToggles() {
   const passwordToggles = document.querySelectorAll('.password-toggle');
 
-  passwordToggles.forEach(toggle => {
+  passwordToggles.forEach((toggle) => {
     toggle.addEventListener('click', function () {
       const targetId = this.getAttribute('data-target');
       const passwordInput = document.getElementById(targetId);
@@ -195,7 +194,7 @@ function setupPasswordToggles() {
 function setupFormValidation() {
   const inputs = document.querySelectorAll('.form-input');
 
-  inputs.forEach(input => {
+  inputs.forEach((input) => {
     input.addEventListener('blur', function () {
       validateField(this);
     });
@@ -233,7 +232,7 @@ function validateField(field) {
       }
       break;
 
-    case 'confirmPassword':
+    case 'confirmPassword': {
       const passwordField = document.getElementById('registerPassword');
       if (!value) {
         errorMessage = 'Confirmação de senha é obrigatória';
@@ -243,6 +242,7 @@ function validateField(field) {
         isValid = false;
       }
       break;
+    }
 
     case 'fullName':
       if (!value) {
@@ -267,7 +267,7 @@ function validateField(field) {
       }
       break;
 
-    case 'birthDate':
+    case 'birthDate': {
       if (!value) {
         errorMessage = 'Data de nascimento é obrigatória';
         isValid = false;
@@ -275,6 +275,7 @@ function validateField(field) {
         isValid = validateAge(field);
       }
       break;
+    }
   }
 
   if (isValid) {
@@ -506,9 +507,10 @@ async function handleLogin(form) {
     return;
   }
 
-  setFormLoading('login', true);
-
   try {
+    setFormLoading('login', true);
+    // Adicionar um pequeno atraso para garantir que o usuário veja o estado de carregamento
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     const response = await fetch(LOGIN_URL, {
       method: 'POST',
       headers: {
@@ -526,6 +528,19 @@ async function handleLogin(form) {
       throw new Error(result.error || 'Erro no login');
     }
 
+    // Verificar onde o token está localizado na resposta
+    let token = null;
+    if (result.token) {
+      token = result.token;
+    } else if (result.data && result.data.token) {
+      token = result.data.token;
+    } else if (result.accessToken) {
+      token = result.accessToken;
+    } else {
+      console.error('Estrutura da resposta:', result);
+      throw new Error('Token não encontrado na resposta');
+    }
+
     const userData = {
       id: result.user.id,
       name: result.user.name,
@@ -535,20 +550,31 @@ async function handleLogin(form) {
       loginTime: new Date().toISOString(),
     };
 
-    loginUser(userData, result.token);
+    loginUser(userData, token);
 
     setFormSuccess('login');
     showToast(
       'success',
       'Login realizado!',
-      'Redirecionando para o dashboard...'
+      'Login efetuado com sucesso!',
+      6000
     );
+    
+    // Mostrar toast de redirecionamento separadamente
+    setTimeout((() => {
+      showToast(
+        'info',
+        'Redirecionando',
+        'Redirecionando para o dashboard...',
+        3000
+      );
+    }), 1000);
 
-    setTimeout(() => {
+    setTimeout((() => {
       window.location.href = './dashboard.html';
-    }, 1500);
+    }), 3000);
   } catch (error) {
-    console.error('Erro no login:', error);
+    // Erro no login
     showToast(
       'error',
       'Erro no login',
@@ -566,7 +592,6 @@ async function handleRegister(form) {
 
   const formData = new FormData(form);
 
-  // Validar todos os campos da etapa 2
   const fields = form.querySelectorAll('.form-input');
   let isValid = true;
 
@@ -576,7 +601,6 @@ async function handleRegister(form) {
     }
   });
 
-  // Validar termos
   const termsCheckbox = form.querySelector('[name="acceptTerms"]');
   if (!termsCheckbox.checked) {
     showToast(
@@ -587,7 +611,6 @@ async function handleRegister(form) {
     isValid = false;
   }
 
-  // Validar força da senha
   if (authState.passwordStrength < 2) {
     showToast('warning', 'Senha fraca', 'Por favor, use uma senha mais forte.');
     isValid = false;
@@ -605,7 +628,6 @@ async function handleRegister(form) {
     return;
   }
 
-  // Combinar dados das duas etapas
   const completeRegistrationData = {
     ...authState.registrationData,
     password: formData.get('password'),
@@ -615,6 +637,9 @@ async function handleRegister(form) {
   setFormLoading('register', true);
 
   try {
+    // Adicionar um pequeno atraso para garantir que o usuário veja o estado de carregamento
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    
     const response = await fetch(REGISTER_URL, {
       method: 'POST',
       headers: {
@@ -635,7 +660,6 @@ async function handleRegister(form) {
       throw new Error(result.error || 'Erro no cadastro');
     }
 
-    // Fazer login automático após o cadastro
     const loginResponse = await fetch(LOGIN_URL, {
       method: 'POST',
       headers: {
@@ -665,17 +689,27 @@ async function handleRegister(form) {
     loginUser(userData, loginResult.token);
 
     setFormSuccess('register');
-    showToast('success', 'Conta criada!', 'Redirecionando para o dashboard...');
+    showToast('success', 'Conta criada!', 'Sua conta foi criada com sucesso!', 6000);
+    
+    // Mostrar toast de redirecionamento separadamente
+    setTimeout((() => {
+      showToast(
+        'info',
+        'Redirecionando',
+        'Redirecionando para o dashboard...',
+        3000
+      );
+    }), 1000);
 
     // Limpar dados temporários
     authState.registrationData = {};
 
     // Redirecionar para dashboard
-    setTimeout(() => {
+    setTimeout((() => {
       window.location.href = './dashboard.html';
-    }, 1500);
+    }), 3000);
   } catch (error) {
-    console.error('Erro no cadastro:', error);
+    // Erro no cadastro
     showToast(
       'error',
       'Erro no cadastro',
@@ -703,13 +737,13 @@ function setFormLoading(formType, isLoading) {
     button.disabled = true;
 
     const inputs = form.querySelectorAll('input, button');
-    inputs.forEach(input => (input.disabled = true));
+    inputs.forEach((input) => (input.disabled = true));
   } else {
     button.classList.remove('loading');
     button.disabled = false;
 
     const inputs = form.querySelectorAll('input, button');
-    inputs.forEach(input => (input.disabled = false));
+    inputs.forEach((input) => (input.disabled = false));
   }
 }
 
@@ -727,12 +761,12 @@ function showToast(type, title, message, duration = 5000) {
   const toast = createToastElement(type, title, message);
   elements.toastContainer.appendChild(toast);
 
-  setTimeout(() => {
+  setTimeout((() => {
     removeToast(toast);
-  }, duration);
+  }), duration);
 
   const closeBtn = toast.querySelector('.toast-close');
-  closeBtn.addEventListener('click', () => removeToast(toast));
+  closeBtn.addEventListener('click', (() => removeToast(toast)));
 }
 
 function createToastElement(type, title, message) {
@@ -789,41 +823,29 @@ function isValidCPF(cpf) {
 
   let sum = 0;
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cpf.charAt(i)) * (10 - i);
+    sum += parseInt(cpf.charAt(i), 10) * (10 - i);
   }
   let remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) {
     remainder = 0;
   }
-  if (remainder !== parseInt(cpf.charAt(9))) {
+  if (remainder !== parseInt(cpf.charAt(9), 10)) {
     return false;
   }
 
   sum = 0;
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cpf.charAt(i)) * (11 - i);
+    sum += parseInt(cpf.charAt(i), 10) * (11 - i);
   }
   remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) {
     remainder = 0;
   }
-  if (remainder !== parseInt(cpf.charAt(10))) {
+  if (remainder !== parseInt(cpf.charAt(10), 10)) {
     return false;
   }
 
   return true;
-}
-
-function simulateAPICall(delay) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() > 0.1) {
-        resolve();
-      } else {
-        reject(new Error('Erro simulado'));
-      }
-    }, delay);
-  });
 }
 
 const style = document.createElement('style');
