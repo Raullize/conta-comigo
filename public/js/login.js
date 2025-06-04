@@ -1,3 +1,11 @@
+/**
+ * Login/Register Page JavaScript
+ * Handles authentication forms, validation, and user registration/login
+ */
+import { loginUser } from './auth-utils.js';
+import { validateEmail, validateCPF } from './utils.js';
+
+// Application state
 const authState = {
   currentForm: 'login',
   currentStep: 1,
@@ -9,8 +17,6 @@ const authState = {
 // API URLs
 const LOGIN_URL = '/sessions';
 const REGISTER_URL = '/users';
-
-// Importa funções de autenticação do auth-utils.js
 
 const elements = {
   loginForm: document.getElementById('loginForm'),
@@ -46,40 +52,57 @@ function initializeAuth() {
   }
 }
 
+function switchToLogin() {
+  authState.currentForm = 'login';
+  elements.loginForm.classList.add('active');
+  elements.registerForm.classList.remove('active');
+
+  const url = new URL(window.location);
+  url.searchParams.delete('action');
+  window.history.replaceState({}, '', url);
+
+  clearFormErrors();
+  elements.registerFormStep1.reset();
+  elements.registerFormElement.reset();
+  authState.registrationData = {};
+  authState.currentStep = 1;
+}
+
+function switchToRegister() {
+  authState.currentForm = 'register';
+  authState.currentStep = 1;
+  elements.registerForm.classList.add('active');
+  elements.registerFormStep2.classList.remove('active');
+  elements.loginForm.classList.remove('active');
+
+  const url = new URL(window.location);
+  url.searchParams.set('action', 'register');
+  window.history.replaceState({}, '', url);
+
+  clearFormErrors();
+  elements.loginFormElement.reset();
+  elements.registerFormStep1.reset();
+  elements.registerFormElement.reset();
+}
+
 function setupFormSwitching() {
-  window.switchToLogin = function () {
-    authState.currentForm = 'login';
-    elements.loginForm.classList.add('active');
-    elements.registerForm.classList.remove('active');
-
-    const url = new URL(window.location);
-    url.searchParams.delete('action');
-    window.history.replaceState({}, '', url);
-
-    clearFormErrors();
-    elements.registerFormStep1.reset();
-    elements.registerFormElement.reset();
-    authState.registrationData = {};
-    authState.currentStep = 1;
-  };
-
-  window.switchToRegister = function () {
-    authState.currentForm = 'register';
-    authState.currentStep = 1;
-    elements.registerForm.classList.add('active');
-    elements.registerFormStep2.classList.remove('active');
-    elements.loginForm.classList.remove('active');
-
-    const url = new URL(window.location);
-    url.searchParams.set('action', 'register');
-    window.history.replaceState({}, '', url);
-
-    clearFormErrors();
-    elements.loginFormElement.reset();
-    elements.registerFormStep1.reset();
-    elements.registerFormElement.reset();
-    authState.registrationData = {};
-  };
+  // Event listeners for form toggle buttons
+  const switchToLoginBtns = document.querySelectorAll('[data-switch="login"]');
+  const switchToRegisterBtns = document.querySelectorAll('[data-switch="register"]');
+  
+  switchToLoginBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchToLogin();
+    });
+  });
+  
+  switchToRegisterBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchToRegister();
+    });
+  });
 }
 
 function setupStepNavigation() {
@@ -165,7 +188,7 @@ function populateStep2Data() {
   form.querySelector('#confirmPassword').value = '';
   form.querySelector('#acceptTerms').checked = false;
 
-  // Resetar indicador de força da senha
+  // Reset password strength indicator
   updatePasswordStrength('');
 }
 
@@ -216,7 +239,7 @@ function validateField(field) {
       if (!value) {
         errorMessage = 'E-mail é obrigatório';
         isValid = false;
-      } else if (!isValidEmail(value)) {
+      } else if (!validateEmail(value)) {
         errorMessage = 'E-mail inválido';
         isValid = false;
       }
@@ -261,7 +284,7 @@ function validateField(field) {
       if (!value) {
         errorMessage = 'CPF é obrigatório';
         isValid = false;
-      } else if (!isValidCPF(value)) {
+      } else if (!validateCPF(value)) {
         errorMessage = 'CPF inválido';
         isValid = false;
       }
@@ -509,7 +532,7 @@ async function handleLogin(form) {
 
   try {
     setFormLoading('login', true);
-    // Adicionar um pequeno atraso para garantir que o usuário veja o estado de carregamento
+    // Add a small delay to ensure user sees loading state
     await new Promise((resolve) => setTimeout(resolve, 2000));
     const response = await fetch(LOGIN_URL, {
       method: 'POST',
@@ -528,7 +551,7 @@ async function handleLogin(form) {
       throw new Error(result.error || 'Erro no login');
     }
 
-    // Verificar onde o token está localizado na resposta
+    // Check where the token is located in the response
     let token = null;
     if (result.token) {
       token = result.token;
@@ -637,7 +660,7 @@ async function handleRegister(form) {
   setFormLoading('register', true);
 
   try {
-    // Adicionar um pequeno atraso para garantir que o usuário veja o estado de carregamento
+    // Add a small delay to ensure user sees loading state
     await new Promise((resolve) => setTimeout(resolve, 1000));
     
     const response = await fetch(REGISTER_URL, {
@@ -701,7 +724,7 @@ async function handleRegister(form) {
       );
     }), 1000);
 
-    // Limpar dados temporários
+    // Clear temporary data
     authState.registrationData = {};
 
     // Redirecionar para dashboard
@@ -805,48 +828,7 @@ function removeToast(toast) {
   }, 300);
 }
 
-function isValidEmail(email) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
 
-function isValidCPF(cpf) {
-  cpf = cpf.replace(/[^\d]/g, '');
-
-  if (cpf.length !== 11) {
-    return false;
-  }
-
-  if (/^(\d)\1{10}$/.test(cpf)) {
-    return false;
-  }
-
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += parseInt(cpf.charAt(i), 10) * (10 - i);
-  }
-  let remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) {
-    remainder = 0;
-  }
-  if (remainder !== parseInt(cpf.charAt(9), 10)) {
-    return false;
-  }
-
-  sum = 0;
-  for (let i = 0; i < 10; i++) {
-    sum += parseInt(cpf.charAt(i), 10) * (11 - i);
-  }
-  remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) {
-    remainder = 0;
-  }
-  if (remainder !== parseInt(cpf.charAt(10), 10)) {
-    return false;
-  }
-
-  return true;
-}
 
 const style = document.createElement('style');
 style.textContent = `
