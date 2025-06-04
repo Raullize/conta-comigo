@@ -27,7 +27,7 @@ function showLogoutModal() {
   const logoutModal = document.getElementById('logoutModal');
   if (logoutModal) {
     logoutModal.classList.add('show');
-    logoutModal.style.display = 'block';
+    console.log('Modal exibido');
   } else {
     if (confirm('Deseja realmente sair?')) {
       logoutUser();
@@ -39,34 +39,69 @@ function hideLogoutModal() {
   const logoutModal = document.getElementById('logoutModal');
   if (logoutModal) {
     logoutModal.classList.remove('show');
-    logoutModal.style.display = 'none';
+    console.log('Modal fechado');
   }
 }
 
 function initLogoutModalEvents() {
+  console.log('Inicializando eventos do modal de logout');
   const confirmLogoutBtn = document.getElementById('confirmLogoutBtn');
   const cancelLogoutBtn = document.getElementById('cancelLogoutBtn');
+  const closeLogoutModal = document.getElementById('closeLogoutModal');
   const logoutModal = document.getElementById('logoutModal');
+
+  console.log('Botões encontrados:', {
+    confirmLogoutBtn: !!confirmLogoutBtn,
+    cancelLogoutBtn: !!cancelLogoutBtn,
+    closeLogoutModal: !!closeLogoutModal,
+    logoutModal: !!logoutModal
+  });
 
   if (confirmLogoutBtn) {
     confirmLogoutBtn.addEventListener('click', () => {
+      console.log('Botão confirmar clicado');
       hideLogoutModal();
       logoutUser();
     });
   }
 
   if (cancelLogoutBtn) {
-    cancelLogoutBtn.addEventListener('click', hideLogoutModal);
+    cancelLogoutBtn.addEventListener('click', () => {
+      console.log('Botão cancelar clicado');
+      hideLogoutModal();
+    });
+  }
+
+  if (closeLogoutModal) {
+    closeLogoutModal.addEventListener('click', () => {
+      console.log('Botão fechar clicado');
+      hideLogoutModal();
+    });
   }
 
   if (logoutModal) {
     logoutModal.addEventListener('click', (event) => {
       if (event.target === logoutModal) {
+        console.log('Clique fora do modal');
         hideLogoutModal();
       }
     });
   }
+  
+  // Adiciona evento para fechar o modal ao pressionar ESC
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && logoutModal && logoutModal.classList.contains('show')) {
+      console.log('Tecla ESC pressionada');
+      hideLogoutModal();
+    }
+  });
 }
+
+// Garantir que os eventos do modal de logout sejam inicializados quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM carregado - inicializando eventos do modal de logout');
+  initLogoutModalEvents();
+});
 
 async function loadUserData() {
     const userNameElement = document.getElementById('userName');
