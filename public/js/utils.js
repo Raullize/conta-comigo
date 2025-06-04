@@ -1,12 +1,12 @@
 /**
- * Utilitários - Funções utilitárias reutilizáveis em toda a aplicação
+ * Utilities - Reusable Utility Functions Across the Application
  */
 
 /**
- * Limita a frequência de execução de uma função
- * @param {Function} func - Função a ser executada
- * @param {number} wait - Tempo de espera em milissegundos
- * @returns {Function} Função com debounce aplicado
+ * Limits the frequency of function execution
+ * @param {Function} func - Function to be executed
+ * @param {number} wait - Wait time in milliseconds
+ * @returns {Function} Function with debounce applied
  */
 const debounce = (func, wait) => {
   let timeout;
@@ -17,10 +17,10 @@ const debounce = (func, wait) => {
 };
 
 /**
- * Limita a frequência de execução de uma função, garantindo que ela seja executada no máximo uma vez a cada período
- * @param {Function} func - Função a ser executada
- * @param {number} limit - Tempo mínimo entre execuções em milissegundos
- * @returns {Function} Função com throttle aplicado
+ * Limits the frequency of function execution, ensuring it runs at most once per period
+ * @param {Function} func - Function to be executed
+ * @param {number} limit - Minimum time between executions in milliseconds
+ * @returns {Function} Function with throttle applied
  */
 const throttle = (func, limit) => {
   let inThrottle;
@@ -34,9 +34,9 @@ const throttle = (func, limit) => {
 };
 
 /**
- * Formata um valor monetário para o formato brasileiro
- * @param {number} value - Valor a ser formatado
- * @returns {string} Valor formatado (ex: R$ 1.234,56)
+ * Formats a monetary value to Brazilian format
+ * @param {number} value - Value to be formatted
+ * @returns {string} Formatted value (e.g., R$ 1.234,56)
  */
 function formatCurrency(value) {
   return new Intl.NumberFormat('pt-BR', {
@@ -46,9 +46,9 @@ function formatCurrency(value) {
 }
 
 /**
- * Formata uma data para o formato brasileiro
- * @param {string|Date} date - Data a ser formatada
- * @returns {string} Data formatada (ex: 01/01/2023)
+ * Formats a date to Brazilian format
+ * @param {string|Date} date - Date to be formatted
+ * @returns {string} Formatted date (e.g., 01/01/2023)
  */
 function formatDate(date) {
   const dateObj = date instanceof Date ? date : new Date(date);
@@ -56,9 +56,9 @@ function formatDate(date) {
 }
 
 /**
- * Formata uma data e hora para o formato brasileiro
- * @param {string|Date} date - Data a ser formatada
- * @returns {string} Data e hora formatadas (ex: 01/01/2023 14:30)
+ * Formats a date and time to Brazilian format
+ * @param {string|Date} date - Date to be formatted
+ * @returns {string} Formatted date and time (e.g., 01/01/2023 14:30)
  */
 function formatDateTime(date) {
   const dateObj = date instanceof Date ? date : new Date(date);
@@ -69,9 +69,9 @@ function formatDateTime(date) {
 }
 
 /**
- * Valida um endereço de e-mail
- * @param {string} email - E-mail a ser validado
- * @returns {boolean} True se o e-mail for válido, false caso contrário
+ * Validates an email address
+ * @param {string} email - Email to be validated
+ * @returns {boolean} True if email is valid, false otherwise
  */
 function validateEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -79,9 +79,9 @@ function validateEmail(email) {
 }
 
 /**
- * Valida um número de CPF
- * @param {string} cpf - CPF a ser validado (apenas números)
- * @returns {boolean} True se o CPF for válido, false caso contrário
+ * Validates a CPF number
+ * @param {string} cpf - CPF to be validated (numbers only)
+ * @returns {boolean} True if CPF is valid, false otherwise
  */
 function validateCPF(cpf) {
   cpf = cpf.replace(/[^\d]/g, '');
@@ -122,9 +122,9 @@ function validateCPF(cpf) {
 }
 
 /**
- * Formata um número de CPF
- * @param {string} cpf - CPF a ser formatado (apenas números)
- * @returns {string} CPF formatado (ex: 123.456.789-00)
+ * Formats a CPF number
+ * @param {string} cpf - CPF to be formatted (numbers only)
+ * @returns {string} Formatted CPF (e.g., 123.456.789-00)
  */
 function formatCPF(cpf) {
   cpf = cpf.replace(/[^\d]/g, '');
@@ -132,9 +132,9 @@ function formatCPF(cpf) {
 }
 
 /**
- * Formata um número de telefone
- * @param {string} phone - Telefone a ser formatado (apenas números)
- * @returns {string} Telefone formatado (ex: (11) 98765-4321)
+ * Formats a phone number
+ * @param {string} phone - Phone to be formatted (numbers only)
+ * @returns {string} Formatted phone (e.g., (11) 98765-4321)
  */
 function formatPhone(phone) {
   phone = phone.replace(/[^\d]/g, '');
@@ -147,18 +147,18 @@ function formatPhone(phone) {
 }
 
 /**
- * Gera um ID único
- * @returns {string} ID único
+ * Generates a unique ID
+ * @returns {string} Unique ID
  */
 function generateUniqueId() {
   return Date.now().toString(36) + Math.random().toString(36).substring(2);
 }
 
 /**
- * Trunca um texto para um tamanho máximo
- * @param {string} text - Texto a ser truncado
- * @param {number} maxLength - Tamanho máximo
- * @returns {string} Texto truncado
+ * Truncates text to a maximum length
+ * @param {string} text - Text to be truncated
+ * @param {number} maxLength - Maximum length
+ * @returns {string} Truncated text
  */
 function truncateText(text, maxLength) {
   if (text.length <= maxLength) {
@@ -167,17 +167,4 @@ function truncateText(text, maxLength) {
   return text.substring(0, maxLength) + '...';
 }
 
-// Exporta as funções para uso global
-window.Utils = {
-  debounce,
-  throttle,
-  formatCurrency,
-  formatDate,
-  formatDateTime,
-  validateEmail,
-  validateCPF,
-  formatCPF,
-  formatPhone,
-  generateUniqueId,
-  truncateText,
-};
+export { throttle, debounce, formatCurrency, formatDate, formatDateTime, validateEmail, validateCPF, formatCPF, formatPhone, generateUniqueId, truncateText };
