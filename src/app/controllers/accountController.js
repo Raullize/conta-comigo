@@ -1,6 +1,7 @@
 const { where } = require('sequelize');
 const Account = require('../models/Account');
 
+
 module.exports = {
   async createAccount(req, res) {
     const userId = req.userId;

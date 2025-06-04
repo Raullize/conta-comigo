@@ -122,6 +122,7 @@ class TransacaoController {
        id_banco: id_banco,
        cpf: cpfDoUser,
        tipo: tipoResposta,
+       valor: Number(transacao.valor),
        data: dataFormatada,
        descricao: transacao.descricao,
       },
