@@ -1,15 +1,23 @@
-// Sidebar Component
+/**
+ * Componente de barra lateral para navegação
+ */
 class SidebarComponent {
     constructor() {
         this.currentPage = this.getCurrentPage();
     }
 
+    /**
+     * Determina a página atual com base na URL
+     */
     getCurrentPage() {
         const path = window.location.pathname;
         const page = path.split('/').pop().replace('.html', '');
         return page || 'dashboard';
     }
 
+    /**
+     * Renderiza o HTML da barra lateral
+     */
     render() {
         return `
             <aside class="sidebar">
@@ -64,11 +72,17 @@ class SidebarComponent {
         `;
     }
 
+    /**
+     * Inicializa o componente no container especificado
+     */
     init(container) {
         container.innerHTML = this.render();
         this.bindEvents();
     }
 
+    /**
+     * Vincula eventos aos elementos do componente
+     */
     bindEvents() {
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
@@ -79,18 +93,19 @@ class SidebarComponent {
         }
     }
 
+    /**
+     * Gerencia o processo de logout
+     */
     handleLogout() {
-        // Trigger logout modal or direct logout
         if (typeof showLogoutModal === 'function') {
             showLogoutModal();
         } else {
-            // Direct logout
             localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            localStorage.removeItem('userData');
             window.location.href = '../pages/auth.html';
         }
     }
 }
 
-// Export for use in other files
+// Exporta o componente para uso global
 window.SidebarComponent = SidebarComponent;

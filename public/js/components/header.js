@@ -1,12 +1,24 @@
-// Header Component
+/**
+ * Componente de cabeçalho para as páginas do dashboard
+ */
 class HeaderComponent {
+    /**
+     * @param {Object} options - Opções de configuração
+     * @param {boolean} [options.showNotifications=true] - Exibir ou não o botão de notificações
+     * @param {boolean} [options.showUserProfile=true] - Exibir ou não o perfil do usuário
+     * @param {string} [options.pageTitle='Dashboard'] - Título da página
+     * @param {string} [options.pageSubtitle='Bem-vindo ao seu painel financeiro'] - Subtítulo da página
+     */
     constructor(options = {}) {
-        this.showNotifications = options.showNotifications !== false; // Default true
-        this.showUserProfile = options.showUserProfile !== false; // Default true
+        this.showNotifications = options.showNotifications !== false;
+        this.showUserProfile = options.showUserProfile !== false;
         this.pageTitle = options.pageTitle || 'Dashboard';
         this.pageSubtitle = options.pageSubtitle || 'Bem-vindo ao seu painel financeiro';
     }
 
+    /**
+     * Renderiza o HTML completo do cabeçalho
+     */
     render() {
         return `
             <header class="dashboard-header">
@@ -22,6 +34,9 @@ class HeaderComponent {
         `;
     }
 
+    /**
+     * Renderiza o componente de notificações
+     */
     renderNotifications() {
         return `
             <button class="notification-btn">
@@ -31,13 +46,15 @@ class HeaderComponent {
         `;
     }
 
+    /**
+     * Renderiza o componente de perfil do usuário
+     */
     renderUserProfile() {
         return `
             <div class="user-profile">
                 <div class="user-avatar">
                     <i class="fas fa-user"></i>
                 </div>
-                <!-- Menu dropdown do usuário -->
                 <div class="user-dropdown" id="userDropdown">
                     <a href="settings.html" class="dropdown-item">
                         <i class="fas fa-cog"></i>
@@ -52,14 +69,29 @@ class HeaderComponent {
         `;
     }
 
+    /**
+     * Inicializa o componente no container especificado
+     */
     init(container) {
         container.innerHTML = this.render();
         this.bindEvents();
         this.loadUserData();
     }
 
+    /**
+     * Vincula eventos aos elementos do componente
+     */
     bindEvents() {
-        // User profile dropdown toggle
+        this.bindUserProfileEvents();
+        this.bindNotificationEvents();
+    }
+
+    /**
+     * Vincula eventos relacionados ao perfil do usuário
+     */
+    bindUserProfileEvents() {
+        if (!this.showUserProfile) return;
+        
         const userProfile = document.querySelector('.user-profile');
         const userDropdown = document.getElementById('userDropdown');
         
@@ -69,13 +101,11 @@ class HeaderComponent {
                 userDropdown.classList.toggle('show');
             });
 
-            // Close dropdown when clicking outside
             document.addEventListener('click', () => {
                 userDropdown.classList.remove('show');
             });
         }
 
-        // Dropdown logout button
         const dropdownLogoutBtn = document.getElementById('dropdownLogoutBtn');
         if (dropdownLogoutBtn) {
             dropdownLogoutBtn.addEventListener('click', (e) => {
@@ -83,20 +113,27 @@ class HeaderComponent {
                 this.handleLogout();
             });
         }
+    }
 
-        // Notification button
+    /**
+     * Vincula eventos relacionados às notificações
+     */
+    bindNotificationEvents() {
+        if (!this.showNotifications) return;
+        
         const notificationBtn = document.querySelector('.notification-btn');
         if (notificationBtn) {
             notificationBtn.addEventListener('click', () => {
-                // Handle notification click
                 console.log('Notifications clicked');
             });
         }
     }
 
+    /**
+     * Carrega os dados do usuário do localStorage
+     */
     loadUserData() {
-        // Load user data from localStorage or API
-        const userData = localStorage.getItem('user');
+        const userData = localStorage.getItem('userData');
         const userNameElement = document.getElementById('userName');
         
         if (userData && userNameElement) {
@@ -111,18 +148,19 @@ class HeaderComponent {
         }
     }
 
+    /**
+     * Gerencia o processo de logout
+     */
     handleLogout() {
-        // Trigger logout modal or direct logout
         if (typeof showLogoutModal === 'function') {
             showLogoutModal();
         } else {
-            // Direct logout
             localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            localStorage.removeItem('userData');
             window.location.href = '../pages/auth.html';
         }
     }
 }
 
-// Export for use in other files
+// Exporta o componente para uso global
 window.HeaderComponent = HeaderComponent;
