@@ -1,16 +1,17 @@
 /**
- * Dashboard - Funções específicas para a página de dashboard
+ * Dashboard - Specific functions for the dashboard page
  */
+import { showLogoutModal } from './auth-utils.js';
 
 /**
- * Inicializa a aplicação quando o DOM estiver carregado
+ * Initializes the application when the DOM is loaded
  */
 document.addEventListener('DOMContentLoaded', () => {
   loadFinancialData();
   setupUIEvents();
 });
 
-// Dados financeiros temporários
+// Temporary financial data
 function loadFinancialData() {
   const existingData = localStorage.getItem('financialData');
 
@@ -118,7 +119,7 @@ function loadFinancialData() {
     ],
   };
 
-  // Salva os dados no localStorage para simular persistência
+  // Save data to localStorage to simulate persistence
   localStorage.setItem('financialData', JSON.stringify(financialData));
 
   // Exibe os dados no dashboard
@@ -140,138 +141,48 @@ function displayFinancialData(data) {
   updateBudget(data.budget);
 }
 
-function updateBalanceCard(balance) {
-  if (!balance) {
-    return;
-  }
+function updateCard(cardClass, data, changeText = null) {
+  if (!data) return;
 
-  const valueElement = document.querySelector('.balance-card .balance-value');
-  const changeElement = document.querySelector('.balance-card .balance-change');
-  const iconElement = document.querySelector('.balance-card .balance-change i');
-  const spanElement = document.querySelector(
-    '.balance-card .balance-change span'
-  );
+  const valueElement = document.querySelector(`.${cardClass} .balance-value`);
+  const changeElement = document.querySelector(`.${cardClass} .balance-change`);
+  const iconElement = document.querySelector(`.${cardClass} .balance-change i`);
+  const spanElement = document.querySelector(`.${cardClass} .balance-change span`);
 
   if (valueElement) {
-    valueElement.textContent = balance.total || 'R$ 0,00';
+    valueElement.textContent = data.total || 'R$ 0,00';
   }
 
-  if (changeElement) {
-    const isPositive = !balance.total.includes('-');
-    changeElement.className =
-      'balance-change ' +
-      (isPositive ? 'balance-positive' : 'balance-negative');
+  if (changeElement && changeText) {
+    const isPositive = changeText.includes('+') || !data.total?.includes('-');
+    changeElement.className = `balance-change ${isPositive ? 'balance-positive' : 'balance-negative'}`;
 
     if (iconElement) {
-      iconElement.className =
-        'fas ' + (isPositive ? 'fa-arrow-up' : 'fa-arrow-down');
+      iconElement.className = `fas ${isPositive ? 'fa-arrow-up' : 'fa-arrow-down'}`;
     }
 
     if (spanElement) {
-      spanElement.textContent = '2,5% desde o mês passado'; // Valor fixo para demonstração
+      spanElement.textContent = changeText;
     }
   }
+}
+
+function updateBalanceCard(balance) {
+  updateCard('balance-card', balance, '2,5% desde o mês passado');
 }
 
 function updateExpensesCard(expenses) {
-  if (!expenses) {
-    return;
-  }
-
-  const valueElement = document.querySelector('.expenses-card .balance-value');
-  const changeElement = document.querySelector(
-    '.expenses-card .balance-change'
-  );
-  const iconElement = document.querySelector(
-    '.expenses-card .balance-change i'
-  );
-  const spanElement = document.querySelector(
-    '.expenses-card .balance-change span'
-  );
-
-  if (valueElement) {
-    valueElement.textContent = expenses.total || 'R$ 0,00';
-  }
-
-  if (changeElement) {
-    changeElement.className = 'balance-change balance-negative';
-
-    if (iconElement) {
-      iconElement.className = 'fas fa-arrow-up';
-    }
-
-    if (spanElement) {
-      spanElement.textContent = '5,2% desde o mês passado'; // Valor fixo para demonstração
-    }
-  }
+  updateCard('expenses-card', expenses, '-5,2% desde o mês passado');
 }
 
 function updateInvestmentsCard(investments) {
-  if (!investments) {
-    return;
-  }
-
-  const valueElement = document.querySelector(
-    '.investments-card .balance-value'
-  );
-  const changeElement = document.querySelector(
-    '.investments-card .balance-change'
-  );
-  const iconElement = document.querySelector(
-    '.investments-card .balance-change i'
-  );
-  const spanElement = document.querySelector(
-    '.investments-card .balance-change span'
-  );
-
-  if (valueElement) {
-    valueElement.textContent = investments.total || 'R$ 0,00';
-  }
-
-  if (changeElement && investments.growth) {
-    const isPositive = investments.growth.includes('+');
-    changeElement.className =
-      'balance-change ' +
-      (isPositive ? 'balance-positive' : 'balance-negative');
-
-    if (iconElement) {
-      iconElement.className =
-        'fas ' + (isPositive ? 'fa-arrow-up' : 'fa-arrow-down');
-    }
-
-    if (spanElement) {
-      spanElement.textContent = investments.growth + ' desde o mês passado';
-    }
-  }
+  const changeText = investments?.growth ? `${investments.growth} desde o mês passado` : '+5,2% desde o mês passado';
+  updateCard('investments-card', investments, changeText);
 }
 
 function updateSavingsCard(savings) {
-  if (!savings) {
-    return;
-  }
-
-  const valueElement = document.querySelector('.savings-card .balance-value');
-  const changeElement = document.querySelector('.savings-card .balance-change');
-  const iconElement = document.querySelector('.savings-card .balance-change i');
-  const spanElement = document.querySelector(
-    '.savings-card .balance-change span'
-  );
-
-  if (valueElement) {
-    valueElement.textContent = savings.total || 'R$ 0,00';
-  }
-
-  if (changeElement) {
-    changeElement.className = 'balance-change balance-positive';
-
-    if (iconElement) {
-      iconElement.className = 'fas fa-arrow-up';
-    }
-
-    if (spanElement) {
-      spanElement.textContent = savings.percentage + ' desde o mês passado';
-    }
-  }
+  const changeText = savings?.percentage ? `${savings.percentage} desde o mês passado` : '+3,1% desde o mês passado';
+  updateCard('savings-card', savings, changeText);
 }
 
 function updateTransactions(transactions) {
@@ -305,7 +216,7 @@ function updateTransactions(transactions) {
       icon = 'fa-money-check-alt';
     }
 
-    // Criar o elemento da transação
+    // Create transaction element
     const transactionItem = document.createElement('div');
     transactionItem.className = `transaction-item transaction-${transaction.type}`;
 
@@ -370,13 +281,13 @@ function updateBudget(budget) {
 }
 
 function setupUIEvents() {
-  // Configurar evento de dropdown no ícone do usuário
+  // Configure dropdown event on user icon
   const userAvatar = document.querySelector('.user-avatar');
   const userDropdown = document.getElementById('userDropdown');
   const dropdownLogoutBtn = document.getElementById('dropdownLogoutBtn');
   const notificationBtn = document.querySelector('.notification-btn');
 
-  // Configurar dropdown do usuário
+  // Configure user dropdown
   if (userAvatar && userDropdown) {
     userAvatar.addEventListener('click', e => {
       e.stopPropagation(); // Evita que o clique se propague para o document
@@ -404,7 +315,7 @@ function setupUIEvents() {
 
   if (notificationBtn) {
     notificationBtn.addEventListener('click', () => {
-      alert('Funcionalidade de notificações em desenvolvimento!');
+      // TODO: Implement notifications functionality
     });
   }
 
@@ -413,20 +324,8 @@ function setupUIEvents() {
     viewAllLinks.forEach(link => {
       link.addEventListener('click', e => {
         e.preventDefault();
-        alert('Funcionalidade em desenvolvimento!');
+        // TODO: Implement view all functionality
       });
-    });
-  }
-
-  const navItems = document.querySelectorAll('.sidebar-nav .nav-item');
-  if (navItems.length > 0) {
-    navItems.forEach(item => {
-      if (!item.classList.contains('active')) {
-        item.addEventListener('click', e => {
-          e.preventDefault();
-          alert('Funcionalidade em desenvolvimento!');
-        });
-      }
     });
   }
 }
