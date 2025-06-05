@@ -11,9 +11,10 @@ module.exports = (sequelize, DataTypes) => {
   }
   Account.init(
     {
-      user_id: {
+      userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        field: 'user_id',
         references: { model: 'users', key: 'id' },
       },
       institution: {
@@ -29,5 +30,12 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
+  Account.associate = (models) => {
+  Account.belongsTo(models.User, {
+    foreignKey: 'userId', 
+    as: 'user',
+    })
+  }
+
   return Account;
-};
+}

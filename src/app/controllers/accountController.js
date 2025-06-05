@@ -1,7 +1,8 @@
 const { where } = require('sequelize');
-const Account = require('../models/Account');
-
-module.exports = {
+const { models } = require('../../database');
+const Account = models.Account;
+  
+class accountController {
   async createAccount(req, res) {
     const userId = req.userId;
     const { institution } = req.body;
@@ -41,7 +42,7 @@ module.exports = {
         .status(500)
         .json({ erro: 'Failed to creater account.', detalhe: error.message });
     }
-  },
+  }
 
   async updateAccount(req, res) {
     const { id } = req.params;
@@ -64,7 +65,7 @@ module.exports = {
     } catch (error) {
       return res.status(500).json({ eroor: 'Failed to update account.' });
     }
-  },
+  }
 
   async getAllAccounts(req, res) {
     try {
@@ -82,7 +83,7 @@ module.exports = {
     } catch (error) {
       return res.status(500).json({ eroor: 'Failed to update account.' });
     }
-  },
+  }
 
   async deleteAccount(req, res) {
     const { id } = req.params;
@@ -105,5 +106,7 @@ module.exports = {
     } catch (error) {
       return res.status(500).json({ error: 'Failed to delete account.' });
     }
-  },
-};
+  }
+}
+
+module.exports = new accountController();
