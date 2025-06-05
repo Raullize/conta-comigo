@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContaComigo - Simulador de Investimentos</title>
+    <meta name="description" content="Simule seus investimentos com o ContaComigo.">
+    <link rel="icon" type="image/png" href="../assets/logos/logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/globals.css">
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/components/sidebar.css">
+    <link rel="stylesheet" href="../css/components/header.css">
+    <link rel="stylesheet" href="../css/simulator.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar will be injected here -->
+        <div id="sidebar-container"></div>
+        
+        <main class="main-content">
+            <!-- Header will be injected here -->
+            <div id="header-container"></div>
+            
+            <!-- Page Content -->
+            <div class="page-content">
+                <p>Em desenvolvimento</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Logout Modal -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Saída</h3>
+                <span class="close" id="closeLogoutModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja sair?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelLogoutBtn">Cancelar</button>
+                <button class="btn btn-primary" id="confirmLogoutBtn">Sair</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import SidebarComponent from '../js/components/sidebar.js';
+        import HeaderComponent from '../js/components/header.js';
+        import { checkAuthentication } from '../js/auth-utils.js';
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize components
+            const sidebar = new SidebarComponent();
+            const header = new HeaderComponent({
+                pageTitle: 'Simular Investimentos',
+                pageSubtitle: 'Simule diferentes cenários de investimento'
+            });
+            
+            // Render components
+            sidebar.init(document.getElementById('sidebar-container'));
+            header.init(document.getElementById('header-container'));
+            
+            // Check authentication
+            checkAuthentication();
+        });
+    </script>
+</body>
+</html>

@@ -46,6 +46,18 @@ module.exports = {
     'yoda': 'error'
   },
   globals: {
-    process: 'readonly'
+    process: 'readonly',
+    getUserData: 'readonly',
+    showLogoutModal: 'readonly',
+    hideLogoutModal: 'readonly',
+    logoutUser: 'readonly',
+    isUserLoggedIn: 'readonly',
+    getAuthToken: 'readonly',
+    loginUser: 'readonly',
+    HeaderComponent: 'readonly',
+    SidebarComponent: 'readonly',
+    Utils: 'readonly',
+    switchToLogin: 'readonly',
+    switchToRegister: 'readonly'
   }
 };
