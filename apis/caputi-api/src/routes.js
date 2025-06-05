@@ -30,4 +30,6 @@ routes.get('/usuarios/:id/contas',ContaController.listarPorUsuario)
 
 routes.get('/usuarios/:id/', UserController.index);
 
+routes.get('/openfinance/:id/extrato',TransacaoController.indexOF);
+
 export default routes;
