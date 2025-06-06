@@ -1,3 +1,4 @@
+/* eslint-disable */
 import *as Yup from 'yup';
 import {cpfSchema} from '../controllers/cpf.js';
 

@@ -16,8 +16,11 @@ COPY package.json ./
 
 COPY . .
 
+RUN chmod +x ./entrypoint.sh
+
 USER appuser
 
 EXPOSE 3003
 
+ENTRYPOINT ["/app/entrypoint.sh"]
 CMD [ "npm", "start", "-s" ]

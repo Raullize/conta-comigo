@@ -1,3 +1,9 @@
+/**
+ * Landing Page JavaScript
+ * Handles animations, scroll effects, and interactive elements
+ */
+import { throttle } from './utils.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   initializeMobileMenu();
   initializeFAQ();
@@ -112,7 +118,7 @@ function smoothScrollTo(targetPosition, duration = 1200) {
     const timeElapsed = currentTime - startTime;
     const progress = Math.min(timeElapsed / duration, 1);
 
-    // Easing function para movimento mais suave (ease-in-out)
+    // Easing function for smoother movement (ease-in-out)
     const easeInOutCubic =
       progress < 0.5
         ? 4 * progress * progress * progress
@@ -150,6 +156,7 @@ function initializeHeaderScrollEffect() {
     return;
   }
 
+  // Uses throttle function from global Utils object
   const scrollHandler = throttle(() => {
     const scrollY = window.scrollY;
     const isScrolled = scrollY > 100;
@@ -225,25 +232,6 @@ function initializeHeroAnimation() {
   heroSection?.classList.add('fade-in-up');
 }
 
-const debounce = (func, wait) => {
-  let timeout;
-  return (...args) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
-};
-
-const throttle = (func, limit) => {
-  let inThrottle;
-  return function (...args) {
-    if (!inThrottle) {
-      func.apply(this, args);
-      inThrottle = true;
-      setTimeout(() => (inThrottle = false), limit);
-    }
-  };
-};
-
 function initializeAccessibility() {
   document.addEventListener('keydown', e => {
     if (e.key === 'Tab') {
@@ -269,6 +257,7 @@ function initializeBackToTop() {
     return;
   }
 
+  // Uses throttle function from global Utils object
   const toggleVisibility = throttle(() => {
     const scrollY = window.scrollY;
     const shouldShow = scrollY > 300;

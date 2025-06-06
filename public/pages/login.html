@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/globals.css">
-    <link rel="stylesheet" href="../css/auth.css">
+    <link rel="stylesheet" href="../css/login.css">
 </head>
 
 <body>
@@ -98,12 +98,12 @@
 
                     <div class="form-footer">
                         <p>Não tem uma conta?
-                            <button type="button" class="link-btn" onclick="switchToRegister()">Cadastre-se</button>
+                            <button type="button" class="link-btn" data-switch="register">Cadastre-se</button>
                         </p>
                     </div>
                 </div>
 
-                <!-- Formulário de Cadastro - Etapa 1 -->
+                <!-- Registration Form - Step 1 -->
                 <div class="form-container" id="registerForm">
                     <div class="form-header">
                         <h1 class="form-title">Crie sua conta</h1>
@@ -170,12 +170,12 @@
 
                     <div class="form-footer">
                         <p>Já tem uma conta?
-                            <button type="button" class="link-btn" onclick="switchToLogin()">Faça login</button>
+                            <button type="button" class="link-btn" data-switch="login">Faça login</button>
                         </p>
                     </div>
                 </div>
 
-                <!-- Formulário de Cadastro - Etapa 2 -->
+                <!-- Registration Form - Step 2 -->
                 <div class="form-container" id="registerFormStep2">
                     <div class="form-header">
                         <h1 class="form-title">Quase lá!</h1>
@@ -263,14 +263,14 @@
 
                     <div class="form-footer">
                         <p>Já tem uma conta?
-                            <button type="button" class="link-btn" onclick="switchToLogin()">Faça login</button>
+                            <button type="button" class="link-btn" data-switch="login">Faça login</button>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Seção lateral com benefícios -->
+        <!-- Sidebar section with benefits -->
         <div class="auth-sidebar">
             <div class="sidebar-content">
                 <div class="benefits">
@@ -327,7 +327,7 @@
     <!-- Toast notifications -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <script src="../js/auth.js"></script>
+    <script type="module" src="../js/login.js"></script>
 </body>
 
 </html>

@@ -73,7 +73,7 @@ class TransacaoController {
       const { id } = req.params;
       const { instituicao_id } = req.query;
 
-      // Se o id for 0 ou nulo, retorna todas as transações
+      
       if (!id || id === '0') {
         const transacoes = await Transacao.findAll({
           include: [
@@ -111,7 +111,7 @@ class TransacaoController {
         return res.json(resultado);
       }
 
-      // Caso contrário, filtra pelas contas do usuário
+      
       const whereConta = { usuario_id: id };
       if (instituicao_id) {
         whereConta.instituicao_id = instituicao_id;
@@ -175,6 +175,92 @@ class TransacaoController {
       });
     }
   }
+
+async indexOF(req, res) {
+  try {
+    const { id: usuarioId } = req.params;
+    let transacoes;
+    let idsDasContasDoUsuario = [];
+    
+    if (!usuarioId || usuarioId === '0') {
+      transacoes = await Transacao.findAll({
+        include: [
+          { model: Conta, as: 'conta', attributes: ['cpf_usuario'] },
+          { model: Conta, as: 'conta_destino', attributes: ['cpf_usuario'] }
+        ],
+        order: [['createdAt', 'DESC']]
+      });
+    } else {
+      const contasDoUsuario = await Conta.findAll({
+        where: { usuario_id: usuarioId },
+        attributes: ['id_conta'],
+      });
+      
+      if (!contasDoUsuario || contasDoUsuario.length === 0) {
+        return res.json({ transactions: [] });
+      }
+      idsDasContasDoUsuario = contasDoUsuario.map(conta => conta.id_conta);
+
+      transacoes = await Transacao.findAll({
+        where: {
+          [Op.or]: [
+            { conta_id: idsDasContasDoUsuario },
+            { conta_destino_id: idsDasContasDoUsuario },
+          ],
+        },
+        include: [
+          { model: Conta, as: 'conta', attributes: ['cpf_usuario'] },
+          { model: Conta, as: 'conta_destino', attributes: ['cpf_usuario'] }
+        ],
+        order: [['createdAt', 'DESC']]
+      });
+    }
+
+    const setContasDoUsuario = new Set(idsDasContasDoUsuario.map(id => String(id)));
+
+    
+    const resultadoFinal = transacoes.map(t => {
+      let tipoFinal = t.tipo;
+      let cpfPrincipal = null;
+
+      
+      if (usuarioId && usuarioId !== '0') {
+        const origemEhDoUsuario = t.conta_id && setContasDoUsuario.has(String(t.conta_id));
+        const destinoEhDoUsuario = t.conta_destino_id && setContasDoUsuario.has(String(t.conta_destino_id));
+
+        if (origemEhDoUsuario) {
+          tipoFinal = 'saque';
+        } else if (destinoEhDoUsuario) {
+          tipoFinal = 'depósito';
+        }
+      }
+
+      
+      const contaDeReferencia = t.conta || t.conta_destino;
+      if (contaDeReferencia) {
+        cpfPrincipal = contaDeReferencia.cpf_usuario;
+      }
+
+      return {
+        id_banco: 6, 
+        cpf: cpfPrincipal,
+        tipo: tipoFinal,
+        data: t.createdAt,
+        descricao: t.descricao,
+        valor: t.valor,
+      };
+    });
+
+    return res.json({ transactions: resultadoFinal });
+
+  } catch (error) {
+    console.error('Erro completo ao listar transações:', error);
+    return res.status(500).json({
+      error: 'Erro ao listar transações',
+      details: error.message,
+    });
+  }
+}
 }
 
 export default new TransacaoController();

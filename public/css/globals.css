@@ -278,6 +278,7 @@ a:hover {
 }
 
 
+/* Responsiveness */
 @media (max-width: 768px) {
   html {
     font-size: 14px;
@@ -312,5 +313,10 @@ a:hover {
 
   .row {
     flex-direction: column;
+  }
+  
+  .col {
+    width: 100%;
+    margin-bottom: var(--spacing-md);
   }
 }

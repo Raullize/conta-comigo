@@ -47,39 +47,85 @@
 
 ```
 conta-comigo/
-├── public/                 # Static files
-│   ├── assets/            # Resources (images, logos, videos)
+├── public/                 # Static files (Frontend)
+│   ├── assets/            # Static resources
+│   │   ├── images/        # Images used on the site
+│   │   ├── logos/         # Application logos
+│   │   └── videos/        # Videos for presentations
 │   ├── css/               # Stylesheets
-│   │   ├── globals.css    # Global styles
+│   │   ├── globals.css    # CSS variables and global styles
+│   │   ├── common.css     # Shared styles between pages
 │   │   ├── landing.css    # Landing page styles
-│   │   ├── auth.css       # Authentication styles
-│   │   └── dashboard.css  # Dashboard styles
+│   │   ├── login.css      # Login page styles
+│   │   ├── dashboard.css  # Dashboard styles
+│   │   ├── expenses.css   # Expenses page styles
+│   │   ├── investments.css # Investments page styles
+│   │   ├── institutions.css # Institutions page styles
+│   │   ├── simulator.css  # Simulator page styles
+│   │   ├── settings.css   # Settings page styles
+│   │   └── components/    # Reusable CSS components
+│   │       ├── header.css # Header styles
+│   │       └── sidebar.css # Sidebar styles
 │   ├── js/                # JavaScript scripts
-│   │   ├── landing.js     # Landing functionalities
-│   │   ├── auth.js        # Authentication
-│   │   └── dashboard.js   # Dashboard
+│   │   ├── auth-utils.js  # Authentication utilities
+│   │   ├── utils.js       # General utility functions
+│   │   ├── landing.js     # Landing page functionalities
+│   │   ├── login.js       # Login functionalities
+│   │   ├── dashboard.js   # Dashboard functionalities
+│   │   ├── expenses.js    # Expenses page functionalities
+│   │   ├── investments.js # Investments page functionalities
+│   │   ├── institutions.js # Institutions page functionalities
+│   │   ├── simulator.js   # Simulator page functionalities
+│   │   ├── settings.js    # Settings page functionalities
+│   │   └── components/    # Reusable JavaScript components
+│   │       ├── header.js  # Header component
+│   │       └── sidebar.js # Sidebar component
 │   ├── pages/             # HTML pages
-│   │   ├── auth.html      # Login/Register
-│   │   └── dashboard.html # Main dashboard
+│   │   ├── login.html     # Login/registration page
+│   │   ├── dashboard.html # Main dashboard
+│   │   ├── expenses.html  # Expenses page
+│   │   ├── investments.html # Investments page
+│   │   ├── institutions.html # Institutions page
+│   │   ├── simulator.html # Simulator page
+│   │   └── settings.html  # Settings page
 │   └── index.html         # Landing page
-├── src/                   # Backend source code
+├── src/                   # Main backend source code
 │   ├── app/               # Main application
-│   ├── config/            # Configurations
+│   │   ├── controllers/   # Route controllers
+│   │   ├── middlewares/   # Authentication and validation middlewares
+│   │   ├── models/        # Data models (Sequelize)
+│   │   └── validators/    # Input validators
 │   ├── database/          # Database configuration
-│   ├── routes/            # API routes
-│   └── utils/             # Utilities
-├── config/                # Project configurations
+│   │   ├── migrations/    # Database migrations
+│   │   ├── seeders/       # Initial data for the database
+│   │   ├── config.js      # Connection configurations
+│   │   ├── database.js    # Database instance
+│   │   └── index.js       # Database entry point
+│   ├── routes/            # API route definitions
+│   │   └── routes.js      # Main routes file
+│   ├── app.js             # Express application configuration
+│   └── server.js          # HTTP server
+├── apis/                  # API microservices (6 independent APIs)
+├── docker-compose.yml     # Docker Compose configuration
+├── dockerfile             # Main Docker configuration
 ├── .env.example           # Environment variables example
-├── package.json           # Dependencies and scripts
-└── README.md              # Documentation
+├── package.json           # Project dependencies and scripts
+├── .eslintrc.js           # ESLint configuration
+├── .prettierrc            # Prettier configuration
+├── .gitignore             # Files ignored by Git
+├── README.md              # Portuguese documentation
+├── README.en.md           # English documentation
+└── wait-for-db.js         # Database wait script
 ```
 
 ## ⚙️ Installation and Setup
 
 ### Prerequisites
 
-- Node.js (version 16 or higher)
-- npm or yarn
+- Docker Desktop (recommended)
+- Docker Compose
+- Node.js (version 16 or higher) - only for manual installation
+- npm - only for manual installation
 
 ### Installation Steps
 

@@ -1,0 +1,294 @@
+/* Dashboard Styles */
+
+/* Cards and Widgets */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--spacing-lg);
+}
+
+.card {
+  background-color: var(--white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-lg);
+  transition: all var(--transition-fast);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.card-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--primary-blue);
+}
+
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--border-radius-md);
+  background-color: rgba(54, 179, 126, 0.1);
+  color: var(--primary-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-xl);
+}
+
+/* Balance Card */
+.balance-card {
+  grid-column: span 3;
+}
+
+.balance-value {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: var(--spacing-sm);
+}
+
+.balance-change {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+}
+
+.balance-positive {
+  color: var(--primary-green);
+}
+
+.balance-negative {
+  color: #e74c3c;
+}
+
+/* Expenses Card */
+.expenses-card {
+  grid-column: span 3;
+}
+
+/* Investments Card */
+.investments-card {
+  grid-column: span 3;
+}
+
+/* Savings Card */
+.savings-card {
+  grid-column: span 3;
+}
+
+/* Recent Transactions */
+.transactions-card {
+  grid-column: span 6;
+  grid-row: span 2;
+}
+
+.transaction-list {
+  margin-top: var(--spacing-md);
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.transaction-item:last-child {
+  border-bottom: none;
+}
+
+.transaction-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--border-radius-md);
+  background-color: rgba(54, 179, 126, 0.1);
+  color: var(--primary-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--spacing-md);
+}
+
+.transaction-expense .transaction-icon {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+}
+
+.transaction-income .transaction-icon {
+  background-color: rgba(54, 179, 126, 0.1);
+  color: var(--primary-green);
+}
+
+.transaction-details {
+  flex: 1;
+}
+
+.transaction-title {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.transaction-category {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.transaction-amount {
+  font-weight: 600;
+}
+
+.transaction-expense .transaction-amount {
+  color: #e74c3c;
+}
+
+.transaction-income .transaction-amount {
+  color: var(--primary-green);
+}
+
+.transaction-date {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.view-all {
+  display: block;
+  text-align: center;
+  margin-top: var(--spacing-md);
+  color: var(--primary-green);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+/* Monthly Budget */
+.budget-card {
+  grid-column: span 6;
+  grid-row: span 2;
+}
+
+.budget-progress {
+  margin: var(--spacing-md) 0;
+}
+
+.budget-category {
+  margin-bottom: var(--spacing-md);
+}
+
+.budget-category-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-xs);
+}
+
+.budget-category-name {
+  font-weight: 500;
+}
+
+.budget-category-values {
+  font-size: var(--font-size-sm);
+}
+
+.budget-category-spent {
+  font-weight: 600;
+}
+
+.budget-bar {
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: var(--border-radius-full);
+  overflow: hidden;
+}
+
+.budget-progress-bar {
+  height: 100%;
+  border-radius: var(--border-radius-full);
+}
+
+.budget-safe {
+  background-color: var(--primary-green);
+}
+
+.budget-warning {
+  background-color: #f39c12;
+}
+
+.budget-danger {
+  background-color: #e74c3c;
+}
+
+/* Responsiveness */
+@media (max-width: 1200px) {
+  .balance-card, .expenses-card, .investments-card, .savings-card {
+    grid-column: span 6;
+  }
+  
+  .transactions-card, .budget-card {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 992px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  
+  .balance-card, .expenses-card, .investments-card, .savings-card {
+    grid-column: span 3;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Dashboard specific styles for smaller screens */
+  
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .balance-card, .expenses-card, .investments-card, .savings-card,
+  .transactions-card, .budget-card, .tips-card {
+    grid-column: span 2;
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+  
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .balance-card, .expenses-card, .investments-card, .savings-card,
+  .transactions-card, .budget-card, .tips-card {
+    grid-column: span 1;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+  }
+  
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
+
+/* Modal styles have been moved to common.css */
