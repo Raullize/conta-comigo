@@ -88,6 +88,17 @@
   color: var(--primary-green);
 }
 
+.nav-item.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.nav-item.disabled:hover {
+  background-color: rgba(54, 179, 126, 0.1);
+  color: var(--primary-green);
+}
+
 .nav-item i {
   width: 20px;
   text-align: center;
@@ -141,6 +152,18 @@
   .nav-item.active {
     border-left: none;
     border-top: 3px solid var(--primary-green);
+  }
+  
+  .nav-item.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  
+  .nav-item.disabled:hover {
+    background-color: rgba(54, 179, 126, 0.1);
+    border-top: 3px solid var(--primary-green);
+    color: var(--primary-green);
   }
   
   .nav-item i {
