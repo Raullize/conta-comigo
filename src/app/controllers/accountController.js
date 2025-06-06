@@ -1,6 +1,15 @@
 const { where } = require('sequelize');
 const { models } = require('../../database');
 const Account = models.Account;
+const axios = require('axios');
+const baseUrls = {
+  'banco_brasil' : 'http://dante-api:3002',
+  'banrisul' : 'http://lucas-api:3003',
+  'santander' : 'http://patricia-api:3004',
+  'nubank' : 'http://vitor-api:3005',
+  'bradesco' : 'http://raul-api:3006',
+  'sicredi' : 'http://caputi-api:3001'
+}
   
 class accountController {
   async createAccount(req, res) {
