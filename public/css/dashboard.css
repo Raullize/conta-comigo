@@ -249,62 +249,7 @@
 }
 
 @media (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 60px;
-    flex-direction: row;
-    border-right: none;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-  }
-  
-  .sidebar-header {
-    display: none;
-  }
-  
-  .sidebar-nav {
-    display: flex;
-    padding: 0;
-    width: 100%;
-  }
-  
-  .nav-item {
-    flex: 1;
-    justify-content: center;
-    padding: var(--spacing-xs);
-    border-left: none;
-    border-top: 3px solid transparent;
-    flex-direction: column;
-    gap: var(--spacing-xs);
-    font-size: var(--font-size-xs);
-  }
-  
-  .nav-item.active {
-    border-left: none;
-    border-top: 3px solid var(--primary-green);
-  }
-  
-  .nav-item i {
-    font-size: var(--font-size-xl);
-  }
-  
-  /* Hide full text and show short versions on mobile devices */
-  .nav-item span.full-text {
-    display: none;
-  }
-  
-  .nav-item span.short-text {
-    display: inline;
-  }
-  
   /* Dashboard specific styles for smaller screens */
-  
-  .sidebar-footer {
-    display: none;
-  }
   
   .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);
