@@ -1,8 +1,8 @@
 'use strict';
-const { Model, Sequelize } = require('sequelize');
+const { Model } = require('sequelize');
 const bcrypt = require('bcryptjs');
 
-module.exports = sequelize => {
+module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     static associate(models) {
       this.hasMany(models.Goal, {
