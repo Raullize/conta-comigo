@@ -4,23 +4,26 @@ import {Instituicao as Institution} from '../models/associations.js';
 class InstitutionController {
   async create(req, res) {
     try {
-      const { nome, cnpj } = req.body;
+      const existingInstitution = await Institution.findOne();
 
-      const InstitutionIsValid = await Institution.findOne({ where: { nome } });
-      if (InstitutionIsValid) {
-        return res.status(400).json({ error: 'Já existe uma instituição com este nome.' });
+    if (existingInstitution) {
+      return res.status(400).json({ error: 'Permitido apenas o cadastro de uma instituição.' });
+    };
+
+    const { nome, cnpj } = req.body;
+    
+    let verificador = false;
+    
+    if(!verificador){
+        const instituicao = await Institution.create({ nome, cnpj });
+        verificador = true;
+      }else{
+        return res.status(400).json({ error: 'permitido apenas uma instituicao', details: error.message });
       }
-
-      const instituicaoExistenteCNPJ = await Institution.findOne({ where: { cnpj } });
-      if (instituicaoExistenteCNPJ) {
-        return res.status(400).json({ error: 'Já existe uma instituição com este CNPJ.' });
-      }
-
-      const instituicao = await Institution.create({ nome, cnpj });
 
       return res.status(201).json(instituicao);
     } catch (error) {
-      return res.status(400).json({ error: 'Erro ao criar instituição', details: error.message });
+      return res.status(400).json({ error: 'Erro ao criar instituicao', details: error.message });
     }
   }
 

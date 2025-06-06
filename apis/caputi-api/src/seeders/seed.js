@@ -36,7 +36,7 @@ try {
 const seedInstituicoes = async () => {
 try {
     const instituicoesPadrao = [
-    { nome: 'Itaú', cnpj: '60701190000104' },
+    { nome: 'Sicredi', cnpj: '60701190000104' },
     ];
     await Institution.bulkCreate(instituicoesPadrao);
 } catch (err) {
