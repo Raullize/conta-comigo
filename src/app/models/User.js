@@ -5,13 +5,13 @@ const bcrypt = require('bcryptjs');
 module.exports = sequelize => {
   class User extends Model {
     static associate(models) {
-      User.hasMany(models.Goal, {
-        foreignKey: 'user_id',
+      this.hasMany(models.Goal, {
+        foreignKey: 'userId',
         as: 'goals',
       });
 
-      User.hasMany(models.Account, {
-        foreignKey: 'user_id',
+      this.hasMany(models.Account, {
+        foreignKey: 'userId',
         as: 'accounts',
       });
     }
@@ -23,16 +23,35 @@ module.exports = sequelize => {
 
   User.init(
     {
-      cpf: Sequelize.STRING,
-      name: Sequelize.STRING,
-      email: Sequelize.STRING,
-      birth_date: Sequelize.STRING,
-      password: Sequelize.STRING,
+      cpf:{
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      birthDate: {
+        type: DataTypes.DATE,
+        field: 'birth_date',
+        allowNull: false, 
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
     },
     {
       sequelize,
       modelName: 'User',
       tableName: 'users',
+      timestamps: true,
       freezeTableName: true,
     }
   );
