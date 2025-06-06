@@ -1,44 +1,55 @@
 'use strict';
 const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Goal extends Model {
     static associate(models) {
-      Goal.belongsTo(models.User, {
-        foreignKey: 'user_id',
-        as: 'users',
+      this.belongsTo(models.User, {
+        foreignKey: 'userId',
+        as: 'user',
       });
-      Goal.belongsTo(models.Category, {
-        foreignKey: 'cetegory_id',
+      this.belongsTo(models.Category, {
+        foreignKey: 'categoryId',
         as: 'category',
       });
     }
   }
   Goal.init(
     {
-      user_id: {
+      userId: {
         type: DataTypes.INTEGER,
+        field: 'user_id',
+        allowNull: false,
+      },
+      categoryId:{
+        type: DataTypes.INTEGER,
+        field: 'category_id',
         allowNull: false,
       },
       title: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      target_amount: {
+      targetAmount: {
         type: DataTypes.DECIMAL(10, 2),
+        field: 'target_amount',
         allowNull: false,
       },
-      current_amount: {
+      currentAmount: {
         type: DataTypes.DECIMAL(10, 2),
+        field: 'current_amount',
         allowNull: false,
       },
-      target_date: {
+      targetDate: {
         type: DataTypes.DATE,
+        field: 'target_date',
       },
     },
     {
       sequelize,
       modelName: 'Goal',
       tableName: 'goals',
+      timestamps: true,
       freezeTableName: true,
     }
   );

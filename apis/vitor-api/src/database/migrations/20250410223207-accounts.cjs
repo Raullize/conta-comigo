@@ -1,7 +1,7 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable(
-      "accounts",
+      'accounts',
       {
         id: {
           type: Sequelize.INTEGER,
@@ -11,34 +11,38 @@ module.exports = {
         user_cpf: {
           type: Sequelize.STRING,
           allowNull: false,
-          references: { model: "users", key: "cpf" },
-          onUpdate: "CASCADE",
-          onDelete: "SET NULL", // Corrigido
+          references: { model: 'users', key: 'cpf' },
+          onUpdate: 'CASCADE',
+          onDelete: 'SET NULL', // Corrigido
         },
         institution_id: {
           type: Sequelize.INTEGER,
           allowNull: false,
-          references: { model: "institutions", key: "id" },
-          onUpdate: "CASCADE",
-          onDelete: "SET NULL", // Corrigido
+          references: { model: 'institutions', key: 'id' },
+          onUpdate: 'CASCADE',
+          onDelete: 'SET NULL', // Corrigido
         },
         balance: {
           type: Sequelize.DECIMAL,
           defaultValue: 0.0,
         },
+        consent: {
+          type: Sequelize.BOOLEAN,
+          defaultValue: false,
+        },
         created_at: {
           type: Sequelize.DATE,
-          defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+          defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         },
         updated_at: {
           type: Sequelize.DATE,
-          defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+          defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
         },
       },
       {
         uniqueKeys: {
           unique_user_institution: {
-            fields: ["user_cpf", "institution_id"],
+            fields: ['user_cpf', 'institution_id'],
           },
         },
       }
@@ -46,6 +50,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("accounts");
+    await queryInterface.dropTable('accounts');
   },
 };

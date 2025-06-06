@@ -13,7 +13,7 @@
         "format:check": "prettier --check \"src/**/*.js\" \"public/**/*.{html,css,js}\"",
         "migrate": "sequelize-cli db:migrate",
         "wait-for-db": "node wait-for-db.js",
-        "down":"docker compose down -v"
+        "down": "docker compose down -v"
     },
     "keywords": [
         "fintech",

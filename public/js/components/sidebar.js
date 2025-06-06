@@ -1,5 +1,5 @@
 /**
- * Sidebar Component - Componente de barra lateral de navegação
+ * Sidebar Component - Navigation sidebar component
  */
 import { showLogoutModal } from '../auth-utils.js';
 
@@ -26,32 +26,32 @@ class SidebarComponent {
                     </div>
                 </div>
                 <nav class="sidebar-nav">
-                    <a href="dashboard.html" class="nav-item ${this.currentPage === 'dashboard' ? 'active' : ''}">
+                    <a href="${this.currentPage === 'dashboard' ? '#' : 'dashboard.html'}" class="nav-item ${this.currentPage === 'dashboard' ? 'active disabled' : ''}">
                         <i class="fas fa-chart-pie"></i>
                         <span class="full-text">Dashboard</span>
                         <span class="short-text">Dashboard</span>
                     </a>
-                    <a href="expenses.html" class="nav-item ${this.currentPage === 'expenses' ? 'active' : ''}">
+                    <a href="${this.currentPage === 'expenses' ? '#' : 'expenses.html'}" class="nav-item ${this.currentPage === 'expenses' ? 'active disabled' : ''}">
                         <i class="fas fa-wallet"></i>
                         <span class="full-text">Meus Gastos</span>
                         <span class="short-text">Gastos</span>
                     </a>
-                    <a href="institutions.html" class="nav-item ${this.currentPage === 'institutions' ? 'active' : ''}">
+                    <a href="${this.currentPage === 'institutions' ? '#' : 'institutions.html'}" class="nav-item ${this.currentPage === 'institutions' ? 'active disabled' : ''}">
                         <i class="fas fa-university"></i>
                         <span class="full-text">Minhas Instituições</span>
                         <span class="short-text">Instituições</span>
                     </a>
-                    <a href="investments.html" class="nav-item ${this.currentPage === 'investments' ? 'active' : ''}">
+                    <a href="${this.currentPage === 'investments' ? '#' : 'investments.html'}" class="nav-item ${this.currentPage === 'investments' ? 'active disabled' : ''}">
                         <i class="fas fa-chart-line"></i>
                         <span class="full-text">Meus Investimentos</span>
                         <span class="short-text">Investimentos</span>
                     </a>
-                    <a href="simulator.html" class="nav-item ${this.currentPage === 'simulator' ? 'active' : ''}">
+                    <a href="${this.currentPage === 'simulator' ? '#' : 'simulator.html'}" class="nav-item ${this.currentPage === 'simulator' ? 'active disabled' : ''}">
                         <i class="fas fa-calculator"></i>
                         <span class="full-text">Simular Investimentos</span>
                         <span class="short-text">Simular</span>
                     </a>
-                    <a href="settings.html" class="nav-item ${this.currentPage === 'settings' ? 'active' : ''}">
+                    <a href="${this.currentPage === 'settings' ? '#' : 'settings.html'}" class="nav-item ${this.currentPage === 'settings' ? 'active disabled' : ''}">
                         <i class="fas fa-cog"></i>
                         <span class="full-text">Configurações</span>
                         <span class="short-text">Config</span>

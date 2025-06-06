@@ -11,11 +11,11 @@ class sessionController {
 
       const user = await User.findOne({ where: { email } });
       if (!user) {
-        return res.status(401).json({ error: 'Usuário não encontrado' });
+        return res.status(401).json({ error: 'User not find' });
       }
 
       if (!(await user.checkPassword(password))) {
-        return res.status(401).json({ error: 'Senha incorreta' });
+        return res.status(401).json({ error: 'Password incorrect' });
       }
 
       const { id, name, cpf, birth_date } = user;
@@ -33,8 +33,8 @@ class sessionController {
         }),
       });
     } catch (error) {
-      console.error('Erro ao fazer login:', error);
-      return res.status(500).json({ error: 'Erro interno do servidor' });
+      console.error('Login failed:', error);
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 }

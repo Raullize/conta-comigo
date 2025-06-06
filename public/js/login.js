@@ -182,7 +182,7 @@ function populateStep1Data() {
 }
 
 function populateStep2Data() {
-  // Limpar campos de senha ao voltar para etapa 2
+  // Clear password fields when returning to step 2
   const form = elements.registerFormElement;
   form.querySelector('#registerPassword').value = '';
   form.querySelector('#confirmPassword').value = '';
@@ -583,7 +583,7 @@ async function handleLogin(form) {
       6000
     );
     
-    // Mostrar toast de redirecionamento separadamente
+    // Show redirect toast separately
     setTimeout((() => {
       showToast(
         'info',
@@ -597,7 +597,7 @@ async function handleLogin(form) {
       window.location.href = './dashboard.html';
     }), 3000);
   } catch (error) {
-    // Erro no login
+    // Login error
     showToast(
       'error',
       'Erro no login',
@@ -714,7 +714,7 @@ async function handleRegister(form) {
     setFormSuccess('register');
     showToast('success', 'Conta criada!', 'Sua conta foi criada com sucesso!', 6000);
     
-    // Mostrar toast de redirecionamento separadamente
+    // Show redirect toast separately
     setTimeout((() => {
       showToast(
         'info',
@@ -727,12 +727,12 @@ async function handleRegister(form) {
     // Clear temporary data
     authState.registrationData = {};
 
-    // Redirecionar para dashboard
+    // Redirect to dashboard
     setTimeout((() => {
       window.location.href = './dashboard.html';
     }), 3000);
   } catch (error) {
-    // Erro no cadastro
+    // Registration error
     showToast(
       'error',
       'Erro no cadastro',

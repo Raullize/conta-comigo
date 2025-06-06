@@ -1,5 +1,5 @@
 /**
- * Header Component - Componente de cabeçalho para o dashboard
+ * Header Component - Dashboard header component
  */
 import { showLogoutModal, getUserData } from '../auth-utils.js';
 
@@ -69,7 +69,7 @@ class HeaderComponent {
   }
 
   /**
-   * Vincula eventos relacionados ao perfil do usuário
+   * Bind events related to user profile
    */
   bindUserProfileEvents() {
     if (!this.showUserProfile) {
@@ -100,7 +100,7 @@ class HeaderComponent {
   }
 
   /**
-   * Vincula eventos relacionados às notificações
+   * Bind events related to notifications
    */
   bindNotificationEvents() {
     if (!this.showNotifications) {

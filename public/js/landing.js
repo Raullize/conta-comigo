@@ -118,7 +118,7 @@ function smoothScrollTo(targetPosition, duration = 1200) {
     const timeElapsed = currentTime - startTime;
     const progress = Math.min(timeElapsed / duration, 1);
 
-    // Easing function para movimento mais suave (ease-in-out)
+    // Easing function for smoother movement (ease-in-out)
     const easeInOutCubic =
       progress < 0.5
         ? 4 * progress * progress * progress
