@@ -1,22 +1,21 @@
 'use strict';
 const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Investment extends Model {
     static associate(models) {
-      Investment.belongsTo(models.User, {
+      this.belongsTo(models.User, {
         foreignKey: 'user_id',
         as: 'users',
       });
-      Investment.belongsTo(models.Category, {
-        foreignKey: 'category_id',
-        as: 'categories',
-      });
+      
     }
   }
   Investment.init(
     {
-      user_id: {
+      userId: {
         type: DataTypes.INTEGER,
+        field: 'user_id',
         allowNull: false,
       },
       value: {
@@ -32,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       sequelize,
       modelName: 'Investment',
       tableName: 'investments',
+      timestamps: true,
       freezeTableName: true,
     }
   );
