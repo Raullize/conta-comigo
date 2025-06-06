@@ -46,7 +46,7 @@ class userController {
       });
     } catch (error) {
       console.error("Error we can't creat user", error);
-      return res.status(500).json({ error: 'Error internal server.' });
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 
@@ -63,7 +63,7 @@ class userController {
       return res.json(user);
     } catch (error) {
       console.error("Error, we can't find the user. ", error);
-      return res.status(500).json({ error: 'Error internal server..' });
+      return res.status(500).json({ error: 'Internal Server Error.' });
     }
   }
 
@@ -101,7 +101,7 @@ class userController {
       });
     } catch (error) {
       console.error('Error not updated:', error);
-      return res.status(500).json({ error: 'Error internal server.' });
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
   }
 }
