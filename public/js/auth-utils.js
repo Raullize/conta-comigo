@@ -112,7 +112,7 @@ async function loadUserData() {
   }
 
   try {
-    const response = await fetch('/api/users', {
+    const response = await fetch('/users', {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -127,11 +127,14 @@ async function loadUserData() {
       if (userNameElement) {
         userNameElement.textContent = userData.name || 'Usuário';
       }
+    } else if (response.status === 401) {
+      // Token expirado ou inválido
+      logoutUser();
     } else {
-      // Error loading user data
+      console.error('Erro ao carregar dados do usuário:', response.status);
     }
   } catch (error) {
-    // Request error
+    console.error('Erro na requisição:', error);
   }
 }
 
@@ -141,14 +144,8 @@ async function checkAuthentication() {
     return;
   }
 
-  try {
-    await loadUserData();
-  } catch (error) {
-    // Error loading user data
-    if (error.status === 401) {
-      logoutUser();
-    }
-  }
+  // Carrega os dados do usuário do servidor
+  await loadUserData();
 }
 
 export { isUserLoggedIn as isAuthenticated, getAuthToken, getUserData, loginUser, logoutUser, showLogoutModal, hideLogoutModal, initLogoutModalEvents, checkAuthentication, loadUserData };
