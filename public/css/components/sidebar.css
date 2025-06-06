@@ -2,6 +2,7 @@
 
 .sidebar {
   width: 280px;
+  height: 100vh;
   background-color: var(--white);
   border-right: 1px solid rgba(0, 0, 0, 0.05);
   box-shadow: var(--shadow-sm);
@@ -9,6 +10,7 @@
   z-index: var(--z-fixed);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .sidebar-header {
@@ -44,6 +46,8 @@
 .sidebar-nav {
   padding: var(--spacing-lg) 0;
   flex-grow: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .sidebar-footer {
