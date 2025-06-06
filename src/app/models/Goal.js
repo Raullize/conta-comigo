@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         as: 'users',
       });
       Goal.belongsTo(models.Category, {
-        foreignKey: 'cetegory_id',
+        foreignKey: 'category_id',
         as: 'category',
       });
     }
