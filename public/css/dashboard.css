@@ -1,6 +1,6 @@
 /* Dashboard Styles */
 
-/* Cards e Widgets */
+/* Cards and Widgets */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -45,7 +45,7 @@
   font-size: var(--font-size-xl);
 }
 
-/* Card de Saldo */
+/* Balance Card */
 .balance-card {
   grid-column: span 3;
 }
@@ -72,17 +72,17 @@
   color: #e74c3c;
 }
 
-/* Card de Gastos */
+/* Expenses Card */
 .expenses-card {
   grid-column: span 3;
 }
 
-/* Card de Investimentos */
+/* Investments Card */
 .investments-card {
   grid-column: span 3;
 }
 
-/* Card de Economia */
+/* Savings Card */
 .savings-card {
   grid-column: span 3;
 }
@@ -227,7 +227,7 @@
   background-color: #e74c3c;
 }
 
-/* Responsividade */
+/* Responsiveness */
 @media (max-width: 1200px) {
   .balance-card, .expenses-card, .investments-card, .savings-card {
     grid-column: span 6;
@@ -291,4 +291,4 @@
   }
 }
 
-/* Os estilos do modal foram movidos para common.css */
+/* Modal styles have been moved to common.css */

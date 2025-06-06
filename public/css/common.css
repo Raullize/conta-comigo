@@ -1,6 +1,6 @@
 /* Common Styles for All Pages */
 
-/* Layout Principal */
+/* Main Layout */
 .dashboard-container {
   display: flex;
   min-height: 100vh;
@@ -101,7 +101,7 @@
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Responsividade */
+/* Responsiveness */
 @media (max-width: 768px) {
   .dashboard-container {
     flex-direction: column;
