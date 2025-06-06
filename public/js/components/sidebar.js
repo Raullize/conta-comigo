@@ -1,5 +1,5 @@
 /**
- * Sidebar Component - Componente de barra lateral de navegação
+ * Sidebar Component - Navigation sidebar component
  */
 import { showLogoutModal } from '../auth-utils.js';
 

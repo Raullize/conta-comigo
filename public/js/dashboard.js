@@ -122,7 +122,7 @@ function loadFinancialData() {
   // Save data to localStorage to simulate persistence
   localStorage.setItem('financialData', JSON.stringify(financialData));
 
-  // Exibe os dados no dashboard
+  // Display data on dashboard
   displayFinancialData(financialData);
 
   return financialData;
@@ -290,11 +290,11 @@ function setupUIEvents() {
   // Configure user dropdown
   if (userAvatar && userDropdown) {
     userAvatar.addEventListener('click', e => {
-      e.stopPropagation(); // Evita que o clique se propague para o document
+      e.stopPropagation(); // Prevent click from propagating to document
       userDropdown.classList.toggle('show');
     });
 
-    // Fechar dropdown ao clicar fora dele
+    // Close dropdown when clicking outside
     document.addEventListener('click', e => {
       if (
         userDropdown.classList.contains('show') &&
