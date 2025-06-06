@@ -5,7 +5,7 @@ import Institution from '../models/Institution.js';
 
 const getDataAccount = async (req, res) => {
   const { cpf } = req.params;
-  const { institutionId } = req.query;
+  const institutionId = 1;
 
   try {
     const user = await User.findOne({ where: { cpf } });
@@ -25,7 +25,7 @@ const getDataAccount = async (req, res) => {
         .status(404)
         .json({ error: 'Account not found for this institution' });
     if (!account.consent) {
-      res.json('Not allowed');
+      return res.json('Not allowed');
     }
     const transactions = await Transaction.findAll({
       where: {
@@ -35,6 +35,7 @@ const getDataAccount = async (req, res) => {
     });
 
     res.json({
+      idBank: 4,
       cpf: user.cpf,
       institution: institution.name,
       balance: account.balance,
@@ -53,15 +54,11 @@ const getDataAccount = async (req, res) => {
 
 const updateConsent = async (req, res) => {
   const { cpf } = req.params;
-  const { institution_id, consent } = req.body;
+  const { consent } = req.body;
+  const institution_id = 1;
 
-  // Validação básica
   if (typeof consent !== 'boolean') {
-    return res.status(400).json({ error: 'use boolean (True or false)' });
-  }
-  if (!institution_id) {
-    scrollY;
-    return res.status(400).json({ error: 'insert institution_id.' });
+    return res.status(400).json({ error: 'use true or false' });
   }
 
   try {
