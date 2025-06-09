@@ -1,121 +1,45 @@
-const { where } = require('sequelize');
-const { models } = require('../../database');
-const Account = models.Account;
+// controllers/AccountImportController.js
 const axios = require('axios');
-const baseUrls = {
-  'banco_brasil' : 'http://dante-api:3002',
-  'banrisul' : 'http://lucas-api:3003',
-  'santander' : 'http://patricia-api:3004',
-  'nubank' : 'http://vitor-api:3005',
-  'bradesco' : 'http://raul-api:3006',
-  'sicredi' : 'http://caputi-api:3001'
-}
-  
-class accountController {
-  async createAccount(req, res) {
-    const userId = req.userId;
-    const { institution } = req.body;
+const { models } = require('../../database');
+const { Account, Institution } = models;
 
-    if (!userId) {
-      return res.status(404).json({ error: "The user doesn't exists" });
-    }
+const accountController = {
+  async importarContaDoBanco(req, res) {
+    const { cpf } = req.params;
 
-    if (!institution) {
-      return res
-        .status(400)
-        .json({ error: 'Missing required account fields.' });
-    }
+    // Usar IPv4 explicitamente
+    const bancoUrl = `http://localhost:4005/open-finance/${cpf}`;
 
     try {
-      const accountExists = await Account.findOne({
-        where: {
-          userId,
-          institution,
-        },
+      const response = await axios.get(bancoUrl);
+      const { idBank, institution, balance } = response.data;
+
+      const instituicao = await Institution.findOrCreate({
+        where: { name: institution },
+        defaults: { name: institution },
       });
 
-      if (accountExists) {
-        return res
-          .status(400)
-          .json({ error: 'This account already exists for this user.' });
-      }
-
-      const newAccount = await Account.create({
-        userId,
-        institution,
+      const [account] = await Account.upsert({
+        user_cpf: cpf,
+        institution_id: instituicao[0].id,
+        balance: parseFloat(balance),
+        consent: true,
       });
 
-      return res.status(201).json(newAccount);
+      return res.json({
+        idBank: account.institution_id,
+        cpf: account.user_cpf,
+        institution: instituicao[0].name,
+        balance: account.balance.toFixed(2),
+      });
     } catch (error) {
-      return res
-        .status(500)
-        .json({ erro: 'Failed to creater account.', detalhe: error.message });
-    }
-  }
-
-  async updateAccount(req, res) {
-    const { id } = req.params;
-    const userId = req.userId;
-
-    try {
-      const account = await Account.findOne({
-        where: { id, userId },
+      console.error('Erro:', error.message);
+      return res.status(500).json({
+        error: 'Falha ao importar dados do banco',
+        details: error.message,
       });
-
-      if (!account) {
-        return res.status(404).json({
-          error: 'Account not found or does not belong to this user.',
-        });
-      }
-
-      const updateAccount = await account.update(req.body);
-
-      return res.json(updateAccount);
-    } catch (error) {
-      return res.status(500).json({ eroor: 'Failed to update account.' });
     }
-  }
+  },
+};
 
-  async getAllAccounts(req, res) {
-    try {
-      const account = await Account.findOne({
-        where: { id, userId },
-      });
-
-      if (!account) {
-        return res.status(404).json({
-          error: 'Account not found or does not belong to this user.',
-        });
-      }
-
-      return res.json(account);
-    } catch (error) {
-      return res.status(500).json({ eroor: 'Failed to update account.' });
-    }
-  }
-
-  async deleteAccount(req, res) {
-    const { id } = req.params;
-    const userId = req.userId;
-
-    try {
-      const account = await Account.findOne({
-        where: { id, userId },
-      });
-
-      if (!account) {
-        return res.status(404).json({
-          error: 'Account not found or does not belong to this user.',
-        });
-      }
-
-      await account.destroy();
-
-      return res.status(204).send();
-    } catch (error) {
-      return res.status(500).json({ error: 'Failed to delete account.' });
-    }
-  }
-}
-
-module.exports = new accountController();
+module.exports = accountController;

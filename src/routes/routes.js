@@ -2,7 +2,6 @@ const { Router } = require('express');
 const path = require('path');
 
 const authMiddleware = require('../app/middlewares/authMiddleware');
-
 const userController = require('../app/controllers/userController');
 const sessionController = require('../app/controllers/sessionController');
 const categoryController = require('../app/controllers/categoryController');
@@ -14,13 +13,13 @@ const routes = new Router();
 routes.post('/users', userController.store);
 routes.post('/sessions', sessionController.store);
 
-// Tudo abaixo dessa rota vai trancar, tem que por token
+// Rotas autenticadas
 routes.use(authMiddleware);
 
 routes.get('/users', userController.show);
 routes.put('/users', userController.update);
 routes.post('/category', categoryController.createCategory);
 
-routes.post('/account', accountController.createAccount);
+routes.post('/accounts/import/:cpf', accountController.importarContaDoBanco);
 
 module.exports = routes;

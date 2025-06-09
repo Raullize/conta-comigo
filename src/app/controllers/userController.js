@@ -12,9 +12,7 @@ class userController {
       });
 
       if (userExistsByEmail) {
-        return res
-          .status(400)
-          .json({ error: 'The user already exists' });
+        return res.status(400).json({ error: 'The user already exists' });
       }
 
       // Verificar se o usuário já existe por CPF
@@ -23,17 +21,14 @@ class userController {
       });
 
       if (userExistsByCpf) {
-        return res
-          .status(400)
-          .json({ error: 'This CPF already exists' });
+        return res.status(400).json({ error: 'This CPF already exists' });
       }
 
-      // Criar o usuário
       const user = await User.create({
         name,
         cpf,
         email,
-        birth_date,
+        birthDate: birth_date,
         password,
       });
 

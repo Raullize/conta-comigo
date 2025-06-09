@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.init(
     {
-      cpf:{
+      cpf: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
@@ -39,8 +39,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       birthDate: {
         type: DataTypes.DATE,
+        allowNull: false,
         field: 'birth_date',
-        allowNull: false, 
       },
       password: {
         type: DataTypes.STRING,
