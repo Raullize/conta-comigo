@@ -18,6 +18,10 @@ module.exports = {
       instituicaoId: {
         type: Sequelize.INTEGER
       },
+      consent: {
+          type: Sequelize.BOOLEAN,
+          defaultValue: false,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
