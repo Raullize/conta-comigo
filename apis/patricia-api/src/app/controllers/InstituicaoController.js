@@ -3,6 +3,11 @@ import Instituicao from './models/Instituicao.js';
 
 class InstituicaoController{
   async store(req,res){
+    const existingInstitution = await Instituicao.findOne();
+
+    if (existingInstitution) {
+        return res.status(400).json({ error: 'Permitido apenas o cadastro de uma instituição.' });
+    };
     const schema = Yup.object().shape({
       nome: Yup.string().required().test((value)=>{
         return /^[a-z\s]+$/.test(value);
@@ -12,15 +17,6 @@ class InstituicaoController{
 
     if(!(await schema.isValid(req.body))){
       return res.status(400).json({error: 'Falha na validação, o nome precisa ser sem acento e com letras minusculas.'})
-    }
-
-
-    const instituicaoExists = await Instituicao.findOne({
-      where: {nome: req.body.nome }
-    });
-
-    if(instituicaoExists){
-      return res.status(400).json({ error: 'Essa instituição já existe'})
     }
 
 

@@ -4,6 +4,13 @@ class Conta extends Model {
   static init(sequelize){
     super.init(
       {
+        id: {
+          type: Sequelize.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+        },
+        user_cpf: Sequelize.STRING,
+        consent: sequelize.BOOLEAN,
         numero: Sequelize.STRING,
         saldo: Sequelize.DECIMAL,
         instituicao_id: Sequelize.INTEGER,

@@ -2,6 +2,11 @@ const { Instituicao } = require('../models');
 
 exports.criarInstituicao = async (req, res) => {
   try {
+    const existingInstitution = await Instituicao.findOne();
+
+    if (existingInstitution) {
+      return res.status(400).json({ error: 'Permitido apenas o cadastro de uma instituição.' });
+    };
     const { nome } = req.body;
     const instituicao = await Instituicao.create({ nome });
     res.status(201).json(instituicao);
@@ -24,7 +29,6 @@ exports.atualizarInstituicao = async (req, res)=> {
     res.status(500).json({ erro: "Erro ao atualizar a instituição" });
   }
 }
-
 
 exports.deletarInstituicao = async (req, res) => {
   try {

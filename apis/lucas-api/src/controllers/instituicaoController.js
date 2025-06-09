@@ -2,6 +2,11 @@ const { Instituicao } = require('../../models');
 
 module.exports = {
     async criarInstituicao(req, res) {
+        const existingInstitution = await Instituicao.findOne();
+
+    if (existingInstitution) {
+        return res.status(400).json({ error: 'Permitido apenas o cadastro de uma instituição.' });
+    };
         try {
             const { nome } = req.body;
             const id = 2;

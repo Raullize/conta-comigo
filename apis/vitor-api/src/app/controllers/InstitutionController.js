@@ -4,6 +4,12 @@ import Institution from "../models/Institution.js";
 class InstitutionController {
   async store(req, res) {
     try {
+      const existingInstitution = await Institution.findOne();
+
+      if (existingInstitution) {
+          return res.status(400).json({ error: 'Permitido apenas o cadastro de uma instituição.' });
+      };
+
       const institutionExists = await Institution.findOne({
         where: { name: req.body.name },
       });
