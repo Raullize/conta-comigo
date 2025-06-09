@@ -1,11 +1,18 @@
 module.exports = {
-  up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('contas', {
+ async up (queryInterface, Sequelize) {
+    await queryInterface.createTable('contas', {
       id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+      },
+      user_cpf: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        references: { model: 'users', key: 'cpf' },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL', 
       },
       numero: {
         type: Sequelize.STRING,
@@ -15,14 +22,11 @@ module.exports = {
         type: Sequelize.DECIMAL,
         defaultValue: 0,
       },
-      usuario_id: {
-        type: Sequelize.INTEGER,
-        references: {model: 'users', key: 'id'},
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
-        allowNull: false,
+      consent: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
-      instituicao_id: {
+        instituicao_id: {
         type: Sequelize.INTEGER,
         references: {model: 'instituicao', key: 'id'},
         onUpdate: 'CASCADE',
@@ -37,9 +41,17 @@ module.exports = {
         type: Sequelize.DATE,
         allowNull: false,
       },
-    });
+     },
+     { 
+      uniqueKeys: {
+          unique_user_instituicao: {
+            fields: ['user_cpf', 'instituicao_id'],
+          },
+        },
+     }
+    );
   },
-  down: (queryInterface) => {
-    return queryInterface.dropTable('contas');
+  async down (queryInterface) {
+    await queryInterface.dropTable('contas');
   },
 };
