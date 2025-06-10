@@ -1,12 +1,12 @@
-import User from '../models/User.js';
-import Conta from '../models/Conta.js'; 
-import Transacao from '../models/Transacao.js'; 
-import Instituicao from '../models/Instituicao.js'; 
+import User from './models/User.js';
+import Conta from './models/Conta.js'; 
+import Transacao from './models/Transacao.js'; 
+import Instituicao from './models/Instituicao.js'; 
 
 
 const getDataAccount = async (req, res) => {
   const { cpf } = req.params;
-  const institutionId = 3;
+  const institutionId = 1;
 
   try {
     const user = await User.findOne({ where: { cpf } });
@@ -38,7 +38,7 @@ const getDataAccount = async (req, res) => {
     });
 
     res.json({
-      idBank: institution.id, 
+      idBank: 3, 
       cpf: user.cpf,
       institution: institution.name,
       balance: account.balance,
@@ -59,7 +59,7 @@ const getDataAccount = async (req, res) => {
 const updateConsent = async (req, res) => {
   const { cpf } = req.params;
   const { consent } = req.body;
-  const institution_id = 3; 
+  const institution_id = 1; 
 
   if (typeof consent !== 'boolean') {
     return res.status(400).json({ error: 'Consent value must be true or false' });
@@ -83,7 +83,7 @@ const updateConsent = async (req, res) => {
     res.json({
       message: 'Consent updated successfully.',
       cpf: account.user_cpf,
-      institution_id: account.institution_id,
+      institution_id: 3,
       consent: account.consent,
     });
   } catch (error) {
