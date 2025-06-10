@@ -4,7 +4,7 @@ const User = models.User;
 class userController {
   async store(req, res) {
     try {
-      const { name, cpf, email, birth_date, password } = req.body;
+      const { name, cpf, email, birthDate, password } = req.body;
 
       // Verificar se o usuário já existe por e-mail
       const userExistsByEmail = await User.findOne({
@@ -33,7 +33,7 @@ class userController {
         name,
         cpf,
         email,
-        birth_date,
+        birthDate,
         password,
       });
 
@@ -42,7 +42,7 @@ class userController {
         name: user.name,
         cpf: user.cpf,
         email: user.email,
-        birth_date: user.birth_date,
+        birthDate: user.birthDate,
       });
     } catch (error) {
       console.error("Error we can't creat user", error);
@@ -53,7 +53,7 @@ class userController {
   async show(req, res) {
     try {
       const user = await User.findByPk(req.userId, {
-        attributes: ['id', 'name', 'cpf', 'email', 'birth_date'],
+        attributes: ['id', 'name', 'cpf', 'email', 'birthDate'],
       });
 
       if (!user) {
