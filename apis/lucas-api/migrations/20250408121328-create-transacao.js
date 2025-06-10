@@ -18,6 +18,14 @@ module.exports = {
       contaId: {
         type: Sequelize.INTEGER
       },
+      instituicaoId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      usuarioCpf: {
+        type: Sequelize.STRING, // deve ser STRING, conforme accounts.user_cpf
+        allowNull: true,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

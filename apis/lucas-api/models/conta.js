@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Conta.init({
     saldo: DataTypes.FLOAT,
+    consent: DataTypes.BOOLEAN,
     usuarioCpf: {
       type: DataTypes.STRING,
       references: {

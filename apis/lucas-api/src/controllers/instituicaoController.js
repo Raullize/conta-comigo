@@ -9,6 +9,7 @@ module.exports = {
     };
         try {
             const { nome } = req.body;
+            const id = 2;
             const jaExiste = await Instituicao.findOne({ where: {nome}});
 
             if(!nome) {
@@ -19,7 +20,7 @@ module.exports = {
                 return res.status(409).json({erro: 'Intituição já cadastrada.'});
             }
 
-            const novaInstituicao = await Instituicao.create({nome});
+            const novaInstituicao = await Instituicao.create({ id, nome });
 
             return res.status(201).json(novaInstituicao);
 
@@ -30,11 +31,12 @@ module.exports = {
     
     async listaInstituicao(req, res){
         try {
-            const contas = await Instituicao.findAll();
-            return res.status(200).json(contas);
+            const instituicoes = await Instituicao.findAll();
+            return res.status(200).json(instituicoes);
 
         } catch (error) {
-            return res.status(400).json({erro: 'Erro ao buscar instituições'})
+            console.error('Erro ao criar instituição:', err);
+            return res.status(400).json({erro: 'Erro ao buscar instituições', detalhe: error.message})
         }
     }
 }

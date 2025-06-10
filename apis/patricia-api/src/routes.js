@@ -7,6 +7,8 @@ import SessionController from './app/controllers/SessionController.js';
 import InstituicaoController from './app/controllers/InstituicaoController.js';
 import ContaController from './app/controllers/ContaController.js';
 import TransacaoController from './app/controllers/TransacaoController.js';
+import { getDataAccount } from '../app/controllers/openFinanceController.js';
+import { updateConsent } from './app/controllers/openFinanceController.js';
 
 const routes = new Router();
 
@@ -21,7 +23,8 @@ routes.post('/users',UserController.store);
 routes.post('/sessions',SessionController.store);
 
 //rota open finance
-
+routes.get ('/open-finance/:cpf', getDataAccount);
+routes.patch('/open-finance/:cpf/consent', updateConsent);
 
 //precisa autenticar.
 

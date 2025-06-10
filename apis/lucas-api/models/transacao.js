@@ -6,10 +6,16 @@ module.exports = (sequelize, DataTypes) => {
 
     static associate(models) {
       Transacao.belongsTo(models.Conta, { foreignKey: 'contaId', as: 'contas' });
+      Transacao.belongsTo(models.Instituicao, { foreignKey: 'instituicaoId', as: 'instituicao' });
     }
 
   }
   Transacao.init({
+    usuarioCpf: DataTypes.STRING,
+    instituicaoId: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     tipo: DataTypes.STRING,
     valor: DataTypes.FLOAT,
     contaId: DataTypes.INTEGER

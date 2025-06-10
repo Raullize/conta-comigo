@@ -6,7 +6,7 @@ module.exports = {
     async criaTransacao(req, res) {
         try {
             const { cpf } = req.params;
-            const { tipo, valor, contaId } = req.body;
+            const { tipo, valor, contaId, instituicaoId } = req.body;
             const usuario = await Usuario.findByPk(cpf);
 
 
@@ -15,12 +15,14 @@ module.exports = {
             }
 
             const conta = await Conta.findOne({
-                where: { id: contaId, usuarioCpf: cpf }
+                where: { id: contaId, usuarioCpf: cpf, instituicaoId: instituicaoId }
             });
 
             if (!conta) {
-                return res.status(404).json({ erro: 'Conta não encontrada' });
+                return res.status(404).json({ erro: 'Conta não encontrada', detalhe: error.message });
             }
+
+            //const instituicaoDaConta = conta.instituicaoId;
 
             if (tipo !== 'entrada' && tipo !== 'saida') {
                 return res.status(404).json({ erro: 'Tipo de transação não aceito' })
@@ -37,15 +39,28 @@ module.exports = {
 
             await conta.save();
 
+            console.log("Valores para Transacao.create:", {
+                instituicaoId: instituicaoId,
+                tipo: tipo,
+                valor: valor,
+                contaId: contaId,
+                usuarioCpf: cpf
+            });
+
+
             const novaTransacao = await Transacao.create({
+                instituicaoId: instituicaoId,
                 tipo,
                 valor,
-                contaId
+                contaId,
+                usuarioCpf: cpf
             });
 
             return res.status(201).json(novaTransacao);
 
         } catch (error) {
+            console.log("instituicaoId da conta:", conta.instituicaoId);
+            console.error("ERRO COMPLETO AO CRIAR TRANSAÇÃO:", error);
             return res.status(500).json({ erro: 'Erro ao criar transação', detalhe: error.message })
         }
     },
