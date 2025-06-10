@@ -35,7 +35,7 @@ class ContaController{
     const { numero, instituicao_id } = req.body;
     try {
     const contas = await Conta.create({
-      usuario_id: req.userId,
+      user_cpf: req.user_cpf,
       numero,
       instituicao_id,
       saldo: 0,

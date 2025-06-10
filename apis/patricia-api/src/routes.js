@@ -7,8 +7,7 @@ import SessionController from './app/controllers/SessionController.js';
 import InstituicaoController from './app/controllers/InstituicaoController.js';
 import ContaController from './app/controllers/ContaController.js';
 import TransacaoController from './app/controllers/TransacaoController.js';
-import { getDataAccount } from '../app/controllers/openFinanceController.js';
-import { updateConsent } from './app/controllers/openFinanceController.js';
+import { getDataAccount, updateConsent } from './app/controllers/openFinanceController.js';
 
 const routes = new Router();
 
