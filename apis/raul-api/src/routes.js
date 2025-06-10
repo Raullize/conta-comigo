@@ -2,6 +2,8 @@ import { Router } from 'express';
 
 import authMiddleware from './app/middlewares/auth.js';
 
+import { getDataAccount } from './app/controllers/openFinanceController.js';
+import { updateConsent } from './app/controllers/openFinanceController.js';
 import BalanceController from './app/controllers/BalanceController.js';
 import BankAccountController from './app/controllers/BankAccountController.js';
 import SessionController from './app/controllers/SessionController.js';
@@ -13,6 +15,10 @@ const routes = new Router();
 // Rotas públicas
 routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
+
+// Open finance
+routes.get('/open-finance/:cpf', getDataAccount);
+routes.patch('/open-finance/:cpf/consent', updateConsent);
 
 // Todas as rotas abaixo necessitam de autenticação
 routes.use(authMiddleware);
