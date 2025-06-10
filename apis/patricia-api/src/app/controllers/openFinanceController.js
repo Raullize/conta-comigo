@@ -55,7 +55,7 @@ const getDataAccount = async (req, res) => {
   }
 };
 
-// Função renomeada para evitar conflito
+
 const updateConsent = async (req, res) => {
   const { cpf } = req.params;
   const { consent } = req.body;
