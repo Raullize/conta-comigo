@@ -675,6 +675,31 @@ input:checked + .toggle-slider:before {
 }
 
 /* Open Finance Section Improvements */
+/* Open Finance Styles */
+.connect-new-account {
+    text-align: center;
+    padding: var(--spacing-xl);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: var(--spacing-lg);
+}
+
+.connect-new-account .btn {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.connect-new-account .btn i {
+    margin-right: var(--spacing-sm);
+}
+
+.connect-description {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
 .account-item {
   display: flex;
   justify-content: space-between;

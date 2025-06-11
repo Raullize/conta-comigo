@@ -104,6 +104,12 @@ function setupEventListeners() {
 
     // Individual Disconnect Buttons
     setupIndividualDisconnectButtons();
+    
+    // Connect New Account Button
+    const connectNewAccountBtn = document.getElementById('connectNewAccountBtn');
+    if (connectNewAccountBtn) {
+        connectNewAccountBtn.addEventListener('click', handleConnectNewAccount);
+    }
 
     // Delete Account Button
     const deleteBtn = document.getElementById('deleteAccountBtn');
@@ -500,6 +506,20 @@ function handleSingleDisconnect() {
     // Here you would implement the actual API call to disconnect the specific bank
     // Example:
     // disconnectSpecificBank(bankName);
+}
+
+// Handle Connect New Account
+function handleConnectNewAccount() {
+    // This is just visual for now as requested
+    showToast('Funcionalidade de vinculação de nova conta em desenvolvimento', 'info');
+    
+    // Here you would implement the actual Open Finance connection flow
+    // Example:
+    // 1. Redirect to Open Finance authorization
+    // 2. Handle callback with authorization code
+    // 3. Exchange code for access token
+    // 4. Fetch account data and update UI
+    // window.location.href = '/api/openfinance/authorize';
 }
 
 // Show Delete Modal
