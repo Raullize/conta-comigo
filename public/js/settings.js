@@ -168,6 +168,24 @@ function setupModalEventListeners() {
             hideDeleteModal();
         }
     });
+
+    // Close modals with ESC key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            // Check which modal is open and close it
+            if (disconnectModal && disconnectModal.classList.contains('show')) {
+                hideDisconnectModal();
+            }
+            if (deleteAccountModal && deleteAccountModal.classList.contains('show')) {
+                hideDeleteModal();
+            }
+            // Check for single disconnect modal
+            const singleDisconnectModal = document.getElementById('disconnectSingleModal');
+            if (singleDisconnectModal && singleDisconnectModal.classList.contains('show')) {
+                hideSingleDisconnectModal();
+            }
+        }
+    });
 }
 
 // Load User Data
