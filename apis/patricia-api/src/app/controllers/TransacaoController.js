@@ -27,9 +27,10 @@ class TransacaoController {
       {return res.status(400).json ({error: 'Essa conta não existe.'});
     }
 
-    if (conta.usuario_id !== req.userId) {
+    if (conta.user_cpf !== req.userId) { //alterei pra nao puxar pelo usuario_id até pq n tem essa coluna
       return res.status(403).json({ error: 'Você não tem permissão para operar nesta conta.' });
     }
+
 
     let cpfDoUser = "CPF não encontrado";
     if (conta.usuario_id){
