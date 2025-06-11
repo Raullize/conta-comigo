@@ -1,45 +1,30 @@
-// controllers/AccountImportController.js
 const axios = require('axios');
-const { models } = require('../../database');
-const { Account, Institution } = models;
+const { User } = require('../models/User');
+const jwt = require('jsonwebtoken');
 
-const accountController = {
-  async importarContaDoBanco(req, res) {
-    const { cpf } = req.params;
-
-    // Usar IPv4 explicitamente
-    const bancoUrl = `http://localhost:4005/open-finance/${cpf}`;
-
+class accountController {
+  static async createAccount(req, res) {
     try {
-      const response = await axios.get(bancoUrl);
-      const { idBank, institution, balance } = response.data;
+      const idBank = req.params.idBank;
+      const { cpf } = req.body;
 
-      const instituicao = await Institution.findOrCreate({
-        where: { name: institution },
-        defaults: { name: institution },
-      });
+      const banksList = {
+        1: process.env.DANTE_API_URL,
+        2: process.env.LUCAS_API_URL,
+        3: process.env.PATRICIA_API_URL,
+        4: process.env.VITOR_API_URL,
+        5: process.env.RAUL_API_URL,
+        6: process.env.CAPUTI_API_URL,
+      };
 
-      const [account] = await Account.upsert({
-        user_cpf: cpf,
-        institution_id: instituicao[0].id,
-        balance: parseFloat(balance),
-        consent: true,
-      });
+      const url = `${banksList[idBank]}/open-finance/${cpf}`;
 
-      return res.json({
-        idBank: account.institution_id,
-        cpf: account.user_cpf,
-        institution: instituicao[0].name,
-        balance: account.balance.toFixed(2),
-      });
+      const response = await axios.get(url, { timeout: 5000 });
+      return res.json(response.data);
     } catch (error) {
-      console.error('Erro:', error.message);
-      return res.status(500).json({
-        error: 'Falha ao importar dados do banco',
-        details: error.message,
-      });
+      res.json('Usuario não encontrado');
     }
-  },
-};
+  }
+}
 
 module.exports = accountController;

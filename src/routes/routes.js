@@ -6,7 +6,6 @@ const userController = require('../app/controllers/userController');
 const sessionController = require('../app/controllers/sessionController');
 const categoryController = require('../app/controllers/categoryController');
 const accountController = require('../app/controllers/accountController');
-
 const routes = new Router();
 
 // Rotas públicas
@@ -20,6 +19,6 @@ routes.get('/users', userController.show);
 routes.put('/users', userController.update);
 routes.post('/category', categoryController.createCategory);
 
-routes.post('/accounts/import/:cpf', accountController.importarContaDoBanco);
+routes.get('/open-finance/:idBank', accountController.createAccount);
 
 module.exports = routes;

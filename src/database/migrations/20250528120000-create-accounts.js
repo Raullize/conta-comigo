@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('accounts', {
@@ -8,16 +6,23 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true,
       },
-      user_id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: 'users',
-          key: 'id',
-        },
-      },
-      institution: {
+      user_cpf: {
         type: Sequelize.STRING,
+        allowNull: false,
+        references: { model: 'users', key: 'cpf' },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+      },
+      balance: {
+        type: Sequelize.DECIMAL,
+        defaultValue: 0.0,
+      },
+      consent: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+      idBank: {
+        type: Sequelize.INTEGER, // Corrigido para INTEGER
         allowNull: false,
       },
       created_at: {
@@ -28,6 +33,12 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
+    });
+
+    await queryInterface.addConstraint('accounts', {
+      fields: ['user_cpf', 'idBank'],
+      type: 'unique',
+      name: 'accounts_user_cpf_idBank_key',
     });
   },
 

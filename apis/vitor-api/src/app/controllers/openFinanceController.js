@@ -44,6 +44,7 @@ const getDataAccount = async (req, res) => {
         date: transaction.date,
         description: transaction.description,
         value: transaction.value,
+        idBank: 4,
       })),
     });
   } catch (error) {

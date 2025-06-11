@@ -1,41 +1,29 @@
 'use strict';
 const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
-  class Account extends Model {
-    static associate(models) {
-      this.belongsTo(models.User, {
-        foreignKey: 'id',
-        as: 'user',
-      });
-    }
-  }
+  class Account extends Model {}
+
   Account.init(
     {
-      userId: {
+      id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        field: 'user_id',
-        references: { model: 'users', key: 'id' },
+        primaryKey: true,
+        autoIncrement: true,
       },
-      institution: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+      idBank: DataTypes.INTEGER,
+      user_cpf: DataTypes.STRING,
+      balance: DataTypes.DECIMAL,
+      consent: DataTypes.BOOLEAN,
     },
     {
       sequelize,
       modelName: 'Account',
       tableName: 'accounts',
-      freezeTableName: true,
+      timestamps: true,
+      underscored: true,
     }
   );
 
-  Account.associate = (models) => {
-  Account.belongsTo(models.User, {
-    foreignKey: 'userId', 
-    as: 'user',
-    })
-  }
-
   return Account;
-}
+};
