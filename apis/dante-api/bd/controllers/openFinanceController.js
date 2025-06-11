@@ -1,9 +1,9 @@
-const { Usuario: User, Instituicao: Institution, Transacao: Transaction, Conta: Account } = require('../../models');
+const { Usuario: User, Instituicao: Institution, Transacao: Transaction, Conta: Account } = require('../models');
 
 
 const getDataAccount = async (req, res) => {
   const { cpf } = req.params;
-  const institution_id = 1;
+  const instituicaoId = 1;
 
   try {
     const user = await User.findOne({ where: { cpf } });
@@ -16,30 +16,30 @@ const getDataAccount = async (req, res) => {
       return res
         .status(404)
         .json({ error: 'Account not found for this institution' });
-    
+
     const institution = await Institution.findOne({
-      where: { id: account.instituicaoId },
+      where: { id: instituicaoId },
     });
     if (!institution)
       return res.status(404).json({ error: 'Institution not found' });
-
+        
     if (!account.consent) {
-      return res.json('Not allowed');
+      return res.status(403).json({ error: 'Consent not granted by the user.' });
     }
 
     const transactions = await Transaction.findAll({
       where: {
         usuarioCpf: account.usuarioCpf,
-        instituicaoId: account.instituicaoId,
+        instituicaoId: institution.id,
       },
     });
 
     res.json({
-      idBank: 2,
+      idBank: 1, 
       cpf: user.cpf,
       institution: institution.nome,
       balance: account.saldo,
-      transactions: transactions.map(transaction => ({
+      transacoes: transactions.map(transaction => ({
         id: transaction.id,
         date: transaction.data,
         description: transaction.descricao,
@@ -47,18 +47,19 @@ const getDataAccount = async (req, res) => {
       })),
     });
   } catch (error) {
-    // console.error('Error updating consent.:', error);
+    console.error('Error getting account data for bank 1:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
+
 const updateConsent = async (req, res) => {
   const { cpf } = req.params;
   const { consent } = req.body;
-  const institution_id = 2;
+  const institution_id = 1; 
 
   if (typeof consent !== 'boolean') {
-    return res.status(400).json({ error: 'use true or false' });
+    return res.status(400).json({ error: 'Consent value must be true or false' });
   }
 
   try {
@@ -83,7 +84,7 @@ const updateConsent = async (req, res) => {
       consent: account.consent,
     });
   } catch (error) {
-    console.error('Error updating consent:', error);
+    console.error('Error updating consent for bank 3:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 };

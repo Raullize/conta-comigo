@@ -1,14 +1,24 @@
+const { where } = require('sequelize');
 const { Conta } = require('../models');
+const { Usuario } = require('../models');
+const usuario = require('../models/usuario');
 
 exports.criarConta = async (req, res) => {
   try {
     const { id } = req.params; // ID usuário
-    const { instituicaoId, saldo } = req.body;
+    const { instituicaoId, saldo, consent } = req.body;
+    const busca_usuario = await Usuario.findByPk(id);
+
+    
+    const cpf = busca_usuario ? busca_usuario.cpf : null;
+   
 
     const conta = await Conta.create({
       usuarioId: id,
       instituicaoId,
       saldo: saldo || 0,
+      consent, 
+      usuarioCpf: cpf
     });
 
     res.status(201).json(conta);

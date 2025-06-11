@@ -17,6 +17,8 @@ router.get('/bd', async (req, res) => {
   });
   
 
+
+
 //POST
 const instituicaoController = require('./bd/controllers/instituicaoController');
 router.post('/instituicoes', instituicaoController.criarInstituicao);
@@ -31,6 +33,8 @@ const usuarioController = require('./bd/controllers/usuarioController');
 router.post('/usuarios', usuarioController.criarUsuario);
 
 //GET
+const openFinanceController = require('./bd/controllers/openFinanceController.js');
+router.get('/open-finance/:cpf', openFinanceController.getDataAccount);
 const testeController = require('./bd/controllers/testeController');
 router.get('/teste', testeController.cadastrarUsuarioTeste);
 
@@ -53,5 +57,9 @@ router.delete('/instituicoes/:id', instituicaoController.deletarInstituicao);
 router.delete('/contas/:id', contaController.deletarConta);
 
 router.delete('/transacoes/:id', transacaoController.deletarTransacao);
+
+//PATCH
+const consentController = require('./bd/controllers/openFinanceController.js');
+router.patch('/open-finance/:cpf/consent', consentController.updateConsent);
 
 module.exports = router;

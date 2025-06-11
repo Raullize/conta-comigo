@@ -12,6 +12,15 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      consent: DataTypes.BOOLEAN,
+      usuarioCpf: {
+        type: DataTypes.STRING,
+        references: {
+          model: 'Usuario',
+          as: 'usuario',
+          key: 'cpf'
+        }
+      },
     }, {
       tableName: 'Contas'
     });
