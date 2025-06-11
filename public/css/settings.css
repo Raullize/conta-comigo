@@ -618,6 +618,62 @@ input:checked + .toggle-slider:before {
   margin-right: var(--spacing-sm);
 }
 
+/* Modal Improvements */
+.modal-body ul {
+  margin: var(--spacing-lg) 0;
+  padding-left: var(--spacing-xl);
+}
+
+.modal-body ul li {
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.5;
+}
+
+.modal-body p {
+  margin-bottom: var(--spacing-md);
+  line-height: 1.6;
+}
+
+.warning-message {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.warning-message i {
+  color: #856404;
+  font-size: var(--font-size-lg);
+}
+
+.warning-message h4 {
+  margin: 0;
+  color: #856404;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+}
+
+.confirmation-input {
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-input label {
+  display: block;
+  margin-bottom: var(--spacing-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.confirmation-input .form-input {
+  margin-top: var(--spacing-sm);
+}
+
 @media (max-width: 768px) {
   .settings-nav {
     justify-content: center;

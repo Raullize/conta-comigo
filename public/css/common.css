@@ -84,7 +84,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: var(--spacing-xl) var(--spacing-2xl);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -107,14 +107,14 @@
 }
 
 .modal-body {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-xl) var(--spacing-2xl);
 }
 
 .modal-footer {
   display: flex;
   justify-content: flex-end;
   gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: var(--spacing-xl) var(--spacing-2xl);
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
