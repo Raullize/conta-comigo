@@ -37,10 +37,16 @@ class HeaderComponent {
   }
 
   renderUserProfile() {
+    const userData = getUserData();
+    const profileImage = userData?.profileImage;
+    
     return `
             <div class="user-profile">
                 <div class="user-avatar">
-                    <i class="fas fa-user"></i>
+                    ${profileImage ? 
+                        `<img src="${profileImage}" alt="Foto de perfil" class="profile-image">` : 
+                        `<i class="fas fa-user"></i>`
+                    }
                 </div>
                 <div class="user-dropdown" id="userDropdown">
                     <a href="settings.html" class="dropdown-item">
@@ -61,6 +67,22 @@ class HeaderComponent {
     this.bindEvents();
     // Uses getUserData function from auth-utils.js to display user name
     this.updateUserName();
+    // Update profile photo if exists
+    this.updateProfilePhoto();
+  }
+  
+  updateProfilePhoto() {
+    const userData = getUserData();
+    const profileImage = userData?.profileImage;
+    const userAvatar = document.querySelector('.user-avatar');
+    
+    if (userAvatar) {
+      if (profileImage) {
+        userAvatar.innerHTML = `<img src="${profileImage}" alt="Foto de perfil" class="profile-image">`;
+      } else {
+        userAvatar.innerHTML = '<i class="fas fa-user"></i>';
+      }
+    }
   }
 
   bindEvents() {

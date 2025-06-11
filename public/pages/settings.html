@@ -60,6 +60,28 @@
                                     
                                     <div class="settings-card">
                             <form id="profileForm" class="profile-form">
+                                <div class="form-row profile-photo-section">
+                                    <div class="form-group profile-photo-group">
+                                        <label class="form-label">Foto de Perfil</label>
+                                        <div class="profile-photo-container">
+                                            <div class="profile-photo-preview" id="profilePhotoPreview">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div class="profile-photo-actions">
+                                                <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;">
+                                                <button type="button" class="btn btn-secondary" id="uploadPhotoBtn">
+                                                    <i class="fas fa-camera"></i>
+                                                    Alterar Foto
+                                                </button>
+                                                <button type="button" class="btn btn-outline" id="removePhotoBtn" style="display: none;">
+                                                    <i class="fas fa-trash"></i>
+                                                    Remover
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label for="fullName" class="form-label">Nome Completo</label>

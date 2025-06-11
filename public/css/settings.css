@@ -92,7 +92,68 @@
 
 /* Espaçamento maior entre senha atual e nova senha */
 #security-section .form-row {
-  margin-top: var(--spacing-xl);
+    margin-top: var(--spacing-xl);
+}
+
+/* Profile Photo Section */
+.profile-photo-section {
+    justify-content: center;
+    margin-bottom: var(--spacing-xl);
+    display: flex;
+    width: 100%;
+}
+
+.profile-photo-group {
+    text-align: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-photo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.profile-photo-preview {
+    width: 140px;
+    height: 140px;
+    border-radius: var(--border-radius-full);
+    background-color: var(--primary-green);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    overflow: hidden;
+    border: 4px solid var(--border-color);
+    transition: all var(--transition-fast);
+    box-shadow: var(--shadow-md);
+}
+
+.profile-photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-photo-preview:hover {
+    border-color: var(--primary-green);
+}
+
+.profile-photo-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.profile-photo-actions .btn {
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
 }
 
 .form-input:focus {

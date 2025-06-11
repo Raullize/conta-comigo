@@ -92,6 +92,14 @@
   align-items: center;
   justify-content: center;
   font-weight: 600;
+  overflow: hidden;
+}
+
+.user-avatar .profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--border-radius-full);
 }
 
 /* User Dropdown Menu */
@@ -186,7 +194,14 @@
   }
   
   .user-avatar {
-    width: 36px;
-    height: 36px;
-  }
+        width: 36px;
+        height: 36px;
+    }
+    
+    .user-avatar .profile-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: var(--border-radius-full);
+    }
 }

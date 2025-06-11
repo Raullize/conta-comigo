@@ -15,6 +15,12 @@ const DOM = {
     cpfInput: document.getElementById('cpf'),
     birthDateInput: document.getElementById('birthDate'),
     
+    // Profile Photo Elements
+    profilePhotoInput: document.getElementById('profilePhotoInput'),
+    profilePhotoPreview: document.getElementById('profilePhotoPreview'),
+    uploadPhotoBtn: document.getElementById('uploadPhotoBtn'),
+    removePhotoBtn: document.getElementById('removePhotoBtn'),
+    
     // Password Form
     passwordForm: document.getElementById('passwordForm'),
     currentPasswordInput: document.getElementById('currentPassword'),
@@ -81,6 +87,9 @@ function setupEventListeners() {
     if (profileForm) {
         profileForm.addEventListener('submit', handleProfileUpdate);
     }
+    
+    // Profile Photo Events
+    setupProfilePhotoEvents();
 
     // Password Form
     if (passwordForm) {
@@ -198,6 +207,9 @@ function populateUserData() {
         const formattedDate = date.toISOString().split('T')[0];
         birthDateInput.value = formattedDate;
     }
+    
+    // Load profile photo
+    loadProfilePhoto();
 }
 
 // Handle Profile Update
@@ -687,6 +699,127 @@ function savePrivacySetting(setting, value) {
     privacySettings[setting] = value;
     localStorage.setItem('privacySettings', JSON.stringify(privacySettings));
     
-    // Show confirmation toast
-    showToast('Configuração de privacidade atualizada!', 'success');
+    showToast(`Configuração de privacidade atualizada`, 'success');
+}
+
+// Profile Photo Functions
+function setupProfilePhotoEvents() {
+    const uploadBtn = DOM.uploadPhotoBtn;
+    const removeBtn = DOM.removePhotoBtn;
+    const photoInput = DOM.profilePhotoInput;
+    
+    if (uploadBtn) {
+        uploadBtn.addEventListener('click', () => {
+            photoInput.click();
+        });
+    }
+    
+    if (photoInput) {
+        photoInput.addEventListener('change', handlePhotoUpload);
+    }
+    
+    if (removeBtn) {
+        removeBtn.addEventListener('click', removeProfilePhoto);
+    }
+}
+
+function loadProfilePhoto() {
+    const userData = JSON.parse(localStorage.getItem('userData')) || {};
+    const profileImage = userData.profileImage;
+    const preview = DOM.profilePhotoPreview;
+    const removeBtn = DOM.removePhotoBtn;
+    
+    if (preview) {
+        if (profileImage) {
+            preview.innerHTML = `<img src="${profileImage}" alt="Foto de perfil">`;
+            if (removeBtn) removeBtn.style.display = 'inline-flex';
+        } else {
+            preview.innerHTML = '<i class="fas fa-user"></i>';
+            if (removeBtn) removeBtn.style.display = 'none';
+        }
+    }
+}
+
+function handlePhotoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        showToast('Por favor, selecione apenas arquivos de imagem', 'error');
+        return;
+    }
+    
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        showToast('A imagem deve ter no máximo 5MB', 'error');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const imageDataUrl = e.target.result;
+        updateProfilePhoto(imageDataUrl);
+    };
+    reader.readAsDataURL(file);
+}
+
+function updateProfilePhoto(imageDataUrl) {
+    const preview = DOM.profilePhotoPreview;
+    const removeBtn = DOM.removePhotoBtn;
+    
+    if (preview) {
+        preview.innerHTML = `<img src="${imageDataUrl}" alt="Foto de perfil">`;
+        if (removeBtn) removeBtn.style.display = 'inline-flex';
+    }
+    
+    // Save to localStorage
+    const userData = JSON.parse(localStorage.getItem('userData')) || {};
+    userData.profileImage = imageDataUrl;
+    localStorage.setItem('userData', JSON.stringify(userData));
+    
+    // Update header if it exists
+    updateHeaderProfilePhoto();
+    
+    showToast('Foto de perfil atualizada com sucesso!', 'success');
+}
+
+function removeProfilePhoto() {
+    const preview = DOM.profilePhotoPreview;
+    const removeBtn = DOM.removePhotoBtn;
+    const photoInput = DOM.profilePhotoInput;
+    
+    if (preview) {
+        preview.innerHTML = '<i class="fas fa-user"></i>';
+        if (removeBtn) removeBtn.style.display = 'none';
+    }
+    
+    if (photoInput) {
+        photoInput.value = '';
+    }
+    
+    // Remove from localStorage
+    const userData = JSON.parse(localStorage.getItem('userData')) || {};
+    delete userData.profileImage;
+    localStorage.setItem('userData', JSON.stringify(userData));
+    
+    // Update header if it exists
+    updateHeaderProfilePhoto();
+    
+    showToast('Foto de perfil removida com sucesso!', 'success');
+}
+
+function updateHeaderProfilePhoto() {
+    // Try to update the header avatar if the header component is present
+    const userAvatar = document.querySelector('.user-avatar');
+    if (userAvatar) {
+        const userData = JSON.parse(localStorage.getItem('userData')) || {};
+        const profileImage = userData.profileImage;
+        
+        if (profileImage) {
+            userAvatar.innerHTML = `<img src="${profileImage}" alt="Foto de perfil" class="profile-image">`;
+        } else {
+            userAvatar.innerHTML = '<i class="fas fa-user"></i>';
+        }
+    }
 }
