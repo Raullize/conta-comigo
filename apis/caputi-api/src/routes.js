@@ -3,6 +3,7 @@ import UserController from './controllers/UserController.js';
 import InstitutionController from './controllers/InstituitionController.js';
 import ContaController from './controllers/ContaController.js';
 import TransacaoController from './controllers/TransacaoController.js';
+import openFinanceController from './controllers/openFinanceController.js';
 
 const routes = Router();
 routes.get('/', (req,res)=>{
@@ -30,6 +31,7 @@ routes.get('/usuarios/:id/contas',ContaController.listarPorUsuario)
 
 routes.get('/usuarios/:id/', UserController.index);
 
-routes.get('/openfinance/:id/extrato',TransacaoController.indexOF);
+router.get('/open-finance/:cpf', openFinanceController.getDataAccount);
+router.patch('/open-finance/:cpf/consent', openFinanceController.updateConsent);
 
 export default routes;

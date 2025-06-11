@@ -4,7 +4,7 @@ import Instituicao from '../models/Institution.js';
 class ContaController{
     async create(req,res){""
         try{
-            const {usuario_id, instituicao_id} = req.body;
+            const {usuario_id, instituicao_id, consent} = req.body;
 
             const usuario = await Usuario.findByPk(usuario_id);
             const instituicao = await Instituicao.findByPk(instituicao_id);
@@ -30,7 +30,8 @@ class ContaController{
                 saldo: 0.0,
                 nome_usuario: usuario.nome,
                 cpf_usuario: usuario.cpf,
-                nome_instituicao: instituicao.nome
+                nome_instituicao: instituicao.nome,
+                consent,
             });
             const mensagem = `Conta de '${usuario.nome}' criada na instituição '${instituicao.nome}'`;
             return res.status(201).json({
