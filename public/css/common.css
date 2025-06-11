@@ -3,20 +3,37 @@
 /* Main Layout */
 .dashboard-container {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   background-color: var(--light-gray);
+  overflow: hidden;
 }
 
 /* Main Content */
 .main-content {
   flex: 1;
-  padding: var(--spacing-xl);
-  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-left: 280px;
 }
 
 /* Page Content */
 .page-content {
+  flex: 1;
   padding: var(--spacing-lg);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .page-content {
+    padding-bottom: calc(var(--spacing-lg) + 60px);
+  }
 }
 
 /* Confirmation Modal */
