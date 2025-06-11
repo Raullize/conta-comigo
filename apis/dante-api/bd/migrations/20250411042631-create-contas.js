@@ -24,6 +24,13 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
+      usuarioCpf: {
+        type: Sequelize.STRING
+      },
+      consent: {
+          type: Sequelize.BOOLEAN,
+          defaultValue: false,
+      },
       instituicaoId: {
         type: Sequelize.INTEGER,
         references: {
@@ -31,7 +38,7 @@ module.exports = {
           key: 'id'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,

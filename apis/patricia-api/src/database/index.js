@@ -7,7 +7,7 @@
 
   const models = [ User, Instituicao, Conta , Transacao ];
   class Database {
-    constructor() {
+    constructor() {41+
       this.init();
     }
     init() {
@@ -27,10 +27,10 @@
     );
 
 
-    models.forEach((model) => model.init(this.connection));
-    models.forEach((model) => {
-      if (model.associate) {
-        model.associate(this.connection.models);
+    models.forEach((models) => models.init(this.connection));
+    models.forEach((models) => {
+      if (models.associate) {
+        models.associate(this.connection.models);
       }
     });
   }

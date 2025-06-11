@@ -1,23 +1,37 @@
-const { Transacao, Conta } = require('../models');
+const { Transacao, Conta, Usuario } = require('../models');
 
 exports.criarTransacao = async (req, res) => {
   try {
     const { id: usuarioId } = req.params;
-    const { contaId, tipo, valor, descricao } = req.body;
+    const { contaId, tipo, valor, descricao, data, instituicaoId } = req.body;
 
     const conta = await Conta.findOne({ where: { id: contaId, usuarioId } });
+
     if (!conta) return res.status(404).json({ erro: 'Conta não encontrada' });
+
+    const busca_usuario = await Usuario.findByPk(usuarioId);
+    const cpf = busca_usuario ? busca_usuario.cpf : null;
 
     const novaTransacao = await Transacao.create({
       contaId,
+      instituicaoId,
       tipo,
       valor,
-      descricao
+      descricao, 
+      data: data || new Date(),
+      usuarioCpf: cpf
     });
 
     // Atualiza saldo
-    let valorNum = parseFloat(valor)
-    conta.saldo += tipo === 'credito' ? valorNum : -valorNum;
+    let saldoAtual = parseFloat(conta.saldo) || 0;
+    let valorNum = parseFloat(valor);
+
+    if(isNaN(valorNum)){
+      return res.status(400).json({ erro: 'Valor inválido' });
+    }
+
+    conta.saldo = tipo === 'credito' ? saldoAtual + valorNum : saldoAtual - valorNum;
+    
     await conta.save();
 
     res.status(201).json(novaTransacao);

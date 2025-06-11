@@ -38,12 +38,12 @@ const getDataAccount = async (req, res) => {
       idBank: 2,
       cpf: user.cpf,
       institution: institution.nome,
-      balance: account.valor,
+      balance: account.saldo,
       transactions: transactions.map(transaction => ({
         id: transaction.id,
-        date: transaction.date,
-        description: transaction.description,
-        value: transaction.value,
+        date: transaction.data,
+        description: transaction.descricao,
+        value: transaction.valor,
       })),
     });
   } catch (error) {

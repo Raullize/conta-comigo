@@ -19,6 +19,11 @@ const Conta = database.define('contas', {
     type: DataTypes.DECIMAL(10, 2),
     defaultValue: 0.0,
   },
+  consent: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,      
+    defaultValue: false,   
+  },
   nome_usuario: {
     type: DataTypes.STRING,
     allowNull: false,

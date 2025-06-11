@@ -10,76 +10,78 @@ class ContaController{
     const schema = Yup.object().shape({
       numero: Yup.string().required(),
       instituicao_id: Yup.number().integer().required(),
-
-
+      consent: Yup.boolean(),
     });
 
     if(!(await schema.isValid(req.body))){
       return res.status(400).json({error: 'Falha ao cadastrar.'});
     }
 
-    const contaExists = await Conta.findOne({
-      where: { numero: req.body.numero}
-    });
+    try {
+        const user = await User.findByPk(req.userId);
+
+      if (!user) {
+        return res.status(404).json({ error: 'Usuário não encontrado.' });
+      }
+   const contaExists = await Conta.findOne({
+       where: {
+          numero: req.body.numero,
+          instituicao_id: req.body.instituicao_id,
+          user_cpf: user.cpf 
+        }
+      });
 
     if(contaExists){
       return res.status(400).json({error: 'Essa conta já existe.'});
     }
 
     const instituicao = await Instituicao.findByPk(req.body.instituicao_id);
-
     if (!instituicao) {
       return res.status(400).json({ error: 'Instituição não encontrada' });
 }
 
-    const { numero, instituicao_id } = req.body;
-    try {
-    const contas = await Conta.create({
-      usuario_id: req.userId,
+    const { numero, instituicao_id, consent } = req.body;
+   
+    const novaConta = await Conta.create({
+      user_cpf: user.cpf,
       numero,
       instituicao_id,
       saldo: 0,
+      consent,
     })
 
     return res.json({
       message: 'Conta criada com sucesso!.',
-      contas: {
-        numero,
-        saldo: 0,
-        usuario_id: req.userId,
-        instituicao_id,
-      }
+      conta: novaConta
+      
     });
 
   }catch (err) {
     console.error('Erro ao criar conta:', err);
     return res.status(500).json({ error: 'Erro interno ao criar conta.' });
   }
-}
-
+ }
   async index(req,res){
-    const user = await User.findByPk(req.userId);
-
-    if ('usuario_id' in req.body && Number(req.body.usuario_id) !== req.userId) {
-      return res.status(403).json({
-        error: 'Você não tem permissão para acessar esses dados.'
-      });
-    }
+    try{ 
+      const user = await User.findByPk(req.userId);
 
     if (!user){
       return res.status(404).json({error: 'Usuário não foi encontrado'});
-   }
-
+   }  
     const contas = await Conta.findAndCountAll({
-      where: { usuario_id: req.userId},
+      where: { user_cpf: user.cpf},
       include: [{ model: Instituicao, as: 'instituicao', attributes: ['id','nome']}]
     });
 
-    if(!contas || contas.length === 0){
-      return res.status (404).json({ error: 'Nenhuma conta foi encontrada para esse usuário.'})
-    }
+     if (contas.count === 0) {
+            return res.status(404).json({ message: 'Nenhuma conta foi encontrada para este usuário.' });
+     }
 
     return res.json(contas);
+  } catch (err) {
+        console.error('Erro ao listar contas:', err);
+        return res.status(500).json({ error: 'Erro interno do servidor.' });
+    }
   }
 
   async saldoTotal(req,res){
@@ -122,5 +124,5 @@ class ContaController{
     }
   }
  }
-
+ 
 export default new ContaController();

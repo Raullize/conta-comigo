@@ -30,6 +30,17 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
+      usuarioCpf: {
+        type: Sequelize.STRING, // deve ser STRING, conforme accounts.user_cpf
+        allowNull: true,
+      },
+      instituicaoId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      data: {
+        type: Sequelize.DATE
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

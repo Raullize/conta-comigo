@@ -52,13 +52,13 @@ exports.getExtrato = async (req, res) => {
 
 exports.criarUsuario = async (req, res) => {
   try {
-    const { nome, email } = req.body;
+    const { nome, email, cpf } = req.body;
 
     if (!nome || !email) {
       return res.status(400).json({ erro: 'Nome e email são obrigatórios.' });
     }
 
-    const novoUsuario = await Usuario.create({ nome, email });
+    const novoUsuario = await Usuario.create({ nome, email, cpf });
     res.status(201).json(novoUsuario);
   } catch (erro) {
     res.status(500).json({ erro: erro.message });

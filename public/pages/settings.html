@@ -18,21 +18,329 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar will be injected here -->
         <div id="sidebar-container"></div>
         
         <main class="main-content">
-            <!-- Header will be injected here, without notifications -->
             <div id="header-container"></div>
             
-            <!-- Page Content -->
             <div class="page-content">
-                <p>Em desenvolvimento</p>
+                <div class="settings-container">
+                    <div class="settings-layout">
+                        <div class="settings-menu">
+                            <nav class="settings-nav">
+                                <button class="settings-nav-item active" data-section="personal">
+                                    <i class="fas fa-user"></i>
+                                    <span>Informações Pessoais</span>
+                                </button>
+                                <button class="settings-nav-item" data-section="security">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Segurança</span>
+                                </button>
+                                <button class="settings-nav-item" data-section="openfinance">
+                                    <i class="fas fa-university"></i>
+                                    <span>Open Finance</span>
+                                </button>
+                                <button class="settings-nav-item" data-section="privacy">
+                                    <i class="fas fa-user-shield"></i>
+                                    <span>Privacidade</span>
+                                </button>
+                            </nav>
+                        </div>
+
+                        <div class="settings-content-wrapper">
+                            <div class="settings-section content-section active" id="personal-section">
+                                <div class="settings-content">
+                                    <div class="section-header">
+                                        <h3 class="section-title">
+                                            <i class="fas fa-user"></i>
+                                            Informações Pessoais
+                                        </h3>
+                                        <p class="section-subtitle">Gerencie seus dados pessoais</p>
+                                    </div>
+                                    
+                                    <div class="settings-card">
+                            <form id="profileForm" class="profile-form">
+                                <div class="form-row profile-photo-section">
+                                    <div class="form-group profile-photo-group">
+                                        <label class="form-label">Foto de Perfil</label>
+                                        <div class="profile-photo-container">
+                                            <div class="profile-photo-preview" id="profilePhotoPreview">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <div class="profile-photo-actions">
+                                                <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;">
+                                                <button type="button" class="btn btn-secondary" id="uploadPhotoBtn">
+                                                    <i class="fas fa-camera"></i>
+                                                    Alterar Foto
+                                                </button>
+                                                <button type="button" class="btn btn-outline" id="removePhotoBtn" style="display: none;">
+                                                    <i class="fas fa-trash"></i>
+                                                    Remover
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="fullName" class="form-label">Nome Completo</label>
+                                        <input type="text" id="fullName" name="fullName" class="form-input" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="birthDate" class="form-label">Data de Nascimento</label>
+                                        <input type="date" id="birthDate" name="birthDate" class="form-input" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="email" class="form-label">E-mail</label>
+                                        <input type="email" id="email" name="email" class="form-input" readonly>
+                                        <small class="form-help">O e-mail não pode ser alterado</small>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="cpf" class="form-label">CPF</label>
+                                        <input type="text" id="cpf" name="cpf" class="form-input" readonly>
+                                        <small class="form-help">O CPF não pode ser alterado</small>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save"></i>
+                                        Salvar Alterações
+                                    </button>
+                                </div>
+                            </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="settings-section content-section" id="security-section">
+                                <div class="settings-content">
+                                    <div class="section-header">
+                                        <h3 class="section-title">
+                                            <i class="fas fa-shield-alt"></i>
+                                            Segurança
+                                        </h3>
+                                        <p class="section-subtitle">Altere sua senha e configure a segurança da conta</p>
+                                    </div>
+                                    
+                                    <div class="settings-card">
+                                    <form id="passwordForm" class="password-form">
+                                <div class="form-group">
+                                    <label for="currentPassword" class="form-label">Senha Atual</label>
+                                    <div class="password-input">
+                                        <input type="password" id="currentPassword" name="currentPassword" class="form-input" required>
+                                        <button type="button" class="password-toggle" data-target="currentPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="newPassword" class="form-label">Nova Senha</label>
+                                        <div class="password-input">
+                                            <input type="password" id="newPassword" name="newPassword" class="form-input" required>
+                                            <button type="button" class="password-toggle" data-target="newPassword">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div class="password-strength">
+                                            <div class="strength-bar">
+                                                <div class="strength-fill"></div>
+                                            </div>
+                                            <span class="strength-text">Força da senha</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="confirmPassword" class="form-label">Confirmar Nova Senha</label>
+                                        <div class="password-input">
+                                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-input" required>
+                                            <button type="button" class="password-toggle" data-target="confirmPassword">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                        <div class="form-actions">
+                                             <button type="submit" class="btn btn-primary">
+                                                 <i class="fas fa-key"></i>
+                                                 Alterar Senha
+                                             </button>
+                                         </div>
+                                     </form>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="settings-section content-section" id="openfinance-section">
+                                <div class="settings-content">
+                                    <div class="section-header">
+                                        <h3 class="section-title">
+                                            <i class="fas fa-university"></i>
+                                            Open Finance
+                                        </h3>
+                                        <p class="section-subtitle">Gerencie suas conexões bancárias</p>
+                                    </div>
+                                    
+                                    <div class="settings-card">
+                                        <div class="connect-new-account">
+                                            <button type="button" class="btn btn-primary" id="connectNewAccountBtn">
+                                                <i class="fas fa-plus"></i>
+                                                Vincular Nova Conta
+                                            </button>
+                                            <p class="connect-description">Conecte uma nova conta bancária via Open Finance</p>
+                                        </div>
+                                        
+                                    <div class="open-finance-info">
+                                        <div class="info-item">
+                                            <i class="fas fa-link"></i>
+                                            <div class="info-content">
+                                                <h4>Contas Conectadas</h4>
+                                                <p>Você possui <strong>3 contas</strong> conectadas via Open Finance</p>
+                                            </div>
+                                        </div>
+                                
+                                <div class="connected-accounts">
+                                    <div class="account-item">
+                                        <div class="account-info">
+                                            <i class="fas fa-building"></i>
+                                            <span>Banco do Brasil</span>
+                                        </div>
+                                        <div class="account-actions">
+                                            <span class="account-status connected">Conectado</span>
+                                            <button type="button" class="btn btn-sm btn-outline disconnect-single-btn" data-bank="Banco do Brasil">
+                                                <i class="fas fa-unlink"></i>
+                                                Desvincular
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="account-item">
+                                        <div class="account-info">
+                                            <i class="fas fa-building"></i>
+                                            <span>Banrisul</span>
+                                        </div>
+                                        <div class="account-actions">
+                                            <span class="account-status connected">Conectado</span>
+                                            <button type="button" class="btn btn-sm btn-outline disconnect-single-btn" data-bank="Banrisul">
+                                                <i class="fas fa-unlink"></i>
+                                                Desvincular
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="account-item">
+                                        <div class="account-info">
+                                            <i class="fas fa-building"></i>
+                                            <span>Nubank</span>
+                                        </div>
+                                        <div class="account-actions">
+                                            <span class="account-status connected">Conectado</span>
+                                            <button type="button" class="btn btn-sm btn-outline disconnect-single-btn" data-bank="Nubank">
+                                                <i class="fas fa-unlink"></i>
+                                                Desvincular
+                                            </button>
+                                        </div>
+                                    </div>
+                            </div>
+                            
+                                        <div class="form-actions">
+                                            <button type="button" class="btn btn-outline" id="disconnectAccountsBtn">
+                                                <i class="fas fa-unlink"></i>
+                                                Desvincular Todas as Contas
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+
+                            <div class="settings-section content-section" id="privacy-section">
+                                <div class="settings-content">
+                                    <div class="section-header">
+                                        <h3 class="section-title">
+                                            <i class="fas fa-user-shield"></i>
+                                            Privacidade
+                                        </h3>
+                                        <p class="section-subtitle">Controle seus dados e privacidade</p>
+                                    </div>
+                                    
+                                    <div class="settings-card">
+                                    <div class="privacy-options">
+                                        <div class="privacy-item">
+                                            <div class="privacy-info">
+                                                <h4>Compartilhamento de Dados</h4>
+                                                <p>Controle como seus dados são compartilhados com terceiros</p>
+                                            </div>
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="dataSharing" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </div>
+                                        
+                                        <div class="privacy-item">
+                                            <div class="privacy-info">
+                                                <h4>Notificações por E-mail</h4>
+                                                <p>Receba atualizações sobre sua conta por e-mail</p>
+                                            </div>
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="emailNotifications" checked>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </div>
+                                        
+                                        <div class="privacy-item">
+                                            <div class="privacy-info">
+                                                <h4>Análise de Uso</h4>
+                                                <p>Ajude-nos a melhorar o app compartilhando dados de uso anônimos</p>
+                                            </div>
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="usageAnalytics">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="settings-card danger-card delete-account-card">
+                                    <div class="section-header">
+                                        <h4 class="danger-title">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            Zona de Perigo
+                                        </h4>
+                                        <p class="section-subtitle">Ações irreversíveis da conta</p>
+                                    </div>
+                                    
+                                    <div class="danger-info">
+                                        <h5>Deletar Conta</h5>
+                                        <p>Esta ação é <strong>irreversível</strong>. Todos os seus dados, preferências e histórico serão permanentemente removidos.</p>
+                                    </div>
+                                    
+                                    <div class="form-actions">
+                                        <button type="button" class="btn btn-danger" id="deleteAccountBtn">
+                                            <i class="fas fa-trash"></i>
+                                            Deletar Conta
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
-    <!-- Logout Modal -->
     <div id="logoutModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -49,10 +357,86 @@
         </div>
     </div>
 
+    <div id="disconnectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Desvincular Contas</h3>
+                <span class="modal-close" id="closeDisconnectModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja desvincular todas as contas do Open Finance?</p>
+                <p><strong>Esta ação irá:</strong></p>
+                <ul>
+                    <li>Remover todas as conexões bancárias</li>
+                    <li>Interromper a sincronização automática</li>
+                    <li>Você precisará reconectar manualmente</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelDisconnectBtn">Cancelar</button>
+                <button class="btn btn-outline" id="confirmDisconnectBtn">Desvincular</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="disconnectSingleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Desvincular Banco</h3>
+                <span class="modal-close" id="closeDisconnectSingleModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja desvincular a conta do <strong id="bankNameToDisconnect"></strong>?</p>
+                <p><strong>Esta ação irá:</strong></p>
+                <ul>
+                    <li>Remover a conexão com este banco</li>
+                    <li>Interromper a sincronização automática desta conta</li>
+                    <li>Você precisará reconectar manualmente se desejar</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelDisconnectSingleBtn">Cancelar</button>
+                <button class="btn btn-outline" id="confirmDisconnectSingleBtn">Desvincular</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteAccountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Deletar Conta</h3>
+                <span class="modal-close" id="closeDeleteModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="warning-message">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Atenção: Esta ação é irreversível!</h4>
+                </div>
+                <p>Ao deletar sua conta, os seguintes dados serão <strong>permanentemente removidos</strong>:</p>
+                <ul>
+                    <li>Todas as informações pessoais</li>
+                    <li>Histórico de transações</li>
+                    <li>Conexões bancárias</li>
+                    <li>Preferências e configurações</li>
+                    <li>Dados de investimentos</li>
+                </ul>
+                <div class="confirmation-input">
+                    <label for="deleteConfirmation">Digite "DELETAR" para confirmar:</label>
+                    <input type="text" id="deleteConfirmation" class="form-input" placeholder="DELETAR">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">Cancelar</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn" disabled>Deletar Conta</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import SidebarComponent from '../js/components/sidebar.js';
         import HeaderComponent from '../js/components/header.js';
         import { checkAuthentication } from '../js/auth-utils.js';
+        import '../js/settings.js';
         
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize components

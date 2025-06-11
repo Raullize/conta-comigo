@@ -15,6 +15,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      usuarioCpf: {
+        type: DataTypes.STRING,
+      },
+      data: {
+        type: DataTypes.DATE,
+      },
+      instituicaoId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,

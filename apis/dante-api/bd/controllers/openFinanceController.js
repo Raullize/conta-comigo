@@ -1,56 +1,53 @@
-import User from './models/User.js';
-import Conta from './models/Conta.js'; 
-import Transacao from './models/Transacao.js'; 
-import Instituicao from './models/Instituicao.js'; 
+const { Usuario: User, Instituicao: Institution, Transacao: Transaction, Conta: Account } = require('../models');
 
 
 const getDataAccount = async (req, res) => {
   const { cpf } = req.params;
-  const institutionId = 1;
+  const instituicaoId = 1;
 
   try {
     const user = await User.findOne({ where: { cpf } });
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const institution = await Instituicao.findOne({
-      where: { id: institutionId },
-    });
-    if (!institution)
-      return res.status(404).json({ error: 'Institution not found' });
-
-    const account = await Conta.findOne({
-      where: { user_cpf: user.cpf, institution_id: institution.id },
+    const account = await Account.findOne({
+      where: { usuarioCpf: user.cpf },
     });
     if (!account)
       return res
         .status(404)
         .json({ error: 'Account not found for this institution' });
+
+    const institution = await Institution.findOne({
+      where: { id: instituicaoId },
+    });
+    if (!institution)
+      return res.status(404).json({ error: 'Institution not found' });
         
     if (!account.consent) {
       return res.status(403).json({ error: 'Consent not granted by the user.' });
     }
 
-    const transactions = await Transacao.findAll({
+    const transactions = await Transaction.findAll({
       where: {
-        origin_cpf: account.user_cpf,
-        institution_id: account.institution_id,
+        usuarioCpf: account.usuarioCpf,
+        instituicaoId: institution.id,
       },
     });
 
     res.json({
-      idBank: 3, 
+      idBank: 1, 
       cpf: user.cpf,
-      institution: institution.name,
-      balance: account.balance,
+      institution: institution.nome,
+      balance: account.saldo,
       transacoes: transactions.map(transaction => ({
         id: transaction.id,
-        date: transaction.date,
-        description: transaction.description,
-        value: transaction.value,
+        date: transaction.data,
+        description: transaction.descricao,
+        value: transaction.valor,
       })),
     });
   } catch (error) {
-    console.error('Error getting account data for bank 3:', error);
+    console.error('Error getting account data for bank 1:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
@@ -66,10 +63,10 @@ const updateConsent = async (req, res) => {
   }
 
   try {
-    const account = await Conta.findOne({
+    const account = await Account.findOne({
       where: {
-        user_cpf: cpf,
-        institution_id: institution_id,
+        usuarioCpf: cpf,
+        instituicaoId: institution_id,
       },
     });
 
@@ -82,8 +79,8 @@ const updateConsent = async (req, res) => {
 
     res.json({
       message: 'Consent updated successfully.',
-      cpf: account.user_cpf,
-      institution_id: 3,
+      cpf: account.usuarioCpf,
+      institution_id: account.instituicaoId,
       consent: account.consent,
     });
   } catch (error) {
@@ -92,4 +89,4 @@ const updateConsent = async (req, res) => {
   }
 };
 
-export { getDataAccount, updateConsent };
+module.exports = { getDataAccount, updateConsent };

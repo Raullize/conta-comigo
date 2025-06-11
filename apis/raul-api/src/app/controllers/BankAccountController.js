@@ -69,39 +69,61 @@ class BankAccountController {
   }
 
   async store(req, res) {
-    const schema = Yup.object().shape({
-      bank_name: Yup.string().required(),
-      agency: Yup.string().required(),
-      account_number: Yup.string().required(),
-      account_type: Yup.string().required().oneOf(['checking', 'savings', 'investment']),
-      balance: Yup.number().required(),
-    });
+  const schema = Yup.object().shape({
+    bank_name: Yup.string().required(),
+    agency: Yup.string().required(),
+    account_number: Yup.string().required(),
+    account_type: Yup.string().required().oneOf(['checking', 'savings', 'investment']),
+    balance: Yup.number().required(),
+  });
 
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Falha na validação.' });
-    }
-
-    const accountExists = await BankAccount.findOne({
-      where: {
-        user_id: req.userId,
-        bank_name: req.body.bank_name,
-        agency: req.body.agency,
-        account_number: req.body.account_number,
-      },
-    });
-
-    if (accountExists) {
-      return res.status(400).json({ error: 'Você já possui esta conta cadastrada.' });
-    }
-
-    const account = await BankAccount.create({
-      ...req.body,
-      user_id: req.userId,
-      is_active: true,
-    });
-
-    return res.json(account);
+  if (!(await schema.isValid(req.body))) {
+    return res.status(400).json({ error: 'Falha na validação dos dados.' });
   }
+
+  
+
+  const { bank_name } = req.body;
+  const existingAccounts = await BankAccount.findAll({
+    where: { user_id: req.userId },
+  });
+
+  
+  if (existingAccounts.length > 0) {
+    const existingBankName = existingAccounts[0].bank_name;
+    if (bank_name !== existingBankName) {
+      return res.status(400).json({
+        error: 'Operação não permitida. Você só pode cadastrar contas de uma única instituição bancária.',
+      });
+    }
+  }
+
+  
+
+
+  
+  const accountExists = await BankAccount.findOne({
+    where: {
+      user_id: req.userId,
+      bank_name: req.body.bank_name,
+      agency: req.body.agency,
+      account_number: req.body.account_number,
+    },
+  });
+
+  if (accountExists) {
+    return res.status(400).json({ error: 'Você já possui esta conta bancária cadastrada.' });
+  }
+
+  
+  const account = await BankAccount.create({
+    ...req.body,
+    user_id: req.userId,
+    is_active: true,
+  });
+
+  return res.status(201).json(account);
+}
 
   async update(req, res) {
     const schema = Yup.object().shape({
