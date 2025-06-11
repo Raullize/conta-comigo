@@ -179,7 +179,7 @@ async function loadUserData() {
             return;
         }
 
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.user}`, {
+        const response = await fetch('/users', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -236,7 +236,7 @@ async function handleProfileUpdate(event) {
         setFormLoading(profileForm, true);
         
         const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.user}`, {
+        const response = await fetch('/users', {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -292,7 +292,7 @@ async function handlePasswordUpdate(event) {
         setFormLoading(passwordForm, true);
         
         const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.user}`, {
+        const response = await fetch('/users', {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -566,7 +566,7 @@ async function handleDeleteAccount() {
         
         // Uncomment when delete endpoint is available:
         /*
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.user}`, {
+        const response = await fetch('/users', {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
