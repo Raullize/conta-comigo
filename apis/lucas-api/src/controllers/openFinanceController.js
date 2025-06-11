@@ -41,9 +41,9 @@ const getDataAccount = async (req, res) => {
       balance: account.valor,
       transactions: transactions.map(transaction => ({
         id: transaction.id,
-        date: transaction.date,
-        description: transaction.description,
-        value: transaction.value,
+        date: transaction.data,
+        description: transaction.descricao,
+        value: transaction.valor,
       })),
     });
   } catch (error) {

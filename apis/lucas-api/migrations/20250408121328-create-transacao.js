@@ -15,6 +15,12 @@ module.exports = {
       valor: {
         type: Sequelize.FLOAT
       },
+      descricao: {
+        type: Sequelize.STRING
+      },
+      data: {
+        type: Sequelize.DATE
+      },
       contaId: {
         type: Sequelize.INTEGER
       },

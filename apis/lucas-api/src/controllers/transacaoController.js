@@ -6,7 +6,7 @@ module.exports = {
     async criaTransacao(req, res) {
         try {
             const { cpf } = req.params;
-            const { tipo, valor, contaId, instituicaoId } = req.body;
+            const { tipo, valor, contaId, instituicaoId, descricao, data } = req.body;
             const usuario = await Usuario.findByPk(cpf);
 
 
@@ -44,7 +44,8 @@ module.exports = {
                 tipo: tipo,
                 valor: valor,
                 contaId: contaId,
-                usuarioCpf: cpf
+                usuarioCpf: cpf,
+                descricao: descricao
             });
 
 
@@ -53,7 +54,9 @@ module.exports = {
                 tipo,
                 valor,
                 contaId,
-                usuarioCpf: cpf
+                usuarioCpf: cpf,
+                descricao: descricao,
+                data: data || new Date()
             });
 
             return res.status(201).json(novaTransacao);

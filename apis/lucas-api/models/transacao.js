@@ -16,6 +16,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false
     },
+    data: DataTypes.DATE,
+    descricao: DataTypes.STRING,
     tipo: DataTypes.STRING,
     valor: DataTypes.FLOAT,
     contaId: DataTypes.INTEGER
