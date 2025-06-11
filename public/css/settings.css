@@ -78,6 +78,21 @@
   font-size: var(--font-size-base);
   transition: var(--transition-fast);
   background: var(--white);
+  max-width: 100%;
+}
+
+/* Largura específica para inputs da seção de segurança */
+#security-section .password-input {
+  width: 250px;
+}
+
+#security-section .form-input {
+  width: 100%;
+}
+
+/* Espaçamento maior entre senha atual e nova senha */
+#security-section .form-row {
+  margin-top: var(--spacing-xl);
 }
 
 .form-input:focus {
@@ -109,26 +124,34 @@
 
 .password-input {
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   width: 100%;
 }
 
 .password-input .form-input {
-  padding-right: 2.7rem;
+  flex: 1;
 }
 
 .password-toggle {
-  position: absolute;
-  right: 0.9rem;
-  top: 50%;
-  transform: translateY(-50%);
+  position: relative;
+  right: 0;
+  top: 0;
+  transform: none;
   background: none;
   border: none;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: var(--spacing-xs);
+  padding: 0.25rem;
   border-radius: var(--border-radius-sm);
   transition: var(--transition-fast);
   z-index: 2;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .password-toggle:hover {
@@ -141,14 +164,21 @@
   align-items: center;
   gap: var(--spacing-sm);
   margin-top: var(--spacing-xs);
+  max-width: 100%;
+}
+
+/* Largura específica para barra de força da senha na seção de segurança */
+#security-section .password-strength {
+  width: 250px;
 }
 
 .strength-bar {
   flex: 1;
-  height: 4px;
+  height: 3px;
   background: #e9ecef;
   border-radius: var(--border-radius-full);
   overflow: hidden;
+  width: 100%;
 }
 
 .strength-fill {
