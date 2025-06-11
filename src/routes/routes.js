@@ -19,6 +19,7 @@ routes.use(authMiddleware);
 
 routes.get('/users', userController.show);
 routes.put('/users', userController.update);
+routes.delete('/users', userController.delete);
 routes.post('/category', categoryController.createCategory);
 
 routes.post('/account', accountController.createAccount);

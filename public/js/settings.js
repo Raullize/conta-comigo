@@ -560,12 +560,6 @@ async function handleDeleteAccount() {
     try {
         const token = localStorage.getItem('token');
         
-        // For now, just show a message since delete endpoint might not exist
-        showToast('Funcionalidade de exclusão em desenvolvimento', 'info');
-        hideDeleteModal();
-        
-        // Uncomment when delete endpoint is available:
-        /*
         const response = await fetch('/users', {
             method: 'DELETE',
             headers: {
@@ -577,13 +571,14 @@ async function handleDeleteAccount() {
         if (response.ok) {
             localStorage.removeItem('token');
             showToast('Conta deletada com sucesso', 'success');
+            hideDeleteModal();
             setTimeout(() => {
                 window.location.href = '/pages/login.html';
             }, 2000);
         } else {
-            throw new Error('Erro ao deletar conta');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Erro ao deletar conta');
         }
-        */
     } catch (error) {
         console.error('Erro ao deletar conta:', error);
         showToast(error.message, 'error');
