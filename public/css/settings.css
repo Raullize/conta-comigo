@@ -674,6 +674,75 @@ input:checked + .toggle-slider:before {
   margin-top: var(--spacing-sm);
 }
 
+/* Open Finance Section Improvements */
+.account-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg);
+  background: var(--light-gray);
+  border-radius: var(--border-radius-md);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: var(--spacing-md);
+  transition: var(--transition-fast);
+}
+
+.account-item:hover {
+  background: rgba(54, 179, 126, 0.05);
+  border-color: rgba(54, 179, 126, 0.1);
+}
+
+.account-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex: 1;
+}
+
+.account-info i {
+  color: var(--primary-green);
+  font-size: var(--font-size-lg);
+}
+
+.account-info span {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.account-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.account-status {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  white-space: nowrap;
+}
+
+.account-status.connected {
+  background: rgba(54, 179, 126, 0.1);
+  color: var(--primary-green);
+}
+
+.disconnect-single-btn {
+  font-size: var(--font-size-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  white-space: nowrap;
+}
+
+.disconnect-single-btn i {
+  margin-right: var(--spacing-xs);
+}
+
+.btn-sm {
+  font-size: var(--font-size-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
 @media (max-width: 768px) {
   .settings-nav {
     justify-content: center;

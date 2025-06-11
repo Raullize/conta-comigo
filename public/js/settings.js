@@ -102,6 +102,9 @@ function setupEventListeners() {
         disconnectBtn.addEventListener('click', showDisconnectModal);
     }
 
+    // Individual Disconnect Buttons
+    setupIndividualDisconnectButtons();
+
     // Delete Account Button
     const deleteBtn = document.getElementById('deleteAccountBtn');
     if (deleteBtn) {
@@ -110,6 +113,7 @@ function setupEventListeners() {
 
     // Modal Close Buttons
     setupModalEventListeners();
+    setupSingleDisconnectModalListeners();
 
     // Delete Confirmation Input
     if (deleteConfirmationInput) {
@@ -422,6 +426,80 @@ function handleDisconnectAccounts() {
     // This is just visual for now as requested
     showToast('Funcionalidade em desenvolvimento', 'info');
     hideDisconnectModal();
+}
+
+// Setup Individual Disconnect Buttons
+function setupIndividualDisconnectButtons() {
+    const disconnectButtons = document.querySelectorAll('.disconnect-single-btn');
+    disconnectButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const bankName = this.getAttribute('data-bank');
+            showSingleDisconnectModal(bankName);
+        });
+    });
+}
+
+// Setup Single Disconnect Modal Event Listeners
+function setupSingleDisconnectModalListeners() {
+    const singleDisconnectModal = document.getElementById('disconnectSingleModal');
+    const closeSingleDisconnectModal = document.getElementById('closeSingleDisconnectModal');
+    const cancelSingleDisconnectBtn = document.getElementById('cancelSingleDisconnectBtn');
+    const confirmSingleDisconnectBtn = document.getElementById('confirmSingleDisconnectBtn');
+
+    if (closeSingleDisconnectModal) {
+        closeSingleDisconnectModal.addEventListener('click', hideSingleDisconnectModal);
+    }
+    if (cancelSingleDisconnectBtn) {
+        cancelSingleDisconnectBtn.addEventListener('click', hideSingleDisconnectModal);
+    }
+    if (confirmSingleDisconnectBtn) {
+        confirmSingleDisconnectBtn.addEventListener('click', handleSingleDisconnect);
+    }
+
+    // Close modal when clicking outside
+    if (singleDisconnectModal) {
+        window.addEventListener('click', function(event) {
+            if (event.target === singleDisconnectModal) {
+                hideSingleDisconnectModal();
+            }
+        });
+    }
+}
+
+// Show Single Disconnect Modal
+function showSingleDisconnectModal(bankName) {
+    const singleDisconnectModal = document.getElementById('disconnectSingleModal');
+    const bankNameSpan = document.getElementById('bankNameToDisconnect');
+    
+    if (singleDisconnectModal && bankNameSpan) {
+        bankNameSpan.textContent = bankName;
+        singleDisconnectModal.classList.add('show');
+        // Store bank name for later use
+        singleDisconnectModal.setAttribute('data-bank', bankName);
+    }
+}
+
+// Hide Single Disconnect Modal
+function hideSingleDisconnectModal() {
+    const singleDisconnectModal = document.getElementById('disconnectSingleModal');
+    if (singleDisconnectModal) {
+        singleDisconnectModal.classList.remove('show');
+        singleDisconnectModal.removeAttribute('data-bank');
+    }
+}
+
+// Handle Single Bank Disconnect
+function handleSingleDisconnect() {
+    const singleDisconnectModal = document.getElementById('disconnectSingleModal');
+    const bankName = singleDisconnectModal ? singleDisconnectModal.getAttribute('data-bank') : '';
+    
+    // This is just visual for now as requested
+    showToast(`Desvinculação do ${bankName} em desenvolvimento`, 'info');
+    hideSingleDisconnectModal();
+    
+    // Here you would implement the actual API call to disconnect the specific bank
+    // Example:
+    // disconnectSpecificBank(bankName);
 }
 
 // Show Delete Modal

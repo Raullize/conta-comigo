@@ -207,7 +207,13 @@
                                             <i class="fas fa-building"></i>
                                             <span>Banco do Brasil</span>
                                         </div>
-                                        <span class="account-status connected">Conectado</span>
+                                        <div class="account-actions">
+                                            <span class="account-status connected">Conectado</span>
+                                            <button type="button" class="btn btn-sm btn-outline disconnect-single-btn" data-bank="Banco do Brasil">
+                                                <i class="fas fa-unlink"></i>
+                                                Desvincular
+                                            </button>
+                                        </div>
                                     </div>
                                     
                                     <div class="account-item">
@@ -215,7 +221,13 @@
                                             <i class="fas fa-building"></i>
                                             <span>Banrisul</span>
                                         </div>
-                                        <span class="account-status connected">Conectado</span>
+                                        <div class="account-actions">
+                                            <span class="account-status connected">Conectado</span>
+                                            <button type="button" class="btn btn-sm btn-outline disconnect-single-btn" data-bank="Banrisul">
+                                                <i class="fas fa-unlink"></i>
+                                                Desvincular
+                                            </button>
+                                        </div>
                                     </div>
                                     
                                     <div class="account-item">
@@ -223,7 +235,13 @@
                                             <i class="fas fa-building"></i>
                                             <span>Nubank</span>
                                         </div>
-                                        <span class="account-status connected">Conectado</span>
+                                        <div class="account-actions">
+                                            <span class="account-status connected">Conectado</span>
+                                            <button type="button" class="btn btn-sm btn-outline disconnect-single-btn" data-bank="Nubank">
+                                                <i class="fas fa-unlink"></i>
+                                                Desvincular
+                                            </button>
+                                        </div>
                                     </div>
                             </div>
                             
@@ -349,6 +367,28 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="cancelDisconnectBtn">Cancelar</button>
                 <button class="btn btn-outline" id="confirmDisconnectBtn">Desvincular</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="disconnectSingleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Desvincular Banco</h3>
+                <span class="modal-close" id="closeDisconnectSingleModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja desvincular a conta do <strong id="bankNameToDisconnect"></strong>?</p>
+                <p><strong>Esta ação irá:</strong></p>
+                <ul>
+                    <li>Remover a conexão com este banco</li>
+                    <li>Interromper a sincronização automática desta conta</li>
+                    <li>Você precisará reconectar manualmente se desejar</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelDisconnectSingleBtn">Cancelar</button>
+                <button class="btn btn-outline" id="confirmDisconnectSingleBtn">Desvincular</button>
             </div>
         </div>
     </div>
