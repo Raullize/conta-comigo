@@ -156,13 +156,37 @@
 /* Responsive styles */
 @media (max-width: 768px) {
   .dashboard-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-md);
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md) var(--spacing-lg);
+  }
+  
+  .welcome-section h1 {
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-xs);
+  }
+  
+  .welcome-section p {
+    font-size: var(--font-size-base);
+    margin: 0;
   }
   
   .header-actions {
-    width: 100%;
-    justify-content: flex-end;
+    gap: var(--spacing-md);
+  }
+  
+  .notification-btn {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .user-profile {
+    padding: var(--spacing-xs);
+  }
+  
+  .user-avatar {
+    width: 36px;
+    height: 36px;
   }
 }
