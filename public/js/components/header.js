@@ -31,7 +31,7 @@ class HeaderComponent {
     return `
             <button class="notification-btn">
                 <i class="fas fa-bell"></i>
-                <span class="notification-badge">3</span>
+                <span class="notification-badge">1</span>
             </button>
         `;
   }
