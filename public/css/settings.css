@@ -1,13 +1,10 @@
 /* Settings Page Styles */
-
-/* Container */
 .settings-container {
   max-width: 1000px;
   margin: 0 auto;
   padding: 0;
 }
 
-/* Section Styles */
 .settings-section {
   margin-bottom: var(--spacing-3xl);
 }
@@ -41,7 +38,6 @@
   margin: 0;
 }
 
-/* Card Styles */
 .settings-card {
   background: var(--white);
   border-radius: var(--border-radius-lg);
@@ -55,7 +51,6 @@
   box-shadow: var(--shadow-lg);
 }
 
-/* Form Styles */
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -112,7 +107,6 @@
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Password Input Styles */
 .password-input {
   position: relative;
   width: 100%;
@@ -142,7 +136,6 @@
   background: var(--light-gray);
 }
 
-/* Password Strength */
 .password-strength {
   display: flex;
   align-items: center;
@@ -192,7 +185,6 @@
   white-space: nowrap;
 }
 
-/* Open Finance Styles */
 .open-finance-info {
   margin-bottom: var(--spacing-xl);
 }
@@ -266,7 +258,6 @@
   color: var(--primary-green);
 }
 
-/* Danger Zone Styles */
 .danger-zone .section-title {
   color: #dc3545;
 }
@@ -291,7 +282,6 @@
   margin-bottom: var(--spacing-md);
 }
 
-/* Button Styles */
 .btn-danger {
   background: #dc3545;
   color: var(--white);
@@ -311,7 +301,6 @@
   opacity: 0.6;
 }
 
-/* Modal Enhancements */
 .warning-message {
   display: flex;
   align-items: center;
@@ -347,7 +336,6 @@
   margin-bottom: var(--spacing-sm);
 }
 
-/* Settings Menu Styles */
 .settings-menu {
   background: var(--white);
   border-radius: var(--border-radius-lg);
@@ -421,7 +409,6 @@
   display: block;
 }
 
-/* Privacy Section Styles */
 .privacy-options {
   display: flex;
   flex-direction: column;
@@ -462,7 +449,6 @@
   line-height: 1.4;
 }
 
-/* Toggle Switch Styles */
 .toggle-switch {
   position: relative;
   display: inline-block;
@@ -513,7 +499,6 @@ input:checked + .toggle-slider:before {
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
 }
 
-/* Updated Danger Zone Styles */
 .danger-title {
   color: #dc3545;
   margin: 0;
@@ -534,17 +519,14 @@ input:checked + .toggle-slider:before {
   font-weight: 600;
 }
 
-/* Delete Account Card Spacing */
 .delete-account-card {
   margin-top: var(--spacing-2xl);
 }
 
-/* Button Icon Spacing */
 .btn i {
   margin-right: var(--spacing-sm);
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .settings-nav {
     justify-content: center;
