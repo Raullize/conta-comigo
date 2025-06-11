@@ -23,7 +23,7 @@
 .section-title {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-md);
   font-size: var(--font-size-2xl);
   font-weight: 600;
   color: var(--primary-blue);
@@ -360,7 +360,7 @@
   display: flex;
   gap: var(--spacing-sm);
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 }
 
@@ -532,6 +532,16 @@ input:checked + .toggle-slider:before {
   margin: 0 0 var(--spacing-sm) 0;
   font-size: var(--font-size-base);
   font-weight: 600;
+}
+
+/* Delete Account Card Spacing */
+.delete-account-card {
+  margin-top: var(--spacing-2xl);
+}
+
+/* Button Icon Spacing */
+.btn i {
+  margin-right: var(--spacing-sm);
 }
 
 /* Responsive Design */
