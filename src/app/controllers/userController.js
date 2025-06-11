@@ -14,7 +14,7 @@ class userController {
       if (userExistsByEmail) {
         return res
           .status(400)
-          .json({ error: 'The user already exists' });
+          .json({ error: 'O usuário já existe' });
       }
 
       // Verificar se o usuário já existe por CPF
@@ -25,7 +25,7 @@ class userController {
       if (userExistsByCpf) {
         return res
           .status(400)
-          .json({ error: 'This CPF already exists' });
+          .json({ error: 'Este CPF já existe' });
       }
 
       // Criar o usuário
@@ -45,8 +45,8 @@ class userController {
         birthDate: user.birthDate,
       });
     } catch (error) {
-      console.error("Error we can't creat user", error);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Erro ao criar usuário', error);
+      return res.status(500).json({ error: 'Erro interno do servidor' });
     }
   }
 
@@ -57,13 +57,13 @@ class userController {
       });
 
       if (!user) {
-        return res.status(404).json({ error: 'User not find.' });
+        return res.status(404).json({ error: 'Usuário não encontrado.' });
       }
 
       return res.json(user);
     } catch (error) {
-      console.error("Error, we can't find the user. ", error);
-      return res.status(500).json({ error: 'Internal Server Error.' });
+      console.error('Erro ao buscar usuário.', error);
+      return res.status(500).json({ error: 'Erro interno do servidor.' });
     }
   }
 
@@ -74,7 +74,7 @@ class userController {
       const user = await User.findByPk(req.userId);
 
       if (!user) {
-        return res.status(404).json({ error: 'User not find.' });
+        return res.status(404).json({ error: 'Usuário não encontrado.' });
       }
 
       if (email && email !== user.email) {
@@ -83,12 +83,12 @@ class userController {
         });
 
         if (userExists) {
-          return res.status(400).json({ error: 'E-mail already exists.' });
+          return res.status(400).json({ error: 'E-mail já existe.' });
         }
       }
 
       if (oldPassword && !(await user.checkPassword(oldPassword))) {
-        return res.status(401).json({ error: 'Old Password incorrect.' });
+        return res.status(401).json({ error: 'Senha antiga incorreta.' });
       }
 
       const updatedUser = await user.update(req.body);
@@ -98,10 +98,11 @@ class userController {
         name: updatedUser.name,
         email: updatedUser.email,
         cpf: user.cpf,
+        birthDate: updatedUser.birthDate,
       });
     } catch (error) {
-      console.error('Error not updated:', error);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Erro ao atualizar usuário:', error);
+      return res.status(500).json({ error: 'Erro interno do servidor' });
     }
   }
 }
