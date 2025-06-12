@@ -1,5 +1,9 @@
-const { Usuario: User, Instituicao: Institution, Transacao: Transaction, Conta: Account } = require('../../models');
-
+const {
+  Usuario: User,
+  Instituicao: Institution,
+  Transacao: Transaction,
+  Conta: Account,
+} = require('../../models');
 
 const getDataAccount = async (req, res) => {
   const { cpf } = req.params;
@@ -16,7 +20,7 @@ const getDataAccount = async (req, res) => {
       return res
         .status(404)
         .json({ error: 'Account not found for this institution' });
-    
+
     const institution = await Institution.findOne({
       where: { id: account.instituicaoId },
     });
@@ -27,27 +31,51 @@ const getDataAccount = async (req, res) => {
       return res.json('Not allowed');
     }
 
-    const transactions = await Transaction.findAll({
+    const sentTransactions = await Transaction.findAll({
       where: {
-        usuarioCpf: account.usuarioCpf,
+        cpfOrigem: user.cpf,
         instituicaoId: account.instituicaoId,
       },
     });
+
+    const receivedTransactions = await Transaction.findAll({
+      where: {
+        cpfDestino: user.cpf,
+        instituicaoId: account.instituicaoId,
+      },
+    });
+
+    const transactions = [...sentTransactions, ...receivedTransactions].sort(
+      (a, b) => new Date(a.data) - new Date(b.data)
+    );
 
     res.json({
       idBank: 2,
       cpf: user.cpf,
       institution: institution.nome,
       balance: account.saldo,
-      transactions: transactions.map(transaction => ({
-        id: transaction.id,
-        date: transaction.data,
-        description: transaction.descricao,
-        value: transaction.valor,
-      })),
+      transactions: transactions.map(transaction => {
+        let type;
+        if (!transaction.cpfDestino) {
+          type = 'withdrawal';
+        } else if (!transaction.cpfOrigem) {
+          type = 'deposit';
+        } else if (transaction.cpfOrigem === user.cpf) {
+          type = 'debit';
+        } else {
+          type = 'credit';
+        }
+
+        return {
+          id: transaction.id,
+          date: transaction.data,
+          description: transaction.descricao,
+          value: transaction.valor,
+          type: type,
+        };
+      }),
     });
   } catch (error) {
-    // console.error('Error updating consent.:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
