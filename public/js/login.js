@@ -672,7 +672,7 @@ async function handleRegister(form) {
         name: completeRegistrationData.fullName,
         email: completeRegistrationData.email,
         cpf: completeRegistrationData.cpf,
-        birthDate: completeRegistrationData.birthDate,
+        birth_date: completeRegistrationData.birthDate,
         password: completeRegistrationData.password,
       }),
     });

@@ -227,6 +227,55 @@
   background-color: #e74c3c;
 }
 
+/* Financial Tips Card */
+.tips-card {
+  grid-column: span 6;
+}
+
+.tip-content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.tip-text {
+  flex: 1;
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  color: var(--text-primary);
+  padding: var(--spacing-md);
+  background-color: rgba(54, 179, 126, 0.05);
+  border-radius: var(--border-radius-md);
+  border-left: 4px solid var(--primary-green);
+  transition: opacity 0.3s ease;
+}
+
+.tip-refresh-btn {
+  background: none;
+  border: none;
+  color: var(--primary-green);
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+}
+
+.tip-refresh-btn:hover {
+  background-color: rgba(54, 179, 126, 0.1);
+  transform: rotate(180deg);
+}
+
+.tip-refresh-btn:active {
+  transform: rotate(180deg) scale(0.95);
+}
+
 /* Responsiveness */
 @media (max-width: 1200px) {
   .balance-card, .expenses-card, .investments-card, .savings-card {

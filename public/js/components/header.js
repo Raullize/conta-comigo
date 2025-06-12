@@ -10,12 +10,14 @@ class HeaderComponent {
     this.pageTitle = options.pageTitle || 'Dashboard';
     this.pageSubtitle =
       options.pageSubtitle || 'Bem-vindo ao seu painel financeiro';
+    this.showBreadcrumb = options.showBreadcrumb !== false;
   }
 
   render() {
     return `
             <header class="dashboard-header">
                 <div class="welcome-section">
+                    ${this.showBreadcrumb ? this.renderBreadcrumb() : ''}
                     <h1>Olá, <span id="userName">Carregando...</span>!</h1>
                     <p>${this.pageSubtitle}</p>
                 </div>
@@ -34,6 +36,24 @@ class HeaderComponent {
                 <span class="notification-badge">1</span>
             </button>
         `;
+  }
+
+  renderBreadcrumb() {
+    if (this.pageTitle === 'Dashboard') {
+      return `
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item current">Dashboard</span>
+                </div>
+            `;
+    } else {
+      return `
+                <div class="breadcrumb">
+                    <span class="breadcrumb-item">Dashboard</span>
+                    <i class="fas fa-chevron-right breadcrumb-separator"></i>
+                    <span class="breadcrumb-item current">${this.pageTitle}</span>
+                </div>
+            `;
+    }
   }
 
   renderUserProfile() {

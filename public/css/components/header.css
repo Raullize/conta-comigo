@@ -14,6 +14,30 @@
   z-index: var(--z-sticky);
 }
 
+/* Breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+}
+
+.breadcrumb-item {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.breadcrumb-item.current {
+  color: var(--primary-green);
+  font-weight: 600;
+}
+
+.breadcrumb-separator {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
 .welcome-section h1 {
   font-size: var(--font-size-2xl);
   margin-bottom: var(--spacing-xs);
