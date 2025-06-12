@@ -217,9 +217,9 @@ function populateUserData() {
     if (fullNameInput) fullNameInput.value = currentUser.name || '';
     if (emailInput) emailInput.value = currentUser.email || '';
     if (cpfInput) cpfInput.value = formatCPF(currentUser.cpf) || '';
-    if (birthDateInput && currentUser.birthDate) {
+    if (birthDateInput && currentUser.birth_date) {
 
-        const date = new Date(currentUser.birthDate);
+        const date = new Date(currentUser.birth_date);
         const formattedDate = date.toISOString().split('T')[0];
         birthDateInput.value = formattedDate;
     }

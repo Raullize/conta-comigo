@@ -64,7 +64,7 @@ class userController {
 
   async update(req, res) {
     try {
-      const { name, email, oldPassword } = req.body;
+      const { name, email, birthDate, oldPassword } = req.body;
 
       const user = await User.findByPk(req.userId);
 
@@ -86,13 +86,20 @@ class userController {
         return res.status(401).json({ error: 'Old Password incorrect.' });
       }
 
-      const updatedUser = await user.update(req.body);
+      // Prepare update data
+      const updateData = { name, email };
+      if (birthDate) {
+        updateData.birthDate = birthDate;
+      }
+
+      const updatedUser = await user.update(updateData);
 
       return res.json({
         id: updatedUser.id,
         name: updatedUser.name,
         email: updatedUser.email,
-        cpf: user.cpf,
+        cpf: updatedUser.cpf,
+        birth_date: updatedUser.birth_date,
       });
     } catch (error) {
       console.error('Error not updated:', error);
