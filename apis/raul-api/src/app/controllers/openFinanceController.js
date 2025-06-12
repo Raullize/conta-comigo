@@ -10,39 +10,39 @@ const getDataAccount = async (req, res) => {
     const user = await User.findOne({ where: { cpf } });
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    const institution = await Institution.findOne({
-      where: { id: institutionId },
-    });
-    if (!institution)
-      return res.status(404).json({ error: 'Institution not found' });
+    // const institution = await Institution.findOne({
+    //   where: { id: institutionId },
+    // });
+    // if (!institution)
+    //   return res.status(404).json({ error: 'Institution not found' });
 
     const account = await BankAccount.findOne({
-      where: { user_cpf: user.cpf, institution_id: institution.id },
+      where: { user_cpf: user.cpf },
     });
     if (!account)
       return res
         .status(404)
         .json({ error: 'Account not found for this institution' });
     if (!account.consent) {
+      console.log('account:', account);
       return res.json('Not allowed');
     }
     const transactions = await Transaction.findAll({
       where: {
-        origin_cpf: account.user_cpf,
-        institution_id: account.institution_id,
+        account_id: account.id
       },
     });
 
     res.json({
       idBank: 4,
       cpf: user.cpf,
-      institution: institution.name,
+      institution: account.bank_name,
       balance: account.balance,
       transacoes: transactions.map(transaction => ({
         id: transaction.id,
         date: transaction.date,
         description: transaction.description,
-        value: transaction.value,
+        value: transaction.amount,
       })),
     });
   } catch (error) {
@@ -61,10 +61,9 @@ const updateConsent = async (req, res) => {
   }
 
   try {
-    const account = await Account.findOne({
+    const account = await BankAccount.findOne({
       where: {
-        user_cpf: cpf,
-        institution_id: institution_id,
+        user_cpf: cpf
       },
     });
 

@@ -19,6 +19,17 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      user_cpf: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        references: { model: 'users', key: 'cpf' },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE', 
+      },
+      consent: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
       account_type: {
         type: Sequelize.ENUM('checking', 'savings', 'investment'),
         allowNull: false,

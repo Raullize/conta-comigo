@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import BankAccount from '../models/BankAccount.js';
 import Transaction from '../models/Transaction.js';
+import User from '../models/User.js';
 
 class BankAccountController {
   async index(req, res) {
@@ -81,7 +82,10 @@ class BankAccountController {
     return res.status(400).json({ error: 'Falha na validação dos dados.' });
   }
 
-  
+  const user = await User.findByPk(req.userId);
+  if (!user) {
+    return res.status(401).json({ error: 'Usuário não encontrado.' });
+  }
 
   const { bank_name } = req.body;
   const existingAccounts = await BankAccount.findAll({
@@ -98,12 +102,10 @@ class BankAccountController {
     }
   }
 
-  
 
-
-  
   const accountExists = await BankAccount.findOne({
     where: {
+      user_cpf: user.cpf,
       user_id: req.userId,
       bank_name: req.body.bank_name,
       agency: req.body.agency,
@@ -119,6 +121,7 @@ class BankAccountController {
   const account = await BankAccount.create({
     ...req.body,
     user_id: req.userId,
+    user_cpf: user.cpf,
     is_active: true,
   });
 
