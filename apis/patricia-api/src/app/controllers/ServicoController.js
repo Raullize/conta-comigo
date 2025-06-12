@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Conta from "./models/Conta.js";
 import Transacao from "./models/Transacao.js";
 import Instituicao from "./models/Instituicao.js";
@@ -15,6 +16,7 @@ class ServicoController {
     const instituicoes = [ ... new Set(contas.map(c => c.instituicao?.nome).filter(Boolean))
     ];
     return { saldo: saldoTotal, instituicoes};
+
 
   }
   static async acessoSaldoInstituicao(usuarioId, instituicaoNome){

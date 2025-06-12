@@ -1,3 +1,4 @@
+/* eslint-disable */
 module.exports = {
  async up (queryInterface, Sequelize) {
     await queryInterface.createTable('contas', {
@@ -7,12 +8,19 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
+      usuario_id: {
+        type: Sequelize.INTEGER,
+        references: {model: 'users', key: 'id'},
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+        allowNull: false,     
+      },
       user_cpf: {
         type: Sequelize.STRING,
         allowNull: false,
         references: { model: 'users', key: 'cpf' },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL', 
+        onDelete: 'CASCADE', 
       },
       numero: {
         type: Sequelize.STRING,
