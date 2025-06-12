@@ -54,11 +54,7 @@ const getDataAccount = async (req, res) => {
       balance: account.balance,
       transacoes: transactions.map(transaction => {
         let type;
-        if (transaction.destination_cpf === null) {
-          type = 'withdrawal';
-        } else if (transaction.origin_cpf === null) {
-          type = 'deposit';
-        } else if (transaction.origin_cpf === user.cpf) {
+        if (transaction.origin_cpf === user.cpf) {
           type = 'debit';
         } else {
           type = 'credit';
