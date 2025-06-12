@@ -64,7 +64,7 @@ class userController {
 
   async update(req, res) {
     try {
-      const { name, email, birthDate, oldPassword } = req.body;
+      const { name, email, birthDate, oldPassword, password } = req.body;
 
       const user = await User.findByPk(req.userId);
 
@@ -90,6 +90,11 @@ class userController {
       const updateData = { name, email };
       if (birthDate) {
         updateData.birthDate = birthDate;
+      }
+      
+      // Add password to update data if provided
+      if (password) {
+        updateData.password = password;
       }
 
       const updatedUser = await user.update(updateData);
