@@ -27,28 +27,55 @@ const getDataAccount = async (req, res) => {
     if (!account.consent) {
       return res.json('Not allowed');
     }
-    const transactions = await Transaction.findAll({
+
+    // Busca separada para transações como origem e destino
+    const sentTransactions = await Transaction.findAll({
       where: {
         origin_cpf: account.user_cpf,
         institution_id: account.institution_id,
       },
     });
 
+    const receivedTransactions = await Transaction.findAll({
+      where: {
+        destination_cpf: account.user_cpf,
+        institution_id: account.institution_id,
+      },
+    });
+
+    // Junta e ordena por data (opcional)
+    const transactions = [...sentTransactions, ...receivedTransactions].sort(
+      (a, b) => new Date(a.created_at) - new Date(b.created_at)
+    );
+
     res.json({
       idBank: 4,
       cpf: user.cpf,
-      institution: institution.name,
       balance: account.balance,
-      transacoes: transactions.map(transaction => ({
-        id: transaction.id,
-        date: transaction.date,
-        description: transaction.description,
-        value: transaction.value,
-        idBank: 4,
-      })),
+      transacoes: transactions.map(transaction => {
+        let type;
+        if (transaction.destination_cpf === null) {
+          type = 'withdrawal';
+        } else if (transaction.origin_cpf === null) {
+          type = 'deposit';
+        } else if (transaction.origin_cpf === user.cpf) {
+          type = 'debit';
+        } else {
+          type = 'credit';
+        }
+
+        return {
+          id: transaction.id,
+          date: transaction.created_at,
+          description: transaction.description,
+          value: transaction.value,
+          type: type,
+          idBank: 4,
+        };
+      }),
     });
   } catch (error) {
-    console.error('Error updating consent.:', error);
+    console.error('Error getting account data:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

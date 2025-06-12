@@ -22,7 +22,7 @@ router.post('/newuser', UserController.createUser);
 router.post('/newInstitution', InstitutionController.store);
 router.post('/users/:user_cpf/accounts', AccountController.createAccount);
 router.post(
-  '/users/:origin_cpf/transaction',
+  '/users/:origin_cpf/transactions',
   TransactionController.newTransaction
 );
 router.post('/users/:user_cpf/deposit', AccountController.newDeposit);
