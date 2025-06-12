@@ -1,30 +1,29 @@
-
-
 import { Op } from 'sequelize';
-import User from '../models/User.js';
-import BankAccount from '../models/Conta.js';
-import Transaction from '../models/Transacao.js';
-import Institution from '../models/Institution.js';
+import { User, Conta, Transacao as Transaction, Instituicao } from '../models/associations.js';
 
 class OpenFinanceController {
   
   async getDataAccount(req, res) {
     try {
       const { cpf } = req.params;
-      const institutionId = 1;
+      const institutionId = 1; 
 
       const user = await User.findOne({ where: { cpf } });
       if (!user) {
         return res.status(404).json({ error: 'Usuário não encontrado.' });
       }
 
-      const institution = await Institution.findOne({ where: { id: institutionId } });
+      const institution = await Instituicao.findOne({ where: { id: institutionId } });
       if (!institution) {
         return res.status(404).json({ error: 'Instituição parceira não encontrada.' });
       }
 
-      const account = await BankAccount.findOne({
-        where: { user_id: user.id, institution_id: institution.id },
+      
+      const account = await Conta.findOne({
+        where: { 
+          usuario_id: user.id, 
+          instituicao_id: institution.id 
+        },
       });
 
       if (!account) {
@@ -38,26 +37,27 @@ class OpenFinanceController {
       const transactions = await Transaction.findAll({
         where: {
           [Op.or]: [
-            { origin_account_id: account.id },
-            { destination_account_id: account.id },
+            { conta_id: account.id_conta },
+            { conta_destino_id: account.id_conta },
           ],
         },
         limit: 20,
-        order: [['transaction_date', 'DESC']],
+        order: [['createdAt', 'DESC']], 
       });
 
+      
       return res.json({
         idBank: institution.id,
         cpf: user.cpf,
-        institution: institution.name,
-        balance: account.balance,
+        institution: institution.nome, 
+        balance: account.saldo,     
         transactions: transactions.map(t => ({
           id: t.id,
-          date: t.transaction_date,
-          description: t.description,
-          value: t.amount,
-          type: t.type,
-          category: t.category,
+          date: t.createdAt, 
+          description: t.descricao,
+          value: t.valor, 
+          type: t.tipo,
+          category: t.category, 
         })),
       });
 
@@ -73,27 +73,20 @@ class OpenFinanceController {
       const { consent } = req.body;
       const institutionId = 1;
 
-    
-    
-      if (consent === undefined || consent === null) {
-        return res.status(400).json({ error: 'O campo "consent" é obrigatório.' });
-      }
-
-    
       if (typeof consent !== 'boolean') {
-        return res.status(400).json({ error: 'O valor de "consent" deve ser do tipo booleano (true ou false).' });
+        return res.status(400).json({ error: 'O valor de "consent" deve ser true ou false.' });
       }
-    
 
       const user = await User.findOne({ where: { cpf } });
       if (!user) {
         return res.status(404).json({ error: 'Usuário não encontrado.' });
       }
       
-      const account = await BankAccount.findOne({
+      
+      const account = await Conta.findOne({
         where: {
-          user_id: user.id,
-          institution_id: institutionId,
+          usuario_id: user.id,
+          instituicao_id: institutionId,
         },
       });
 
@@ -107,7 +100,7 @@ class OpenFinanceController {
       return res.json({
         message: 'Consentimento atualizado com sucesso.',
         cpf: user.cpf,
-        institution_id: account.institution_id,
+        institution_id: account.instituicao_id,
         consent: account.consent,
       });
 
