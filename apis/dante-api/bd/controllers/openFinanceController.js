@@ -1,5 +1,9 @@
-const { Usuario: User, Instituicao: Institution, Transacao: Transaction, Conta: Account } = require('../models');
-
+const {
+  Usuario: User,
+  Instituicao: Institution,
+  Transacao: Transaction,
+  Conta: Account,
+} = require('../models');
 
 const getDataAccount = async (req, res) => {
   const { cpf } = req.params;
@@ -22,29 +26,57 @@ const getDataAccount = async (req, res) => {
     });
     if (!institution)
       return res.status(404).json({ error: 'Institution not found' });
-        
+
     if (!account.consent) {
-      return res.status(403).json({ error: 'Consent not granted by the user.' });
+      return res
+        .status(403)
+        .json({ error: 'Consent not granted by the user.' });
     }
 
-    const transactions = await Transaction.findAll({
+    const sentTransactions = await Transaction.findAll({
       where: {
-        usuarioCpf: account.usuarioCpf,
-        instituicaoId: institution.id,
+        cpfOrigem: user.cpf,
+        instituicaoId: account.instituicaoId,
       },
     });
 
+    const receivedTransactions = await Transaction.findAll({
+      where: {
+        cpfDestino: user.cpf,
+        instituicaoId: account.instituicaoId,
+      },
+    });
+
+    const transactions = [...sentTransactions, ...receivedTransactions].sort(
+      (a, b) => new Date(a.data) - new Date(b.data)
+    );
+
     res.json({
-      idBank: 1, 
+      idBank: 1,
       cpf: user.cpf,
       institution: institution.nome,
       balance: account.saldo,
-      transacoes: transactions.map(transaction => ({
-        id: transaction.id,
-        date: transaction.data,
-        description: transaction.descricao,
-        value: transaction.valor,
-      })),
+      transacoes: transactions.map(transaction => {
+        let type;
+        if (!transaction.cpfDestino) {
+          type = 'withdrawal';
+        } else if (!transaction.cpfOrigem) {
+          type = 'deposit';
+        } else if (transaction.cpfOrigem === user.cpf) {
+          type = 'debit';
+        } else {
+          type = 'credit';
+        }
+
+        return {
+          id: transaction.id,
+          date: transaction.data,
+          description: transaction.descricao,
+          value: transaction.valor,
+          type: type,
+          idBank: 1,
+        };
+      }),
     });
   } catch (error) {
     console.error('Error getting account data for bank 1:', error);
@@ -52,14 +84,15 @@ const getDataAccount = async (req, res) => {
   }
 };
 
-
 const updateConsent = async (req, res) => {
   const { cpf } = req.params;
   const { consent } = req.body;
-  const institution_id = 1; 
+  const institution_id = 1;
 
   if (typeof consent !== 'boolean') {
-    return res.status(400).json({ error: 'Consent value must be true or false' });
+    return res
+      .status(400)
+      .json({ error: 'Consent value must be true or false' });
   }
 
   try {
