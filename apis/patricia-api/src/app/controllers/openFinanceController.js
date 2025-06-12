@@ -33,21 +33,20 @@ const getDataAccount = async (req, res) => {
 
     const transactions = await Transacao.findAll({
       where: {
-        origin_cpf: account.user_cpf,
-        institution_id: account.institution_id,
+        conta_id: account.id
       },
     });
 
     res.json({
       idBank: 3, 
       cpf: user.cpf,
-      institution: institution.name,
-      balance: account.balance,
+      institution: institution.nome,
+      balance: account.saldo,
       transacoes: transactions.map(transaction => ({
         id: transaction.id,
-        date: transaction.date,
-        description: transaction.description,
-        value: transaction.value,
+        date: transaction.data,
+        description: transaction.descricao,
+        value: transaction.valor,
       })),
     });
   } catch (error) {
