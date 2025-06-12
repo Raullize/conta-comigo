@@ -33,14 +33,14 @@ const getDataAccount = async (req, res) => {
 
     const sentTransactions = await Transaction.findAll({
       where: {
-        cpfOrigem: user.cpf,
+        origin_cpf: user.cpf,
         instituicaoId: account.instituicaoId,
       },
     });
 
     const receivedTransactions = await Transaction.findAll({
       where: {
-        cpfDestino: user.cpf,
+        destination_cpf: user.cpf,
         instituicaoId: account.instituicaoId,
       },
     });
@@ -56,11 +56,11 @@ const getDataAccount = async (req, res) => {
       balance: account.saldo,
       transactions: transactions.map(transaction => {
         let type;
-        if (!transaction.cpfDestino) {
+        if (!transaction.destination_cpf) {
           type = 'withdrawal';
-        } else if (!transaction.cpfOrigem) {
+        } else if (!transaction.origin_cpf) {
           type = 'deposit';
-        } else if (transaction.cpfOrigem === user.cpf) {
+        } else if (transaction.origin_cpf === user.cpf) {
           type = 'debit';
         } else {
           type = 'credit';
