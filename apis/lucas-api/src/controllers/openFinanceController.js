@@ -48,6 +48,7 @@ const getDataAccount = async (req, res) => {
         date: transaction.data,
         description: transaction.descricao,
         value: transaction.valor,
+        type: transaction.tipo === 'entrada' ? 'credit' : 'debit',
       })),
     });
   } catch (error) {
