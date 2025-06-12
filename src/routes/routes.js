@@ -20,5 +20,6 @@ routes.put('/users', userController.update);
 routes.post('/category', categoryController.createCategory);
 
 routes.get('/open-finance/:idBank', accountController.createAccount);
+routes.get('/open-finance/:idBank/update', accountController.updateAccount);
 
 module.exports = routes;
