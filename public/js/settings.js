@@ -59,6 +59,26 @@ let passwordToggles = [];
 // User Data
 let currentUser = null;
 
+// Connected Banks Data - This will be replaced by API call in the future
+const connectedBanks = [
+    {
+        id: 1,
+        name: 'Banco do Brasil'
+    },
+    {
+        id: 2,
+        name: 'Banrisul'
+    },
+    {
+        id: 3,
+        name: 'Nubank'
+    },
+    {
+        id: 4,
+        name: 'Bradesco'
+    }
+];
+
 // Initialize Settings Page
 document.addEventListener('DOMContentLoaded', function() {
     initializeElements();
@@ -66,6 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
     loadUserData();
     setupPasswordStrength();
     setupPasswordToggles();
+    renderConnectedAccounts();
 });
 
 // Initialize DOM Elements
@@ -102,8 +123,8 @@ function setupEventListeners() {
         disconnectBtn.addEventListener('click', showDisconnectModal);
     }
 
-    // Individual Disconnect Buttons
-    setupIndividualDisconnectButtons();
+    // Individual Disconnect Buttons will be setup after rendering accounts
+    // setupIndividualDisconnectButtons();
     
     // Connect New Account Button
     const connectNewAccountBtn = document.getElementById('connectNewAccountBtn');
@@ -452,6 +473,48 @@ function handleDisconnectAccounts() {
     hideDisconnectModal();
 }
 
+// Render Connected Accounts Dynamically
+function renderConnectedAccounts() {
+    const connectedAccountsContainer = document.querySelector('.connected-accounts');
+    const accountCountElement = document.querySelector('.open-finance-info .info-content p strong');
+    
+    if (!connectedAccountsContainer) return;
+    
+    // Update account count
+    if (accountCountElement) {
+        accountCountElement.textContent = connectedBanks.length;
+    }
+    
+    // Clear existing content
+    connectedAccountsContainer.innerHTML = '';
+    
+    // Generate HTML for each connected bank
+    // Icon and status are always the same for all banks
+    connectedBanks.forEach(bank => {
+        const accountItem = document.createElement('div');
+        accountItem.className = 'account-item';
+        
+        accountItem.innerHTML = `
+            <div class="account-info">
+                <i class="fas fa-building"></i>
+                <span>${bank.name}</span>
+            </div>
+            <div class="account-actions">
+                <span class="account-status connected">Conectado</span>
+                <button type="button" class="btn btn-sm btn-outline disconnect-single-btn" data-bank="${bank.name}" data-bank-id="${bank.id}">
+                    <i class="fas fa-unlink"></i>
+                    Desvincular
+                </button>
+            </div>
+        `;
+        
+        connectedAccountsContainer.appendChild(accountItem);
+    });
+    
+    // Setup event listeners for the newly created buttons
+    setupIndividualDisconnectButtons();
+}
+
 // Setup Individual Disconnect Buttons
 function setupIndividualDisconnectButtons() {
     const disconnectButtons = document.querySelectorAll('.disconnect-single-btn');
@@ -517,8 +580,17 @@ function handleSingleDisconnect() {
     const singleDisconnectModal = document.getElementById('disconnectSingleModal');
     const bankName = singleDisconnectModal ? singleDisconnectModal.getAttribute('data-bank') : '';
     
-    // This is just visual for now as requested
-    showToast(`Desvinculação do ${bankName} em desenvolvimento`, 'info');
+    // Remove bank from the array (simulating API call)
+    const bankIndex = connectedBanks.findIndex(bank => bank.name === bankName);
+    if (bankIndex > -1) {
+        connectedBanks.splice(bankIndex, 1);
+        // Re-render the accounts list
+        renderConnectedAccounts();
+        showToast(`${bankName} desvinculado com sucesso!`, 'success');
+    } else {
+        showToast(`Erro ao desvincular ${bankName}`, 'error');
+    }
+    
     hideSingleDisconnectModal();
     
     // Here you would implement the actual API call to disconnect the specific bank
@@ -526,10 +598,55 @@ function handleSingleDisconnect() {
     // disconnectSpecificBank(bankName);
 }
 
+// Add New Connected Bank (for demonstration)
+function addConnectedBank(bankData) {
+    // Check if bank is already connected
+    const existingBank = connectedBanks.find(bank => bank.name === bankData.name);
+    if (existingBank) {
+        showToast(`${bankData.name} já está conectado!`, 'info');
+        return;
+    }
+    
+    // Add new bank to the array
+    // Only id and name are needed, as per API specification
+    const newBank = {
+        id: Date.now(), // Simple ID generation for demo
+        name: bankData.name
+    };
+    
+    connectedBanks.push(newBank);
+    
+    // Re-render the accounts list
+    renderConnectedAccounts();
+    
+    showToast(`${bankData.name} conectado com sucesso!`, 'success');
+}
+
 // Handle Connect New Account
 function handleConnectNewAccount() {
-    // This is just visual for now as requested
-    showToast('Funcionalidade de vinculação de nova conta em desenvolvimento', 'info');
+    // For demonstration purposes, let's add a sample bank
+    // In real implementation, this would redirect to Open Finance authorization
+    
+    // Example of adding a new bank (for testing)
+    // Only name is needed, icon is always the same
+    const sampleBanks = [
+        { name: 'Itaú' },
+        { name: 'Bradesco' },
+        { name: 'Santander' },
+        { name: 'Caixa Econômica Federal' }
+    ];
+    
+    // Get a random bank that's not already connected
+    const availableBanks = sampleBanks.filter(bank => 
+        !connectedBanks.some(connected => connected.name === bank.name)
+    );
+    
+    if (availableBanks.length > 0) {
+        const randomBank = availableBanks[Math.floor(Math.random() * availableBanks.length)];
+        addConnectedBank(randomBank);
+    } else {
+        showToast('Todos os bancos de exemplo já estão conectados!', 'info');
+    }
     
     // Here you would implement the actual Open Finance connection flow
     // Example:
