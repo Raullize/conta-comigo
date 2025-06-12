@@ -59,33 +59,23 @@
                     </div>
                 </div>
 
-                <!-- Investments -->
-                <div class="card investments-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Investimentos</h3>
-                        <div class="card-icon">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                    </div>
-                    <div class="balance-value"></div>
-                    <div class="balance-change">
-                        <i class="fas"></i>
-                        <span></span>
-                    </div>
-                </div>
 
-                <!-- Savings -->
-                <div class="card savings-card">
+
+                <!-- Financial Tips -->
+                <div class="card tips-card">
                     <div class="card-header">
-                        <h3 class="card-title">Economia</h3>
+                        <h3 class="card-title">Dica Financeira do Dia</h3>
                         <div class="card-icon">
-                            <i class="fas fa-piggy-bank"></i>
+                            <i class="fas fa-lightbulb"></i>
                         </div>
                     </div>
-                    <div class="balance-value"></div>
-                    <div class="balance-change">
-                        <i class="fas"></i>
-                        <span></span>
+                    <div class="tip-content">
+                        <div class="tip-text" id="dailyTip">
+                            <!-- Daily tip will be populated by JavaScript -->
+                        </div>
+                        <button class="tip-refresh-btn" id="refreshTip" title="Nova dica">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
                     </div>
                 </div>
 
