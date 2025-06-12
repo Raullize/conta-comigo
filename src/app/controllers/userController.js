@@ -91,7 +91,7 @@ class userController {
       if (birthDate) {
         updateData.birthDate = birthDate;
       }
-      
+
       // Add password to update data if provided
       if (password) {
         updateData.password = password;
