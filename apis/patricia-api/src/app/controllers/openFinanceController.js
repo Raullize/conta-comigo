@@ -12,20 +12,21 @@ const getDataAccount = async (req, res) => {
     const user = await User.findOne({ where: { cpf } });
     if (!user) return res.status(404).json({ error: 'User not found' });
 
+    const account = await Conta.findOne({
+      where: { user_cpf: user.cpf},
+    });
+    if (!account)
+      return res
+        .status(404)
+        .json({ error: 'Account not found for this institution' });
+    
     const institution = await Instituicao.findOne({
       where: { id: institutionId },
     });
     if (!institution)
       return res.status(404).json({ error: 'Institution not found' });
 
-    const account = await Conta.findOne({
-      where: { user_cpf: user.cpf, institution_id: institution.id },
-    });
-    if (!account)
-      return res
-        .status(404)
-        .json({ error: 'Account not found for this institution' });
-        
+ 
     if (!account.consent) {
       return res.status(403).json({ error: 'Consent not granted by the user.' });
     }
@@ -69,7 +70,7 @@ const updateConsent = async (req, res) => {
     const account = await Conta.findOne({
       where: {
         user_cpf: cpf,
-        institution_id: institution_id,
+        instituicao_id: institution_id,
       },
     });
 

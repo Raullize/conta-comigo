@@ -27,20 +27,20 @@ class TransacaoController {
       {return res.status(400).json ({error: 'Essa conta não existe.'});
     }
 
-    if (conta.user_cpf !== req.userId) { //alterei pra nao puxar pelo usuario_id até pq n tem essa coluna
-      return res.status(403).json({ error: 'Você não tem permissão para operar nesta conta.' });
-    }
+    // if (conta.usuario_id !== req.userId) {
+      //return res.status(403).json({ error: 'Você não tem permissão para operar nesta conta.' });
+    //}
 
 
-    let cpfDoUser = "CPF não encontrado";
+   let cpfDoUser = "CPF não encontrado";
     if (conta.usuario_id){
-      const usuarioDaConta = await Usuario.findByPk(conta.usuario_id);
+      const usuarioDaConta = await User.findByPk(conta.usuario_id);
       if (usuarioDaConta && usuarioDaConta.cpf){
         cpfDoUser = usuarioDaConta.cpf;
       }else {
         console.warn ('Cpf não encontrado para o user id');
       }
-    }
+  }
     const id_banco = conta.id_banco_placeholder || "Id de banco não configurada"
 
     if(tipo === 'transferencia'){

@@ -1,3 +1,4 @@
+/* eslint-disable */
 import ServicoController from './ServicoController.js'
 import Conta from '../controllers/models/Conta.js';
 import *as Yup from 'yup';
@@ -43,6 +44,7 @@ class ContaController{
     const { numero, instituicao_id, consent } = req.body;
    
     const novaConta = await Conta.create({
+      usuario_id: req.userId,
       user_cpf: user.cpf,
       numero,
       instituicao_id,

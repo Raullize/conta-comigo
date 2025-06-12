@@ -9,6 +9,7 @@ class Conta extends Model {
           primaryKey: true,
           autoIncrement: true,
         },
+        usuario_id: Sequelize.INTEGER,
         user_cpf: Sequelize.STRING,
         consent: Sequelize.BOOLEAN,
         numero: Sequelize.STRING,
