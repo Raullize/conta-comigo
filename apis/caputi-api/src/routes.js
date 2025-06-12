@@ -31,7 +31,7 @@ routes.get('/usuarios/:id/contas',ContaController.listarPorUsuario)
 
 routes.get('/usuarios/:id/', UserController.index);
 
-router.get('/open-finance/:cpf', openFinanceController.getDataAccount);
-router.patch('/open-finance/:cpf/consent', openFinanceController.updateConsent);
+routes.get('/open-finance/:cpf', openFinanceController.getDataAccount);
+routes.patch('/open-finance/:cpf/consent', openFinanceController.updateConsent);
 
 export default routes;

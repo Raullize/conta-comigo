@@ -2,8 +2,8 @@
 
 import { Op } from 'sequelize';
 import User from '../models/User.js';
-import BankAccount from '../models/BankAccount.js';
-import Transaction from '../models/Transaction.js';
+import BankAccount from '../models/Conta.js';
+import Transaction from '../models/Transacao.js';
 import Institution from '../models/Institution.js';
 
 class OpenFinanceController {
