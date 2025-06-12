@@ -31,51 +31,27 @@ const getDataAccount = async (req, res) => {
       return res.json('Not allowed');
     }
 
-    const sentTransactions = await Transaction.findAll({
+    const transactions = await Transaction.findAll({
       where: {
-        origin_cpf: user.cpf,
+        usuarioCpf: account.usuarioCpf,
         instituicaoId: account.instituicaoId,
       },
     });
-
-    const receivedTransactions = await Transaction.findAll({
-      where: {
-        destination_cpf: user.cpf,
-        instituicaoId: account.instituicaoId,
-      },
-    });
-
-    const transactions = [...sentTransactions, ...receivedTransactions].sort(
-      (a, b) => new Date(a.data) - new Date(b.data)
-    );
 
     res.json({
       idBank: 2,
       cpf: user.cpf,
       institution: institution.nome,
       balance: account.saldo,
-      transactions: transactions.map(transaction => {
-        let type;
-        if (!transaction.destination_cpf) {
-          type = 'withdrawal';
-        } else if (!transaction.origin_cpf) {
-          type = 'deposit';
-        } else if (transaction.origin_cpf === user.cpf) {
-          type = 'debit';
-        } else {
-          type = 'credit';
-        }
-
-        return {
-          id: transaction.id,
-          date: transaction.data,
-          description: transaction.descricao,
-          value: transaction.valor,
-          type: type,
-        };
-      }),
+      transactions: transactions.map(transaction => ({
+        id: transaction.id,
+        date: transaction.data,
+        description: transaction.descricao,
+        value: transaction.valor,
+      })),
     });
   } catch (error) {
+    // console.error('Error updating consent.:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
