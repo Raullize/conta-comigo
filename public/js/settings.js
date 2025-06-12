@@ -4,49 +4,32 @@
 
 // DOM Elements
 const DOM = {
-    // Menu Navigation
     menuItems: document.querySelectorAll('.settings-nav-item'),
     contentSections: document.querySelectorAll('.content-section'),
-    
-    // User Info Form
     userInfoForm: document.getElementById('userInfoForm'),
     nameInput: document.getElementById('name'),
     emailInput: document.getElementById('email'),
     cpfInput: document.getElementById('cpf'),
     birthDateInput: document.getElementById('birthDate'),
-    
-    // Profile Photo Elements
     profilePhotoInput: document.getElementById('profilePhotoInput'),
     profilePhotoPreview: document.getElementById('profilePhotoPreview'),
     uploadPhotoBtn: document.getElementById('uploadPhotoBtn'),
     removePhotoBtn: document.getElementById('removePhotoBtn'),
-    
-    // Password Form
     passwordForm: document.getElementById('passwordForm'),
     currentPasswordInput: document.getElementById('currentPassword'),
     newPasswordInput: document.getElementById('newPassword'),
     confirmPasswordInput: document.getElementById('confirmPassword'),
-    
-    // Password toggles
     currentPasswordToggle: document.getElementById('currentPasswordToggle'),
     newPasswordToggle: document.getElementById('newPasswordToggle'),
     confirmPasswordToggle: document.getElementById('confirmPasswordToggle'),
-    
-    // Password strength
     strengthBar: document.querySelector('.strength-fill'),
     strengthText: document.querySelector('.strength-text'),
-    
-    // Privacy toggles
     dataSharingToggle: document.getElementById('dataSharing'),
     emailNotificationsToggle: document.getElementById('emailNotifications'),
     usageAnalyticsToggle: document.getElementById('usageAnalytics'),
-    
-    // Buttons
     logoutBtn: document.getElementById('logoutBtn'),
     disconnectBtn: document.getElementById('disconnectBtn'),
     deleteAccountBtn: document.getElementById('deleteAccountBtn'),
-    
-    // Modals
     logoutModal: document.getElementById('logoutModal'),
     disconnectModal: document.getElementById('disconnectModal'),
     deleteAccountModal: document.getElementById('deleteAccountModal')
@@ -55,20 +38,37 @@ const DOM = {
 let profileForm, passwordForm, deleteConfirmationInput;
 let disconnectModal, deleteAccountModal;
 let passwordToggles = [];
-
-// User Data
 let currentUser = null;
+const connectedBanks = [
+    {
+        id: 1,
+        name: 'Banco do Brasil'
+    },
+    {
+        id: 2,
+        name: 'Banrisul'
+    },
+    {
+        id: 3,
+        name: 'Nubank'
+    },
+    {
+        id: 4,
+        name: 'Bradesco'
+    }
+];
 
-// Initialize Settings Page
+
 document.addEventListener('DOMContentLoaded', function() {
     initializeElements();
     setupEventListeners();
     loadUserData();
     setupPasswordStrength();
     setupPasswordToggles();
+    renderConnectedAccounts();
 });
 
-// Initialize DOM Elements
+
 function initializeElements() {
     profileForm = document.getElementById('profileForm');
     passwordForm = document.getElementById('passwordForm');
@@ -78,58 +78,46 @@ function initializeElements() {
     passwordToggles = document.querySelectorAll('.password-toggle');
 }
 
-// Setup Event Listeners
+
 function setupEventListeners() {
-    // Menu Navigation
     setupMenuNavigation();
-    
-    // Profile Form
     if (profileForm) {
         profileForm.addEventListener('submit', handleProfileUpdate);
     }
     
-    // Profile Photo Events
     setupProfilePhotoEvents();
-
-    // Password Form
     if (passwordForm) {
         passwordForm.addEventListener('submit', handlePasswordUpdate);
     }
 
-    // Disconnect Accounts Button
+
     const disconnectBtn = document.getElementById('disconnectAccountsBtn');
     if (disconnectBtn) {
         disconnectBtn.addEventListener('click', showDisconnectModal);
     }
 
-    // Individual Disconnect Buttons
-    setupIndividualDisconnectButtons();
-    
-    // Connect New Account Button
+
     const connectNewAccountBtn = document.getElementById('connectNewAccountBtn');
     if (connectNewAccountBtn) {
         connectNewAccountBtn.addEventListener('click', handleConnectNewAccount);
     }
 
-    // Delete Account Button
+
     const deleteBtn = document.getElementById('deleteAccountBtn');
     if (deleteBtn) {
         deleteBtn.addEventListener('click', showDeleteModal);
     }
 
-    // Modal Close Buttons
     setupModalEventListeners();
     setupSingleDisconnectModalListeners();
-
-    // Delete Confirmation Input
     if (deleteConfirmationInput) {
         deleteConfirmationInput.addEventListener('input', handleDeleteConfirmationInput);
     }
 }
 
-// Setup Modal Event Listeners
+
 function setupModalEventListeners() {
-    // Disconnect Modal
+
     const closeDisconnectModal = document.getElementById('closeDisconnectModal');
     const cancelDisconnectBtn = document.getElementById('cancelDisconnectBtn');
     const confirmDisconnectBtn = document.getElementById('confirmDisconnectBtn');
@@ -144,7 +132,7 @@ function setupModalEventListeners() {
         confirmDisconnectBtn.addEventListener('click', handleDisconnectAccounts);
     }
 
-    // Delete Account Modal
+
     const closeDeleteModal = document.getElementById('closeDeleteModal');
     const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
@@ -159,7 +147,7 @@ function setupModalEventListeners() {
         confirmDeleteBtn.addEventListener('click', handleDeleteAccount);
     }
 
-    // Close modals when clicking outside
+
     window.addEventListener('click', function(event) {
         if (event.target === disconnectModal) {
             hideDisconnectModal();
@@ -168,9 +156,27 @@ function setupModalEventListeners() {
             hideDeleteModal();
         }
     });
+
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+
+            if (disconnectModal && disconnectModal.classList.contains('show')) {
+                hideDisconnectModal();
+            }
+            if (deleteAccountModal && deleteAccountModal.classList.contains('show')) {
+                hideDeleteModal();
+            }
+
+            const singleDisconnectModal = document.getElementById('disconnectSingleModal');
+            if (singleDisconnectModal && singleDisconnectModal.classList.contains('show')) {
+                hideSingleDisconnectModal();
+            }
+        }
+    });
 }
 
-// Load User Data
+
 async function loadUserData() {
     try {
         const token = localStorage.getItem('token');
@@ -179,7 +185,7 @@ async function loadUserData() {
             return;
         }
 
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.user}`, {
+        const response = await fetch('/users', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -199,7 +205,7 @@ async function loadUserData() {
     }
 }
 
-// Populate User Data in Form
+
 function populateUserData() {
     if (!currentUser) return;
 
@@ -212,17 +218,16 @@ function populateUserData() {
     if (emailInput) emailInput.value = currentUser.email || '';
     if (cpfInput) cpfInput.value = formatCPF(currentUser.cpf) || '';
     if (birthDateInput && currentUser.birthDate) {
-        // Convert date to YYYY-MM-DD format for input
+
         const date = new Date(currentUser.birthDate);
         const formattedDate = date.toISOString().split('T')[0];
         birthDateInput.value = formattedDate;
     }
-    
-    // Load profile photo
+
     loadProfilePhoto();
 }
 
-// Handle Profile Update
+
 async function handleProfileUpdate(event) {
     event.preventDefault();
     
@@ -236,7 +241,7 @@ async function handleProfileUpdate(event) {
         setFormLoading(profileForm, true);
         
         const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.user}`, {
+        const response = await fetch('/users', {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -263,7 +268,7 @@ async function handleProfileUpdate(event) {
     }
 }
 
-// Handle Password Update
+
 async function handlePasswordUpdate(event) {
     event.preventDefault();
     
@@ -272,7 +277,7 @@ async function handlePasswordUpdate(event) {
     const newPassword = formData.get('newPassword');
     const confirmPassword = formData.get('confirmPassword');
 
-    // Validate passwords
+
     if (newPassword !== confirmPassword) {
         showToast('As senhas não coincidem', 'error');
         return;
@@ -292,7 +297,7 @@ async function handlePasswordUpdate(event) {
         setFormLoading(passwordForm, true);
         
         const token = localStorage.getItem('token');
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.user}`, {
+        const response = await fetch('/users', {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -318,7 +323,7 @@ async function handlePasswordUpdate(event) {
     }
 }
 
-// Password Strength Setup
+
 function setupPasswordStrength() {
     const newPasswordInput = document.getElementById('newPassword');
     if (newPasswordInput) {
@@ -326,7 +331,7 @@ function setupPasswordStrength() {
     }
 }
 
-// Update Password Strength
+
 function updatePasswordStrength(event) {
     const password = event.target.value;
     const strengthFill = document.querySelector('.strength-fill');
@@ -336,7 +341,7 @@ function updatePasswordStrength(event) {
 
     const strength = calculatePasswordStrength(password);
     
-    // Remove all strength classes
+
     strengthFill.classList.remove('weak', 'fair', 'good', 'strong');
     
     if (password.length === 0) {
@@ -372,7 +377,7 @@ function updatePasswordStrength(event) {
     }
 }
 
-// Calculate Password Strength
+
 function calculatePasswordStrength(password) {
     let score = 0;
     
@@ -392,7 +397,7 @@ function calculatePasswordStrength(password) {
     return { score, level };
 }
 
-// Setup Password Toggles
+
 function setupPasswordToggles() {
     passwordToggles.forEach(toggle => {
         toggle.addEventListener('click', function() {
@@ -413,28 +418,69 @@ function setupPasswordToggles() {
     });
 }
 
-// Show Disconnect Modal
+
 function showDisconnectModal() {
     if (disconnectModal) {
         disconnectModal.classList.add('show');
     }
 }
 
-// Hide Disconnect Modal
+
 function hideDisconnectModal() {
     if (disconnectModal) {
         disconnectModal.classList.remove('show');
     }
 }
 
-// Handle Disconnect Accounts
+
 function handleDisconnectAccounts() {
-    // This is just visual for now as requested
+
     showToast('Funcionalidade em desenvolvimento', 'info');
     hideDisconnectModal();
 }
 
-// Setup Individual Disconnect Buttons
+
+function renderConnectedAccounts() {
+    const connectedAccountsContainer = document.querySelector('.connected-accounts');
+    const accountCountElement = document.querySelector('.open-finance-info .info-content p strong');
+    
+    if (!connectedAccountsContainer) return;
+    
+
+    if (accountCountElement) {
+        accountCountElement.textContent = connectedBanks.length;
+    }
+    
+
+    connectedAccountsContainer.innerHTML = '';
+    
+
+    connectedBanks.forEach(bank => {
+        const accountItem = document.createElement('div');
+        accountItem.className = 'account-item';
+        
+        accountItem.innerHTML = `
+            <div class="account-info">
+                <i class="fas fa-building"></i>
+                <span>${bank.name}</span>
+            </div>
+            <div class="account-actions">
+                <span class="account-status connected">Conectado</span>
+                <button type="button" class="btn btn-sm btn-outline disconnect-single-btn" data-bank="${bank.name}" data-bank-id="${bank.id}">
+                    <i class="fas fa-unlink"></i>
+                    Desvincular
+                </button>
+            </div>
+        `;
+        
+        connectedAccountsContainer.appendChild(accountItem);
+    });
+    
+
+    setupIndividualDisconnectButtons();
+}
+
+
 function setupIndividualDisconnectButtons() {
     const disconnectButtons = document.querySelectorAll('.disconnect-single-btn');
     disconnectButtons.forEach(button => {
@@ -445,7 +491,7 @@ function setupIndividualDisconnectButtons() {
     });
 }
 
-// Setup Single Disconnect Modal Event Listeners
+
 function setupSingleDisconnectModalListeners() {
     const singleDisconnectModal = document.getElementById('disconnectSingleModal');
     const closeSingleDisconnectModal = document.getElementById('closeSingleDisconnectModal');
@@ -462,7 +508,7 @@ function setupSingleDisconnectModalListeners() {
         confirmSingleDisconnectBtn.addEventListener('click', handleSingleDisconnect);
     }
 
-    // Close modal when clicking outside
+
     if (singleDisconnectModal) {
         window.addEventListener('click', function(event) {
             if (event.target === singleDisconnectModal) {
@@ -472,7 +518,7 @@ function setupSingleDisconnectModalListeners() {
     }
 }
 
-// Show Single Disconnect Modal
+
 function showSingleDisconnectModal(bankName) {
     const singleDisconnectModal = document.getElementById('disconnectSingleModal');
     const bankNameSpan = document.getElementById('bankNameToDisconnect');
@@ -480,12 +526,12 @@ function showSingleDisconnectModal(bankName) {
     if (singleDisconnectModal && bankNameSpan) {
         bankNameSpan.textContent = bankName;
         singleDisconnectModal.classList.add('show');
-        // Store bank name for later use
+
         singleDisconnectModal.setAttribute('data-bank', bankName);
     }
 }
 
-// Hide Single Disconnect Modal
+
 function hideSingleDisconnectModal() {
     const singleDisconnectModal = document.getElementById('disconnectSingleModal');
     if (singleDisconnectModal) {
@@ -494,39 +540,75 @@ function hideSingleDisconnectModal() {
     }
 }
 
-// Handle Single Bank Disconnect
+
 function handleSingleDisconnect() {
     const singleDisconnectModal = document.getElementById('disconnectSingleModal');
     const bankName = singleDisconnectModal ? singleDisconnectModal.getAttribute('data-bank') : '';
     
-    // This is just visual for now as requested
-    showToast(`Desvinculação do ${bankName} em desenvolvimento`, 'info');
+
+    const bankIndex = connectedBanks.findIndex(bank => bank.name === bankName);
+    if (bankIndex > -1) {
+        connectedBanks.splice(bankIndex, 1);
+
+        renderConnectedAccounts();
+        showToast(`${bankName} desvinculado com sucesso!`, 'success');
+    } else {
+        showToast(`Erro ao desvincular ${bankName}`, 'error');
+    }
+    
     hideSingleDisconnectModal();
-    
-    // Here you would implement the actual API call to disconnect the specific bank
-    // Example:
-    // disconnectSpecificBank(bankName);
+
 }
 
-// Handle Connect New Account
+
+function addConnectedBank(bankData) {
+
+    const existingBank = connectedBanks.find(bank => bank.name === bankData.name);
+    if (existingBank) {
+        showToast(`${bankData.name} já está conectado!`, 'info');
+        return;
+    }
+
+    const newBank = {
+        id: Date.now(),
+        name: bankData.name
+    };
+    
+    connectedBanks.push(newBank);
+
+    renderConnectedAccounts();
+    
+    showToast(`${bankData.name} conectado com sucesso!`, 'success');
+}
+
+
 function handleConnectNewAccount() {
-    // This is just visual for now as requested
-    showToast('Funcionalidade de vinculação de nova conta em desenvolvimento', 'info');
+
+    const sampleBanks = [
+        { name: 'Itaú' },
+        { name: 'Bradesco' },
+        { name: 'Santander' },
+        { name: 'Caixa Econômica Federal' }
+    ];
+
+    const availableBanks = sampleBanks.filter(bank => 
+        !connectedBanks.some(connected => connected.name === bank.name)
+    );
     
-    // Here you would implement the actual Open Finance connection flow
-    // Example:
-    // 1. Redirect to Open Finance authorization
-    // 2. Handle callback with authorization code
-    // 3. Exchange code for access token
-    // 4. Fetch account data and update UI
-    // window.location.href = '/api/openfinance/authorize';
+    if (availableBanks.length > 0) {
+        const randomBank = availableBanks[Math.floor(Math.random() * availableBanks.length)];
+        addConnectedBank(randomBank);
+    } else {
+        showToast('Todos os bancos de exemplo já estão conectados!', 'info');
+    }
+
 }
 
-// Show Delete Modal
+
 function showDeleteModal() {
     if (deleteAccountModal) {
         deleteAccountModal.classList.add('show');
-        // Reset confirmation input
+
         if (deleteConfirmationInput) {
             deleteConfirmationInput.value = '';
             updateDeleteButton();
@@ -534,19 +616,19 @@ function showDeleteModal() {
     }
 }
 
-// Hide Delete Modal
+
 function hideDeleteModal() {
     if (deleteAccountModal) {
         deleteAccountModal.classList.remove('show');
     }
 }
 
-// Handle Delete Confirmation Input
+
 function handleDeleteConfirmationInput() {
     updateDeleteButton();
 }
 
-// Update Delete Button State
+
 function updateDeleteButton() {
     const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
     if (confirmDeleteBtn && deleteConfirmationInput) {
@@ -555,18 +637,12 @@ function updateDeleteButton() {
     }
 }
 
-// Handle Delete Account
+
 async function handleDeleteAccount() {
     try {
         const token = localStorage.getItem('token');
         
-        // For now, just show a message since delete endpoint might not exist
-        showToast('Funcionalidade de exclusão em desenvolvimento', 'info');
-        hideDeleteModal();
-        
-        // Uncomment when delete endpoint is available:
-        /*
-        const response = await fetch(`${API_BASE_URL}${API_ENDPOINTS.user}`, {
+        const response = await fetch('/users', {
             method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -577,20 +653,21 @@ async function handleDeleteAccount() {
         if (response.ok) {
             localStorage.removeItem('token');
             showToast('Conta deletada com sucesso', 'success');
+            hideDeleteModal();
             setTimeout(() => {
                 window.location.href = '/pages/login.html';
             }, 2000);
         } else {
-            throw new Error('Erro ao deletar conta');
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Erro ao deletar conta');
         }
-        */
     } catch (error) {
         console.error('Erro ao deletar conta:', error);
         showToast(error.message, 'error');
     }
 }
 
-// Utility Functions
+
 function setFormLoading(form, loading) {
     const submitBtn = form.querySelector('button[type="submit"]');
     if (submitBtn) {
@@ -635,7 +712,7 @@ function formatCPF(cpf) {
 }
 
 function showToast(message, type = 'info') {
-    // Create toast element
+
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
     toast.innerHTML = `
@@ -648,7 +725,7 @@ function showToast(message, type = 'info') {
         </button>
     `;
 
-    // Add toast styles if not already present
+
     if (!document.querySelector('#toast-styles')) {
         const styles = document.createElement('style');
         styles.id = 'toast-styles';
@@ -693,16 +770,16 @@ function showToast(message, type = 'info') {
         document.head.appendChild(styles);
     }
 
-    // Add to page
+
     document.body.appendChild(toast);
 
-    // Setup close functionality
+
     const closeBtn = toast.querySelector('.toast-close');
     closeBtn.addEventListener('click', () => {
         toast.remove();
     });
 
-    // Auto remove after 5 seconds
+
     setTimeout(() => {
         if (toast.parentNode) {
             toast.remove();
@@ -719,9 +796,9 @@ function getToastIcon(type) {
     }
 }
 
-// Menu Navigation Functions
+
 function setupMenuNavigation() {
-    // Add click event listeners to menu items
+
     DOM.menuItems.forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
@@ -730,31 +807,25 @@ function setupMenuNavigation() {
         });
     });
     
-    // Set default active section (personal info)
     switchToSection('personal');
-    
-    // Setup privacy toggles
     setupPrivacyToggles();
 }
 
 function switchToSection(sectionName) {
-    // Remove active class from all menu items
+
     DOM.menuItems.forEach(item => {
         item.classList.remove('active');
     });
-    
-    // Hide all content sections
+
     DOM.contentSections.forEach(section => {
         section.classList.remove('active');
     });
-    
-    // Add active class to clicked menu item
+
     const activeMenuItem = document.querySelector(`[data-section="${sectionName}"]`);
     if (activeMenuItem) {
         activeMenuItem.classList.add('active');
     }
-    
-    // Show target content section
+
     const targetSection = document.getElementById(`${sectionName}-section`);
     if (targetSection) {
         targetSection.classList.add('active');
@@ -762,14 +833,13 @@ function switchToSection(sectionName) {
 }
 
 function setupPrivacyToggles() {
-    // Load privacy settings from localStorage
+
     const privacySettings = JSON.parse(localStorage.getItem('privacySettings')) || {
         dataSharing: true,
         emailNotifications: true,
         usageAnalytics: false
     };
-    
-    // Set initial toggle states
+
     if (DOM.dataSharingToggle) {
         DOM.dataSharingToggle.checked = privacySettings.dataSharing;
         DOM.dataSharingToggle.addEventListener('change', () => {
@@ -800,7 +870,7 @@ function savePrivacySetting(setting, value) {
     showToast(`Configuração de privacidade atualizada`, 'success');
 }
 
-// Profile Photo Functions
+
 function setupProfilePhotoEvents() {
     const uploadBtn = DOM.uploadPhotoBtn;
     const removeBtn = DOM.removePhotoBtn;
@@ -842,13 +912,12 @@ function handlePhotoUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
     
-    // Validate file type
+
     if (!file.type.startsWith('image/')) {
         showToast('Por favor, selecione apenas arquivos de imagem', 'error');
         return;
     }
-    
-    // Validate file size (max 5MB)
+
     if (file.size > 5 * 1024 * 1024) {
         showToast('A imagem deve ter no máximo 5MB', 'error');
         return;
@@ -870,13 +939,11 @@ function updateProfilePhoto(imageDataUrl) {
         preview.innerHTML = `<img src="${imageDataUrl}" alt="Foto de perfil">`;
         if (removeBtn) removeBtn.style.display = 'inline-flex';
     }
-    
-    // Save to localStorage
+
     const userData = JSON.parse(localStorage.getItem('userData')) || {};
     userData.profileImage = imageDataUrl;
     localStorage.setItem('userData', JSON.stringify(userData));
-    
-    // Update header if it exists
+
     updateHeaderProfilePhoto();
     
     showToast('Foto de perfil atualizada com sucesso!', 'success');
@@ -895,20 +962,18 @@ function removeProfilePhoto() {
     if (photoInput) {
         photoInput.value = '';
     }
-    
-    // Remove from localStorage
+
     const userData = JSON.parse(localStorage.getItem('userData')) || {};
     delete userData.profileImage;
     localStorage.setItem('userData', JSON.stringify(userData));
-    
-    // Update header if it exists
+
     updateHeaderProfilePhoto();
     
     showToast('Foto de perfil removida com sucesso!', 'success');
 }
 
 function updateHeaderProfilePhoto() {
-    // Try to update the header avatar if the header component is present
+
     const userAvatar = document.querySelector('.user-avatar');
     if (userAvatar) {
         const userData = JSON.parse(localStorage.getItem('userData')) || {};
