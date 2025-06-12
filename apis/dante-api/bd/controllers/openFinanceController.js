@@ -33,50 +33,25 @@ const getDataAccount = async (req, res) => {
         .json({ error: 'Consent not granted by the user.' });
     }
 
-    const sentTransactions = await Transaction.findAll({
+    const transactions = await Transaction.findAll({
       where: {
-        cpfOrigem: user.cpf,
-        instituicaoId: account.instituicaoId,
+        usuarioCpf: account.usuarioCpf,
+        instituicaoId: institution.id,
       },
     });
-
-    const receivedTransactions = await Transaction.findAll({
-      where: {
-        cpfDestino: user.cpf,
-        instituicaoId: account.instituicaoId,
-      },
-    });
-
-    const transactions = [...sentTransactions, ...receivedTransactions].sort(
-      (a, b) => new Date(a.data) - new Date(b.data)
-    );
 
     res.json({
       idBank: 1,
       cpf: user.cpf,
       institution: institution.nome,
       balance: account.saldo,
-      transacoes: transactions.map(transaction => {
-        let type;
-        if (!transaction.cpfDestino) {
-          type = 'withdrawal';
-        } else if (!transaction.cpfOrigem) {
-          type = 'deposit';
-        } else if (transaction.cpfOrigem === user.cpf) {
-          type = 'debit';
-        } else {
-          type = 'credit';
-        }
-
-        return {
-          id: transaction.id,
-          date: transaction.data,
-          description: transaction.descricao,
-          value: transaction.valor,
-          type: type,
-          idBank: 1,
-        };
-      }),
+      transacoes: transactions.map(transaction => ({
+        id: transaction.id,
+        date: transaction.data,
+        description: transaction.descricao,
+        value: transaction.valor,
+        type: transaction.tipo === 'entrada' ? 'credit' : 'debit',
+      })),
     });
   } catch (error) {
     console.error('Error getting account data for bank 1:', error);
