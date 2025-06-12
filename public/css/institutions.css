@@ -1,8 +1,424 @@
 /* Institutions Page Styles */
 
-/* Specific styles for institutions page */
-.page-content {
-  padding: var(--spacing-lg);
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-2xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Add specific styles for institutions page here */
+.page-title-section {
+  flex: 1;
+}
+
+.page-title {
+  margin-bottom: var(--spacing-sm);
+  color: var(--primary-blue);
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+}
+
+.page-subtitle {
+  color: var(--text-secondary);
+  font-size: var(--font-size-lg);
+  margin-bottom: 0;
+}
+
+.page-actions {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.stat-card {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+  transition: all var(--transition-normal);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: var(--border-radius-lg);
+  background: var(--gradient-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-icon i {
+  font-size: 1.5rem;
+  color: var(--primary-blue);
+}
+
+.stat-content {
+  flex: 1;
+}
+
+.stat-number {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--primary-blue);
+  margin-bottom: var(--spacing-xs);
+  line-height: 1;
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  margin-bottom: 0;
+  font-weight: 500;
+}
+
+/* Institutions Section */
+.institutions-section {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+  color: var(--primary-blue);
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.section-filters {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 2px solid transparent;
+  background: var(--light-gray);
+  color: var(--text-secondary);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-btn:hover {
+  background: rgba(54, 179, 126, 0.1);
+  color: var(--primary-green);
+}
+
+.filter-btn.active {
+  background: var(--gradient-light);
+  border-color: var(--primary-green);
+  color: var(--primary-blue);
+}
+
+/* Institutions Grid */
+.institutions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.institution-card {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-lg);
+  transition: var(--transition-base);
+  border: 1px solid var(--gray-200);
+}
+
+.institution-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.institution-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.institution-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--primary-50);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-600);
+  font-size: 1.5rem;
+}
+
+.institution-info {
+  flex: 1;
+}
+
+.institution-name {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.institution-sync {
+  font-size: 0.875rem;
+  color: var(--gray-600);
+  margin: 0;
+}
+
+.institution-status {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--border-radius-full);
+  flex-shrink: 0;
+}
+
+.status-indicator.active {
+  background: var(--primary-green);
+}
+
+.status-indicator.inactive {
+  background: #ff6b6b;
+}
+
+.status-indicator.warning {
+  background: #ffa726;
+}
+
+.status-text {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.status-text.active {
+  color: var(--primary-green);
+}
+
+.status-text.inactive {
+  color: #ff6b6b;
+}
+
+.status-text.warning {
+  color: #ffa726;
+}
+
+.institution-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.detail-item {
+  text-align: center;
+}
+
+.detail-value {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--primary-blue);
+  margin-bottom: var(--spacing-xs);
+}
+
+.detail-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0;
+}
+
+.institution-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.action-btn {
+  flex: 1;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--white);
+  color: var(--text-secondary);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+}
+
+.action-btn:hover {
+  background: var(--light-gray);
+  color: var(--primary-blue);
+}
+
+.action-btn.primary {
+  background: var(--gradient-primary);
+  color: var(--white);
+  border-color: transparent;
+}
+
+.action-btn.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.action-btn.danger {
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+}
+
+.action-btn.danger:hover {
+  background: #ff6b6b;
+  color: var(--white);
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: var(--spacing-4xl) var(--spacing-2xl);
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--border-radius-full);
+  background: var(--gradient-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--spacing-xl);
+}
+
+.empty-icon i {
+  font-size: 2rem;
+  color: var(--primary-blue);
+}
+
+.empty-title {
+  color: var(--primary-blue);
+  font-size: var(--font-size-2xl);
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+}
+
+.empty-description {
+  color: var(--text-secondary);
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-xl);
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    align-items: stretch;
+  }
+
+  .page-actions {
+    justify-content: stretch;
+  }
+
+  .page-actions .btn {
+    flex: 1;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: stretch;
+  }
+
+  .section-filters {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .institutions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .institution-details {
+    grid-template-columns: 1fr;
+  }
+
+  .institution-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .institutions-section {
+    padding: var(--spacing-lg);
+  }
+
+  .institution-card {
+    padding: var(--spacing-lg);
+  }
+
+  .filter-btn {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .empty-state {
+    padding: var(--spacing-2xl) var(--spacing-lg);
+  }
+}

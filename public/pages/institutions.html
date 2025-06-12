@@ -27,7 +27,86 @@
             
             <!-- Page Content -->
             <div class="page-content">
-                <p>Em desenvolvimento</p>
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="page-title-section">
+                        <h2 class="page-title">Minhas Instituições</h2>
+                        <p class="page-subtitle">Gerencie suas conexões com instituições financeiras via Open Finance</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-primary" id="connectNewInstitution">
+                            <i class="fas fa-plus"></i>
+                            Conectar Nova Instituição
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="totalInstitutions">0</h3>
+                            <p class="stat-label">Instituições Conectadas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="totalAccounts">0</h3>
+                            <p class="stat-label">Contas Vinculadas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 class="stat-number" id="lastSync">--</h3>
+                            <p class="stat-label">Última Sincronização</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Institutions Grid -->
+                <div class="institutions-section">
+                    <div class="section-header">
+                        <h3 class="section-title">Instituições Conectadas</h3>
+                        <div class="section-filters">
+                            <button class="filter-btn active" data-filter="recent">
+                                <i class="fas fa-clock"></i>
+                                Última Sincronização
+                            </button>
+                            <button class="filter-btn" data-filter="oldest">
+                                <i class="fas fa-history"></i>
+                                Sincronização Mais Antiga
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="institutions-grid" id="institutionsGrid">
+                        <!-- Institutions will be dynamically loaded here -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div class="empty-state" id="emptyState" style="display: none;">
+                        <div class="empty-icon">
+                            <i class="fas fa-university"></i>
+                        </div>
+                        <h3 class="empty-title">Nenhuma instituição conectada</h3>
+                        <p class="empty-description">
+                            Conecte suas contas bancárias para começar a gerenciar suas finanças de forma integrada.
+                        </p>
+                        <button class="btn btn-primary" id="connectFirstInstitution">
+                            <i class="fas fa-plus"></i>
+                            Conectar Primeira Instituição
+                        </button>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -70,5 +149,6 @@
             checkAuthentication();
         });
     </script>
+    <script type="module" src="../js/institutions.js"></script>
 </body>
 </html>
