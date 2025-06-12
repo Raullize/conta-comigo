@@ -12,7 +12,7 @@ class AccountController {
         where: { user_cpf, institution_id },
       });
 
-      if (isNaN(existAccount)) {
+      if (existAccount) {
         return res.status(404).json("Conta já existe");
       }
 

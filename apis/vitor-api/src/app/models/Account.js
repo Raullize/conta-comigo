@@ -6,7 +6,7 @@ class Account extends Model {
       {
         id: {
           type: Sequelize.INTEGER,
-          defaultValue: 5,
+          autoIncrement: true,
           primaryKey: true,
         },
         user_cpf: Sequelize.STRING,
