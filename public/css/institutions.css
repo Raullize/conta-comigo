@@ -32,6 +32,10 @@
   gap: var(--spacing-md);
 }
 
+#connectNewInstitution i {
+  margin-right: var(--spacing-sm);
+}
+
 /* Stats Grid */
 .stats-grid {
   display: grid;
