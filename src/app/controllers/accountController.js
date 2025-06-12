@@ -1,9 +1,12 @@
 const axios = require('axios');
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 const sequelize = require('../../database/database.js');
 
-const Account = require('../models/Account.js')(sequelize, DataTypes);
-const Transaction = require('../models/Transaction.js')(sequelize, DataTypes);
+const Account = require('../models/Account.js')(sequelize, Sequelize.DataTypes);
+const Transaction = require('../models/Transaction.js')(
+  sequelize,
+  Sequelize.DataTypes
+);
 
 const banksList = {
   1: process.env.DANTE_API_URL,
@@ -14,112 +17,182 @@ const banksList = {
   6: process.env.CAPUTI_API_URL,
 };
 
-class accountController {
-  static async createAccount(req, res) {
-    const idBank = req.params.idBank;
-    const { cpf } = req.body;
+class AccountController {
+  static async validateBank(idBank) {
+    const bankId = Number(idBank);
+    return {
+      isValid: !!banksList[bankId],
+      idBank: bankId,
+      baseURL: banksList[bankId],
+    };
+  }
 
+  static async handleExternalAPI(baseURL, cpf) {
+    const url = `${baseURL}/open-finance/${cpf}`;
     try {
-      const url = `${banksList[idBank]}/open-finance/${cpf}`;
-      const response = await axios.get(url, { timeout: 5000 });
-      const data = response.data;
+      const response = await axios.get(url, { timeout: 10000 });
+      return response.data;
+    } catch (error) {
+      console.error(`External API error: ${error.message}`);
+      throw new Error('Failed to retrieve data from bank API');
+    }
+  }
 
-      const existingAccount = await Account.findOne({
-        where: { idBank, user_cpf: data.cpf },
-      });
+  static async createAccount(req, res) {
+    try {
+      const { idBank: rawIdBank } = req.params;
+      const { cpf } = req.body;
 
-      if (existingAccount) {
-        return res.status(409).json({ error: 'Account already exists.' });
+      // Validação de entrada
+      const { isValid, idBank, baseURL } =
+        await AccountController.validateBank(rawIdBank);
+      if (!isValid || !/^\d{11}$/.test(cpf)) {
+        return res.status(400).json({ error: 'Invalid parameters' });
       }
 
-      const createdAccount = await Account.create({
-        idBank,
-        user_cpf: data.cpf,
-        balance: data.balance,
-      });
-
-      if (Array.isArray(data.transacoes) && data.transacoes.length > 0) {
-        await Transaction.bulkCreate(
-          data.transacoes.map(transactionData => ({
-            origin_cpf: data.cpf,
-            destination_cpf: transactionData.destination_cpf,
-            value: transactionData.value,
-            type: transactionData.type,
-            description: transactionData.description,
-            idBank,
-          }))
+      // Operação atômica
+      const result = await sequelize.transaction(async t => {
+        const externalData = await AccountController.handleExternalAPI(
+          baseURL,
+          cpf
         );
-      }
+
+        // Verifica conta existente
+        const existingAccount = await Account.findOne({
+          where: { idBank, user_cpf: externalData.cpf },
+          transaction: t,
+        });
+
+        if (existingAccount) {
+          throw new Error('Account already exists');
+        }
+
+        // Cria nova conta
+        const newAccount = await Account.create(
+          {
+            idBank,
+            user_cpf: externalData.cpf,
+            balance: externalData.balance,
+            consent: true,
+          },
+          { transaction: t }
+        );
+
+        // Importa transações
+        if (externalData.transacoes?.length > 0) {
+          await Transaction.bulkCreate(
+            externalData.transacoes.map(t => ({
+              origin_cpf: externalData.cpf,
+              value: t.value,
+              type: t.type,
+              description: t.description,
+              idBank,
+              created_at: t.date || new Date(),
+            })),
+            { transaction: t }
+          );
+        }
+
+        return newAccount;
+      });
 
       return res.status(201).json({
-        message: 'Account created successfully!',
-        account: createdAccount,
-        transactions: data.transacoes,
+        message: 'Account created successfully',
+        account: result,
       });
     } catch (error) {
-      return res.status(500).json({
-        error: 'Database error.',
+      console.error(`Create Account Error: ${error.message}`);
+      return res.status(error.status || 500).json({
+        error: error.message,
+        details: error.original?.message || error.response?.data,
       });
     }
   }
 
   static async updateAccount(req, res) {
-    const idBank = req.params.idBank;
-    const { cpf } = req.body;
-
     try {
-      const url = `${banksList[idBank]}/open-finance/${cpf}`;
-      const response = await axios.get(url, { timeout: 5000 });
-      const data = response.data;
+      const { idBank: rawIdBank } = req.params;
+      const { cpf } = req.body;
 
-      const account = await Account.findOne({
-        where: { idBank, user_cpf: data.cpf },
-      });
-
-      if (!account) {
-        return res.status(404).json({ error: 'Account not found.' });
+      // Validação de entrada
+      const { isValid, idBank, baseURL } =
+        await AccountController.validateBank(rawIdBank);
+      if (!isValid || !/^\d{11}$/.test(cpf)) {
+        return res.status(400).json({ error: 'Invalid parameters' });
       }
 
-      await account.update({ balance: data.balance });
+      // Operação atômica
+      const result = await sequelize.transaction(async t => {
+        const externalData = await AccountController.handleExternalAPI(
+          baseURL,
+          cpf
+        );
 
-      const importedTransactions = [];
-      if (Array.isArray(data.transacoes) && data.transacoes.length > 0) {
-        for (const transactionData of data.transacoes) {
-          const transactionExists = await Transaction.findOne({
-            where: {
-              origin_cpf: data.cpf,
-              idBank,
-              value: transactionData.value,
-              description: transactionData.description,
-              created_at: transactionData.date,
-            },
-          });
+        // Encontra conta existente
+        const account = await Account.findOne({
+          where: { idBank, user_cpf: externalData.cpf },
+          transaction: t,
+        });
 
-          if (!transactionExists) {
-            const createdTransaction = await Transaction.create({
-              origin_cpf: data.cpf,
-              destination_cpf: transactionData.destination_cpf,
-              value: transactionData.value,
-              type: transactionData.type,
-              description: transactionData.description,
-              idBank,
+        if (!account) {
+          throw new Error('Account not found');
+        }
+
+        // Atualiza saldo
+        await account.update(
+          { balance: externalData.balance },
+          { transaction: t }
+        );
+
+        // Importa novas transações
+        const newTransactions = [];
+        if (externalData.transacoes?.length > 0) {
+          for (const transaction of externalData.transacoes) {
+            const exists = await Transaction.findOne({
+              where: {
+                origin_cpf: externalData.cpf,
+                idBank,
+                value: transaction.value,
+                description: transaction.description,
+                created_at: transaction.date,
+              },
+              transaction: t,
             });
-            importedTransactions.push(createdTransaction);
+
+            if (!exists) {
+              const newTransaction = await Transaction.create(
+                {
+                  origin_cpf: externalData.cpf,
+                  destination_cpf: transaction.destination_cpf,
+                  value: transaction.value,
+                  type: transaction.type,
+                  description: transaction.description,
+                  idBank,
+                  created_at: transaction.date || new Date(),
+                },
+                { transaction: t }
+              );
+              newTransactions.push(newTransaction);
+            }
           }
         }
-      }
+
+        return { account, newTransactions };
+      });
 
       return res.status(200).json({
-        message: 'Account updated. New transactions imported.',
-        newTransactions: importedTransactions,
-        newBalance: data.balance,
+        message: 'Account updated successfully',
+        newBalance: result.account.balance,
+        newTransactions: result.newTransactions,
       });
     } catch (error) {
-      return res.status(500).json({
-        error: 'Database update error.',
+      console.error(`Update Account Error: ${error.message}`);
+      return res.status(error.status || 500).json({
+        error: error.message,
+        details: error.original?.message || error.response?.data,
       });
     }
   }
 }
 
-module.exports = accountController;
+module.exports = AccountController;
