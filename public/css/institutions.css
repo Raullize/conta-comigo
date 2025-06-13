@@ -159,6 +159,58 @@
   gap: var(--spacing-lg);
 }
 
+/* Connect Card */
+.connect-card {
+    margin-top: var(--spacing-xl);
+    margin-bottom: var(--spacing-lg);
+}
+
+.connect-card-content {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--spacing-lg);
+    transition: var(--transition-base);
+    border: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+}
+
+.connect-card-content:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.connect-card-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--primary-50);
+    border-radius: var(--border-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-600);
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.connect-card-text {
+    flex-grow: 1;
+}
+
+.connect-card-text h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--gray-900);
+}
+
+.connect-card-text p {
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+    color: var(--gray-600);
+}
+
 .institution-card {
   background: white;
   border-radius: var(--border-radius-lg);

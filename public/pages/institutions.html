@@ -27,18 +27,7 @@
             
             <!-- Page Content -->
             <div class="page-content">
-                <!-- Page Header -->
-                <div class="page-header">
-                    <div class="page-title-section">
-                        <h2 class="page-title">Minhas Instituições</h2>
-                        <p class="page-subtitle">Gerencie suas conexões com instituições financeiras via Open Finance</p>
-                    </div>
-                    <div class="page-actions">
-                        <button class="btn btn-primary" id="connectNewInstitution">
-                            <i class="fas fa-plus"></i>Conectar Nova Instituição
-                        </button>
-                    </div>
-                </div>
+                <!-- Removido o título e subtítulo conforme solicitado -->
 
                 <!-- Stats Cards -->
                 <div class="stats-grid">
@@ -90,6 +79,22 @@
                     <div class="institutions-grid" id="institutionsGrid">
                         <!-- Institutions will be dynamically loaded here -->
                     </div>
+                    
+                    <!-- Card para o botão de Vincular Nova Conta -->
+                    <div class="connect-card">
+                        <div class="connect-card-content">
+                            <div class="connect-card-icon">
+                                <i class="fas fa-plus-circle"></i>
+                            </div>
+                            <div class="connect-card-text">
+                                <h3>Adicionar nova instituição</h3>
+                                <p>Conecte uma nova conta bancária via Open Finance</p>
+                            </div>
+                            <button class="btn btn-primary" id="connectNewInstitution">
+                                <i class="fas fa-plus"></i>Vincular Nova Conta
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- Empty State -->
                     <div class="empty-state" id="emptyState" style="display: none;">
@@ -102,7 +107,7 @@
                         </p>
                         <button class="btn btn-primary" id="connectFirstInstitution">
                             <i class="fas fa-plus"></i>
-                            Conectar Primeira Instituição
+                            Vincular Primeira Conta
                         </button>
                     </div>
                 </div>
