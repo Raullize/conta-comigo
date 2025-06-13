@@ -15,6 +15,8 @@
     <link rel="stylesheet" href="../css/components/sidebar.css">
     <link rel="stylesheet" href="../css/components/header.css">
     <link rel="stylesheet" href="../css/simulator.css">
+
+   <script src="../js/simulator.js"></script>   
 </head>
 <body>
     <div class="dashboard-container">
@@ -27,28 +29,648 @@
             
             <!-- Page Content -->
             <div class="page-content">
-                <p>Em desenvolvimento</p>
+                <!-- Main Content Area -->
+                <main class="content">
+                    <div class="content-grid">
+                        <!-- Parameters Panel -->
+                        <div class="parameters-panel">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h2>Parâmetros de Simulação</h2>
+                                    
+                                </div>
+                                <div class="card-content">
+                                    <form id="simulationForm" novalidate>
+                                        <!-- Classe de Ativo -->
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                Classe de Ativo
+                                                <button type="button" class="tooltip-btn" data-tooltip="Selecione o tipo de investimento que deseja simular">
+                                                    <i class="fas fa-question-circle"></i>
+                                                </button>
+                                            </label>
+                                            <div class="select-wrapper">
+                                                <select id="classeAtivo" class="form-select" required>
+                                                    <option value="">Selecione uma classe de ativo</option>
+                                                    <option value="acoes">📈 Ações</option>
+                                                    <option value="renda-fixa">🏦 Renda Fixa</option>
+                                                    <option value="fundos">📊 Fundos de Investimento</option>
+                                                    <option value="fiis">🏢 FIIs</option>
+                                                    <option value="cripto">₿ Criptomoedas</option>
+                                                    <option value="outros">💼 Outros</option>
+                                                </select>
+                                                <i class="fas fa-chevron-down select-arrow"></i>
+                                            </div>
+                                            <div class="field-error" id="classeAtivoError"></div>
+                                        </div>
+
+                                        <!-- Tipo de Aporte -->
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                Tipo de Aporte
+                                                <button type="button" class="tooltip-btn" data-tooltip="Escolha entre investimento único ou aportes periódicos">
+                                                    <i class="fas fa-question-circle"></i>
+                                                </button>
+                                            </label>
+                                            <div class="radio-group">
+                                                <label class="radio-item">
+                                                    <input type="radio" name="aporteType" value="unico" checked>
+                                                    <span class="radio-custom"></span>
+                                                    <span class="radio-label">
+                                                        <strong>Único</strong>
+                                                        <small>Investimento de uma só vez</small>
+                                                    </span>
+                                                </label>
+                                                <label class="radio-item">
+                                                    <input type="radio" name="aporteType" value="periodico">
+                                                    <span class="radio-custom"></span>
+                                                    <span class="radio-label">
+                                                        <strong>Periódico</strong>
+                                                        <small>Aportes regulares</small>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <!-- Configuração de Aporte -->
+                                        <div id="aporteUnico" class="aporte-config">
+                                            <div class="form-group">
+                                                <label for="valorInicial" class="form-label">Valor Inicial (R$)</label>
+                                                <div class="input-wrapper">
+                                                    <span class="input-prefix">R$</span>
+                                                    <input type="number" id="valorInicial" class="form-input" placeholder="10.000,00" step="0.01" min="0">
+                                                </div>
+                                                <div class="field-error" id="valorInicialError"></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="aportePeriodico" class="aporte-config" style="display: none;">
+                                            <div class="form-group">
+                                                <label for="valorAporte" class="form-label">
+                                                    Valor do Aporte (R$)
+                                                    <button type="button" class="tooltip-btn" data-tooltip="Valor que será investido a cada período">
+                                                        <i class="fas fa-question-circle"></i>
+                                                    </button>
+                                                </label>
+                                                <div class="input-wrapper">
+                                                    <span class="input-prefix">R$</span>
+                                                    <input type="number" id="valorAporte" class="form-input" placeholder="1.000,00" step="0.01" min="0">
+                                                </div>
+                                                <div class="field-error" id="valorAporteError"></div>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="frequencia" class="form-label">
+                                                    Frequência dos Aportes
+                                                    <button type="button" class="tooltip-btn" data-tooltip="Com que frequência você fará os aportes">
+                                                        <i class="fas fa-question-circle"></i>
+                                                    </button>
+                                                </label>
+                                                <div class="select-wrapper">
+                                                    <select id="frequencia" class="form-select">
+                                                        <option value="">Selecione a frequência</option>
+                                                        <option value="mensal">📅 Mensal (12x por ano)</option>
+                                                        <option value="bimestral">📅 Bimestral (6x por ano)</option>
+                                                        <option value="trimestral">📅 Trimestral (4x por ano)</option>
+                                                        <option value="semestral">📅 Semestral (2x por ano)</option>
+                                                        <option value="anual">📅 Anual (1x por ano)</option>
+                                                    </select>
+                                                    <i class="fas fa-chevron-down select-arrow"></i>
+                                                </div>
+                                                <div class="field-error" id="frequenciaError"></div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="dataInicial" class="form-label">
+                                                    Data do Primeiro Aporte
+                                                    <button type="button" class="tooltip-btn" data-tooltip="Data em que você fará o primeiro aporte">
+                                                        <i class="fas fa-question-circle"></i>
+                                                    </button>
+                                                </label>
+                                                <input type="date" id="dataInicial" class="form-input">
+                                            </div>
+
+                                            <!-- Informações Adicionais para Aportes Periódicos -->
+                                            <div class="info-card" id="periodicInfo">
+                                                <div class="info-header">
+                                                    <i class="fas fa-info-circle"></i>
+                                                    <span>Informações sobre Aportes Periódicos</span>
+                                                </div>
+                                                <div class="info-content">
+                                                    <div class="info-item">
+                                                        <strong>Vantagens:</strong>
+                                                        <ul>
+                                                            <li>Reduz o risco de timing do mercado</li>
+                                                            <li>Aproveita a média de preços ao longo do tempo</li>
+                                                            <li>Facilita a disciplina de investimento</li>
+                                                            <li>Permite começar com valores menores</li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="info-item">
+                                                        <strong>Dica:</strong>
+                                                        <p>Aportes mensais são ideais para quem recebe salário mensal. Considere automatizar os aportes para manter a disciplina.</p>
+                                                    </div>
+                                                    <div class="calculation-preview" id="calculationPreview">
+                                                        <strong>Resumo dos Aportes:</strong>
+                                                        <div class="preview-grid">
+                                                            <div class="preview-item">
+                                                                <span>Valor por aporte:</span>
+                                                                <span id="previewValorAporte">R$ 0,00</span>
+                                                            </div>
+                                                            <div class="preview-item">
+                                                                <span>Frequência:</span>
+                                                                <span id="previewFrequencia">-</span>
+                                                            </div>
+                                                            <div class="preview-item">
+                                                                <span>Total por ano:</span>
+                                                                <span id="previewTotalAno">R$ 0,00</span>
+                                                            </div>
+                                                            <div class="preview-item">
+                                                                <span>Total no período:</span>
+                                                                <span id="previewTotalPeriodo">R$ 0,00</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Dados do Investimento -->
+                                        <div class="form-section">
+                                            <h3>Dados do Investimento</h3>
+                                            
+                                            <div class="form-group">
+                                                <label for="cotacao" class="form-label">
+                                                    Cotação/Valor Unitário (R$)
+                                                    <button type="button" class="tooltip-btn" data-tooltip="Preço atual do ativo ou valor unitário da cota">
+                                                        <i class="fas fa-question-circle"></i>
+                                                    </button>
+                                                </label>
+                                                <div class="input-wrapper">
+                                                    <span class="input-prefix">R$</span>
+                                                    <input type="number" id="cotacao" class="form-input" placeholder="25,50" step="0.01" min="0">
+                                                </div>
+                                                <div class="field-error" id="cotacaoError"></div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="form-label">
+                                                    Taxa de Retorno Anual Esperada: <span id="taxaRetornoValue" class="slider-value">8.0</span>%
+                                                    <button type="button" class="tooltip-btn" data-tooltip="Rentabilidade anual esperada para o investimento">
+                                                        <i class="fas fa-question-circle"></i>
+                                                    </button>
+                                                </label>
+                                                <div class="slider-container">
+                                                    <input type="range" id="taxaRetorno" class="slider" min="0" max="30" step="0.5" value="8">
+                                                    <div class="slider-track">
+                                                        <div class="slider-fill"></div>
+                                                    </div>
+                                                    <div class="slider-markers">
+                                                        <span class="marker" style="left: 0%">0%</span>
+                                                        <span class="marker" style="left: 33.33%">10%</span>
+                                                        <span class="marker" style="left: 66.66%">20%</span>
+                                                        <span class="marker" style="left: 100%">30%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="form-label">
+                                                    Prazo de Investimento: <span id="prazoInvestimentoValue" class="slider-value">5</span> anos
+                                                    <button type="button" class="tooltip-btn" data-tooltip="Período que o dinheiro ficará investido">
+                                                        <i class="fas fa-question-circle"></i>
+                                                    </button>
+                                                </label>
+                                                <div class="slider-container">
+                                                    <input type="range" id="prazoInvestimento" class="slider" min="1" max="30" step="1" value="5">
+                                                    <div class="slider-track">
+                                                        <div class="slider-fill"></div>
+                                                    </div>
+                                                    <div class="slider-markers">
+                                                        <span class="marker" style="left: 0%">1a</span>
+                                                        <span class="marker" style="left: 33.33%">10a</span>
+                                                        <span class="marker" style="left: 66.66%">20a</span>
+                                                        <span class="marker" style="left: 100%">30a</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Taxas e Custos -->
+                                        <div class="form-section">
+                                            <h3>Taxas & Custos</h3>
+                                            <div class="form-row">
+                                                <div class="form-group">
+                                                    <label for="taxaAdm" class="form-label">
+                                                        Taxa Adm. (% a.a.)
+                                                        <button type="button" class="tooltip-btn" data-tooltip="Taxa de administração anual do investimento">
+                                                            <i class="fas fa-question-circle"></i>
+                                                        </button>
+                                                    </label>
+                                                    <div class="input-wrapper">
+                                                        <input type="number" id="taxaAdm" class="form-input" placeholder="1,5" step="0.01" min="0" max="10">
+                                                        <span class="input-suffix">%</span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="corretagem" class="form-label">
+                                                        Corretagem (R$)
+                                                        <button type="button" class="tooltip-btn" data-tooltip="Taxa de corretagem por operação">
+                                                            <i class="fas fa-question-circle"></i>
+                                                        </button>
+                                                    </label>
+                                                    <div class="input-wrapper">
+                                                        <span class="input-prefix">R$</span>
+                                                        <input type="number" id="corretagem" class="form-input" placeholder="10,00" step="0.01" min="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group">
+                                                    <label for="impostoRenda" class="form-label">
+                                                        Imposto de Renda (%)
+                                                        <button type="button" class="tooltip-btn" data-tooltip="Alíquota de IR aplicável ao investimento">
+                                                            <i class="fas fa-question-circle"></i>
+                                                        </button>
+                                                    </label>
+                                                    <div class="select-wrapper">
+                                                        <select id="impostoRenda" class="form-select">
+                                                            <option value="0">Isento</option>
+                                                            <option value="15">15% (Longo prazo)</option>
+                                                            <option value="17.5">17,5% (Médio prazo)</option>
+                                                            <option value="20">20% (Curto prazo)</option>
+                                                            <option value="22.5">22,5% (Muito curto prazo)</option>
+                                                        </select>
+                                                        <i class="fas fa-chevron-down select-arrow"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="inflacao" class="form-label">
+                                                        Inflação Anual (%)
+                                                        <button type="button" class="tooltip-btn" data-tooltip="Taxa de inflação esperada para o período">
+                                                            <i class="fas fa-question-circle"></i>
+                                                        </button>
+                                                    </label>
+                                                    <div class="input-wrapper">
+                                                        <input type="number" id="inflacao" class="form-input" placeholder="4,0" step="0.1" min="0" max="20" value="4.0">
+                                                        <span class="input-suffix">%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Botões de Ação -->
+                                        <div class="form-actions">
+                                            <button type="submit" class="btn btn-primary" id="simulateBtn">
+                                                <span class="btn-text">
+                                                    <i class="fas fa-calculator"></i>
+                                                    Simular
+                                                </span>
+                                                <span class="btn-loading" style="display: none;">
+                                                    <i class="fas fa-spinner fa-spin"></i>
+                                                    Simulando...
+                                                </span>
+                                            </button>
+                                            <button type="button" class="btn btn-secondary" id="clearBtn">
+                                                <i class="fas fa-eraser"></i>
+                                                Limpar
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results Panel -->
+                        <div class="results-panel">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="header-left">
+                                        <h2>Resultados da Simulação</h2>
+                                    </div>
+                                    <div class="card-actions">
+                                        <div class="export-buttons" id="exportButtons" style="display: none;">
+                                            <button class="btn btn-outline btn-sm" id="exportPdfBtn">
+                                                <i class="fas fa-file-pdf"></i>
+                                                PDF
+                                            </button>
+                                            <button class="btn btn-outline btn-sm" id="exportCsvBtn">
+                                                <i class="fas fa-download"></i>
+                                                CSV
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-content">
+                                    <!-- Loading State -->
+                                    <div id="loadingState" class="loading-state" style="display: none;">
+                                        <div class="loading-header">
+                                            <div class="loading-spinner">
+                                                <div class="spinner"></div>
+                                            </div>
+                                            <h3>Processando simulação...</h3>
+                                            <p>Calculando cenários de investimento</p>
+                                        </div>
+                                        <div class="skeleton-grid">
+                                            <div class="skeleton-card">
+                                                <div class="skeleton skeleton-icon"></div>
+                                                <div class="skeleton skeleton-text-sm"></div>
+                                                <div class="skeleton skeleton-text-lg"></div>
+                                            </div>
+                                            <div class="skeleton-card">
+                                                <div class="skeleton skeleton-icon"></div>
+                                                <div class="skeleton skeleton-text-sm"></div>
+                                                <div class="skeleton skeleton-text-lg"></div>
+                                            </div>
+                                            <div class="skeleton-card">
+                                                <div class="skeleton skeleton-icon"></div>
+                                                <div class="skeleton skeleton-text-sm"></div>
+                                                <div class="skeleton skeleton-text-lg"></div>
+                                            </div>
+                                            <div class="skeleton-card">
+                                                <div class="skeleton skeleton-icon"></div>
+                                                <div class="skeleton skeleton-text-sm"></div>
+                                                <div class="skeleton skeleton-text-lg"></div>
+                                            </div>
+                                        </div>
+                                        <div class="skeleton skeleton-table"></div>
+                                    </div>
+
+                                    <!-- Empty State -->
+                                    <div id="emptyState" class="empty-state">
+                                        <div class="empty-illustration">
+                                            <i class="fas fa-chart-line empty-icon"></i>
+                                            <div class="empty-dots">
+                                                <span></span>
+                                                <span></span>
+                                                <span></span>
+                                            </div>
+                                        </div>
+                                        <h3>Nenhuma simulação realizada</h3>
+                                        <p>Configure os parâmetros e clique em "Simular" para ver os resultados</p>
+                                        <button class="btn btn-primary btn-sm" onclick="document.getElementById('classeAtivo').focus()">
+                                            <i class="fas fa-play"></i>
+                                            Começar Simulação
+                                        </button>
+                                    </div>
+
+                                    <!-- Results Content -->
+                                    <div id="resultsContent" style="display: none;">
+                                        <!-- Indicadores-Chave Expandidos -->
+                                        <div class="indicators-grid-expanded">
+                                            <div class="indicator-card-large success">
+                                                <div class="indicator-header">
+                                                    <div class="indicator-icon-wrapper">
+                                                        <i class="fas fa-dollar-sign indicator-icon"></i>
+                                                    </div>
+                                                    <div class="indicator-info">
+                                                        <span class="indicator-label">Valor Futuro</span>
+                                                        <span class="indicator-change" id="valorFuturoChange">+0%</span>
+                                                    </div>
+                                                </div>
+                                                <p class="indicator-value-large" id="valorFuturo">R$ 0,00</p>
+                                                <div class="indicator-footer">
+                                                    <small id="valorFuturoDetail">Valor total acumulado ao final do período</small>
+                                                </div>
+                                                <div class="indicator-progress">
+                                                    <div class="progress-bar">
+                                                        <div class="progress-fill" id="valorFuturoProgress"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="indicator-card-large info">
+                                                <div class="indicator-header">
+                                                    <div class="indicator-icon-wrapper">
+                                                        <i class="fas fa-chart-line indicator-icon"></i>
+                                                    </div>
+                                                    <div class="indicator-info">
+                                                        <span class="indicator-label">CAGR</span>
+                                                        <span class="indicator-change" id="cagrChange">Taxa anual</span>
+                                                    </div>
+                                                </div>
+                                                <p class="indicator-value-large" id="cagr">0.00%</p>
+                                                <div class="indicator-footer">
+                                                    <small>Taxa de crescimento anual composta</small>
+                                                </div>
+                                                <div class="indicator-progress">
+                                                    <div class="progress-bar">
+                                                        <div class="progress-fill" id="cagrProgress"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="indicator-card-large warning">
+                                                <div class="indicator-header">
+                                                    <div class="indicator-icon-wrapper">
+                                                        <i class="fas fa-exclamation-triangle indicator-icon" id="drawdownIcon"></i>
+                                                    </div>
+                                                    <div class="indicator-info">
+                                                        <span class="indicator-label">Drawdown Máx.</span>
+                                                        <span class="badge badge-warning" id="drawdownBadge" style="display: none;">Alto Risco</span>
+                                                    </div>
+                                                </div>
+                                                <p class="indicator-value-large" id="drawdownMaximo">0.00%</p>
+                                                <div class="indicator-footer">
+                                                    <small>Maior queda registrada no período</small>
+                                                </div>
+                                                <div class="indicator-progress">
+                                                    <div class="progress-bar">
+                                                        <div class="progress-fill" id="drawdownProgress"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="indicator-card-large primary">
+                                                <div class="indicator-header">
+                                                    <div class="indicator-icon-wrapper">
+                                                        <i class="fas fa-percentage indicator-icon"></i>
+                                                    </div>
+                                                    <div class="indicator-info">
+                                                        <span class="indicator-label">Rent. Líquida</span>
+                                                        <span class="indicator-change" id="rentabilidadeChange">vs. CDI</span>
+                                                    </div>
+                                                </div>
+                                                <p class="indicator-value-large" id="rentabilidadeLiquida">0.00%</p>
+                                                <div class="indicator-footer">
+                                                    <small>Rentabilidade após impostos e taxas</small>
+                                                </div>
+                                                <div class="indicator-progress">
+                                                    <div class="progress-bar">
+                                                        <div class="progress-fill" id="rentabilidadeProgress"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Indicadores Adicionais -->
+                                            <div class="indicator-card-large secondary">
+                                                <div class="indicator-header">
+                                                    <div class="indicator-icon-wrapper">
+                                                        <i class="fas fa-piggy-bank indicator-icon"></i>
+                                                    </div>
+                                                    <div class="indicator-info">
+                                                        <span class="indicator-label">Total Investido</span>
+                                                        <span class="indicator-change">Capital aplicado</span>
+                                                    </div>
+                                                </div>
+                                                <p class="indicator-value-large" id="totalInvestido">R$ 0,00</p>
+                                                <div class="indicator-footer">
+                                                    <small>Soma de todos os aportes realizados</small>
+                                                </div>
+                                            </div>
+
+                                            <div class="indicator-card-large success">
+                                                <div class="indicator-header">
+                                                    <div class="indicator-icon-wrapper">
+                                                        <i class="fas fa-trophy indicator-icon"></i>
+                                                    </div>
+                                                    <div class="indicator-info">
+                                                        <span class="indicator-label">Ganho Total</span>
+                                                        <span class="indicator-change" id="ganhoChange">Lucro obtido</span>
+                                                    </div>
+                                                </div>
+                                                <p class="indicator-value-large" id="ganhoTotal">R$ 0,00</p>
+                                                <div class="indicator-footer">
+                                                    <small>Diferença entre valor futuro e investido</small>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Resumo Executivo -->
+                                        <div class="summary-card">
+                                            <div class="summary-header">
+                                                <h3>Resumo Executivo</h3>
+                                                <button class="btn btn-ghost btn-sm" id="toggleSummary">
+                                                    <i class="fas fa-chevron-up"></i>
+                                                </button>
+                                            </div>
+                                            <div class="summary-content" id="summaryContent">
+                                                <div class="summary-grid">
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Valor Real (Inflação):</span>
+                                                        <span class="summary-value" id="valorReal">R$ 0,00</span>
+                                                    </div>
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Impostos Pagos:</span>
+                                                        <span class="summary-value" id="totalImpostos">R$ 0,00</span>
+                                                    </div>
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Múltiplo do Capital:</span>
+                                                        <span class="summary-value" id="multiplicadorCapital">0,00x</span>
+                                                    </div>
+                                                    <div class="summary-item">
+                                                        <span class="summary-label">Tempo para Dobrar:</span>
+                                                        <span class="summary-value" id="tempoDobrar">0 anos</span>
+                                                    </div>
+                                                </div>
+                                                <div class="risk-assessment" id="riskAssessment">
+                                                    <div class="risk-header">
+                                                        <i class="fas fa-shield-alt"></i>
+                                                        <span>Avaliação de Risco</span>
+                                                    </div>
+                                                    <div class="risk-level" id="riskLevel">
+                                                        <span class="risk-indicator"></span>
+                                                        <span class="risk-text">Moderado</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Análise Detalhada -->
+                                        <div class="analysis-tabs">
+                                            <div class="tab-header">
+                                                <button class="tab-btn active" data-tab="table">📊 Tabela Detalhada</button>
+                                                <button class="tab-btn" data-tab="scenarios">🎯 Cenários</button>
+                                            </div>
+                                            
+                                            <!-- Tabela -->
+                                            <div class="tab-content active" id="tableTab">
+                                                <div class="table-container">
+                                                    <div class="table-header">
+                                                        <h3>Detalhamento por Período</h3>
+                                                        <div class="table-controls">
+                                                            <button class="btn btn-ghost btn-sm" id="exportTableBtn">
+                                                                <i class="fas fa-download"></i>
+                                                                Exportar
+                                                            </button>
+                                                            <div class="table-search">
+                                                                <input type="text" placeholder="Buscar período..." id="tableSearch">
+                                                                <i class="fas fa-search"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="table-wrapper">
+                                                        <table class="results-table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Período</th>
+                                                                    <th>Aporte</th>
+                                                                    <th>Saldo Nominal</th>
+                                                                    <th>Saldo Real</th>
+                                                                    <th>Rendimento</th>
+                                                                    <th>Drawdown</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="resultsTableBody">
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div class="table-pagination" id="tablePagination">
+                                                        <button class="btn btn-ghost btn-sm" id="prevPage" disabled>
+                                                            <i class="fas fa-chevron-left"></i>
+                                                        </button>
+                                                        <span class="pagination-info">Página 1 de 1</span>
+                                                        <button class="btn btn-ghost btn-sm" id="nextPage" disabled>
+                                                            <i class="fas fa-chevron-right"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- metricas tirada-->
+                                            
+                                            <!-- Cenários -->
+                                            <div class="tab-content" id="scenariosTab">
+                                                <div class="scenarios-grid">
+                                                    <div class="scenario-card optimistic">
+                                                        <h4>🚀 Cenário Otimista</h4>
+                                                        <p>Retorno 20% acima do esperado</p>
+                                                        <div class="scenario-value" id="optimisticValue">R$ 0,00</div>
+                                                    </div>
+                                                    <div class="scenario-card realistic">
+                                                        <h4>🎯 Cenário Realista</h4>
+                                                        <p>Retorno conforme esperado</p>
+                                                        <div class="scenario-value" id="realisticValue">R$ 0,00</div>
+                                                    </div>
+                                                    <div class="scenario-card pessimistic">
+                                                        <h4>⚠️ Cenário Pessimista</h4>
+                                                        <p>Retorno 20% abaixo do esperado</p>
+                                                        <div class="scenario-value" id="pessimisticValue">R$ 0,00</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
             </div>
         </main>
     </div>
 
-    <!-- Logout Modal -->
-    <div id="logoutModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Confirmar Saída</h3>
-                <span class="modal-close" id="closeLogoutModal">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p>Tem certeza que deseja sair?</p>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelLogoutBtn">Cancelar</button>
-                <button class="btn btn-primary" id="confirmLogoutBtn">Sair</button>
-            </div>
+    <!-- Notification Toast -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="toast-icon"></i>
+            <span class="toast-message"></span>
         </div>
+        <button class="toast-close">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
-
+<div id="tooltip" class="tooltip"></div>
     <script type="module">
         import SidebarComponent from '../js/components/sidebar.js';
         import HeaderComponent from '../js/components/header.js';
@@ -67,7 +689,7 @@
             header.init(document.getElementById('header-container'));
             
             // Check authentication
-            checkAuthentication();
+            //checkAuthentication();
         });
     </script>
 </body>
