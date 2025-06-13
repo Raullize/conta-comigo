@@ -39,7 +39,7 @@ const getDataAccount = async (req, res) => {
     });
 
     res.json({
-      idBank: 2,
+      id_bank: 2,
       cpf: user.cpf,
       institution: institution.nome,
       balance: account.saldo,
