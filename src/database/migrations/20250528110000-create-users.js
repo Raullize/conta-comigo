@@ -1,16 +1,11 @@
-'use strict';
-
+// XXXXXXXXXXXXXX-create-users.js
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('users', {
-      id: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-      },
       user_cpf: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(11), // Tamanho fixo para CPF
         allowNull: false,
+        primaryKey: true, // ← Defina como chave primária
         unique: true,
       },
       name: {
