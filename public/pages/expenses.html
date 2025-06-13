@@ -27,7 +27,113 @@
             
             <!-- Page Content -->
             <div class="page-content">
-                <p>Em desenvolvimento</p>
+                <div class="expenses-grid">
+                    <!-- Transações -->
+                    <div class="transactions-section">
+                        <div class="transactions-header">
+                            <h3>Transações</h3>
+                            <!-- Filtros Desktop -->
+                            <div class="filters-horizontal filters-desktop">
+                                <div class="filter-group">
+                                    <label for="categoryFilter">Categoria</label>
+                                    <select id="categoryFilter">
+                                        <option value="">Todas</option>
+                                        <option value="alimentacao">Alimentação</option>
+                                        <option value="transporte">Transporte</option>
+                                        <option value="saude">Saúde</option>
+                                        <option value="lazer">Lazer</option>
+                                        <option value="educacao">Educação</option>
+                                        <option value="casa">Casa</option>
+                                        <option value="utilidades">Utilidades</option>
+                                        <option value="entretenimento">Entretenimento</option>
+                                        <option value="salario">Salário</option>
+                                        <option value="trabalho">Trabalho</option>
+                                        <option value="outros">Outros</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label for="typeFilter">Tipo</label>
+                                    <select id="typeFilter">
+                                        <option value="">Todos</option>
+                                        <option value="receita">Receita</option>
+                                        <option value="gasto">Gasto</option>
+                                    </select>
+                                </div>
+                                <div class="filter-group">
+                                    <label for="startDate">De</label>
+                                    <input type="date" id="startDate" min="2020-01-01" max="2030-12-31">
+                                </div>
+                                <div class="filter-group">
+                                    <label for="endDate">Até</label>
+                                    <input type="date" id="endDate" min="2020-01-01" max="2030-12-31">
+                                </div>
+                                <div class="filter-group">
+                                    <label>&nbsp;</label>
+                                    <button type="button" class="clear-filters-btn" id="clearFiltersBtn">
+                                        <i class="fas fa-times"></i>
+                                        Limpar
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Filtros Mobile (Dropdown) -->
+                            <div class="filters-mobile">
+                                <button type="button" class="filters-toggle" id="filtersToggle">
+                                    <i class="fas fa-filter"></i>
+                                    Filtros
+                                    <i class="fas fa-chevron-down toggle-icon"></i>
+                                </button>
+                                <div class="filters-dropdown" id="filtersDropdown">
+                                    <div class="filter-group">
+                                        <label for="categoryFilterMobile">Categoria</label>
+                                        <select id="categoryFilterMobile">
+                                            <option value="">Todas</option>
+                                            <option value="alimentacao">Alimentação</option>
+                                            <option value="transporte">Transporte</option>
+                                            <option value="saude">Saúde</option>
+                                            <option value="lazer">Lazer</option>
+                                            <option value="educacao">Educação</option>
+                                            <option value="casa">Casa</option>
+                                            <option value="utilidades">Utilidades</option>
+                                            <option value="entretenimento">Entretenimento</option>
+                                            <option value="salario">Salário</option>
+                                            <option value="trabalho">Trabalho</option>
+                                            <option value="outros">Outros</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-group">
+                                        <label for="typeFilterMobile">Tipo</label>
+                                        <select id="typeFilterMobile">
+                                            <option value="">Todos</option>
+                                            <option value="receita">Receita</option>
+                                            <option value="gasto">Gasto</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-group">
+                                        <label for="startDateMobile">De</label>
+                                        <input type="date" id="startDateMobile" min="2020-01-01" max="2030-12-31">
+                                    </div>
+                                    <div class="filter-group">
+                                        <label for="endDateMobile">Até</label>
+                                        <input type="date" id="endDateMobile" min="2020-01-01" max="2030-12-31">
+                                    </div>
+                                    <div class="filters-actions">
+                                        <button type="button" class="clear-filters-btn" id="clearFiltersBtnMobile">
+                                            <i class="fas fa-times"></i>
+                                            Limpar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="transactions-content">
+                            <div id="transactionsList"></div>
+                            <div class="pagination" id="pagination"></div>
+                        </div>
+                    </div>
+
+
+                </div>
             </div>
         </main>
     </div>
@@ -49,10 +155,13 @@
         </div>
     </div>
 
+
+
     <script type="module">
         import SidebarComponent from '../js/components/sidebar.js';
         import HeaderComponent from '../js/components/header.js';
         import { checkAuthentication } from '../js/auth-utils.js';
+        import ExpensesManager from '../js/expenses.js';
         
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize components
@@ -66,6 +175,10 @@
             // Render components
             sidebar.init(document.getElementById('sidebar-container'));
             header.init(document.getElementById('header-container'));
+            
+            // Initialize expenses manager
+            window.expensesManager = new ExpensesManager();
+            window.expensesManager.init();
             
             // Check authentication
             checkAuthentication();
