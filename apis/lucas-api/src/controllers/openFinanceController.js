@@ -45,6 +45,7 @@ const getDataAccount = async (req, res) => {
       balance: account.saldo,
       transactions: transactions.map(transaction => ({
         id: transaction.id,
+        id_bank: 2,
         date: transaction.data,
         description: transaction.descricao,
         value: transaction.valor,
