@@ -5,9 +5,8 @@ const User = require('../app/models/User');
 const Category = require('../app/models/Category');
 const Account = require('../app/models/Account');
 const Goal = require('../app/models/Goal');
-const Investment = require('../app/models/Investment');
 const Transaction = require('../app/models/Transaction');
-const models = [User, Transaction, Category, Account, Goal, Investment];
+const models = [User, Transaction, Category, Account, Goal];
 
 class Database {
   constructor() {

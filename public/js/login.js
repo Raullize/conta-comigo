@@ -88,17 +88,19 @@ function switchToRegister() {
 function setupFormSwitching() {
   // Event listeners for form toggle buttons
   const switchToLoginBtns = document.querySelectorAll('[data-switch="login"]');
-  const switchToRegisterBtns = document.querySelectorAll('[data-switch="register"]');
-  
+  const switchToRegisterBtns = document.querySelectorAll(
+    '[data-switch="register"]'
+  );
+
   switchToLoginBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', e => {
       e.preventDefault();
       switchToLogin();
     });
   });
-  
+
   switchToRegisterBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', e => {
       e.preventDefault();
       switchToRegister();
     });
@@ -126,7 +128,7 @@ function validateStep1() {
   const inputs = form.querySelectorAll('.form-input');
   let isValid = true;
 
-  inputs.forEach((input) => {
+  inputs.forEach(input => {
     if (!validateField(input)) {
       isValid = false;
     }
@@ -195,7 +197,7 @@ function populateStep2Data() {
 function setupPasswordToggles() {
   const passwordToggles = document.querySelectorAll('.password-toggle');
 
-  passwordToggles.forEach((toggle) => {
+  passwordToggles.forEach(toggle => {
     toggle.addEventListener('click', function () {
       const targetId = this.getAttribute('data-target');
       const passwordInput = document.getElementById(targetId);
@@ -217,7 +219,7 @@ function setupPasswordToggles() {
 function setupFormValidation() {
   const inputs = document.querySelectorAll('.form-input');
 
-  inputs.forEach((input) => {
+  inputs.forEach(input => {
     input.addEventListener('blur', function () {
       validateField(this);
     });
@@ -496,6 +498,15 @@ function setupFormSubmissions() {
   });
 }
 
+async function safeParseJSON(response) {
+  const text = await response.text();
+  try {
+    return text ? JSON.parse(text) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
 async function handleLogin(form) {
   if (authState.isLoading) {
     return;
@@ -533,7 +544,7 @@ async function handleLogin(form) {
   try {
     setFormLoading('login', true);
     // Add a small delay to ensure user sees loading state
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
     const response = await fetch(LOGIN_URL, {
       method: 'POST',
       headers: {
@@ -582,20 +593,20 @@ async function handleLogin(form) {
       'Login efetuado com sucesso!',
       6000
     );
-    
+
     // Show redirect toast separately
-    setTimeout((() => {
+    setTimeout(() => {
       showToast(
         'info',
         'Redirecionando',
         'Redirecionando para o dashboard...',
         3000
       );
-    }), 1000);
+    }, 1000);
 
-    setTimeout((() => {
+    setTimeout(() => {
       window.location.href = './dashboard.html';
-    }), 3000);
+    }, 3000);
   } catch (error) {
     // Login error
     showToast(
@@ -661,8 +672,8 @@ async function handleRegister(form) {
 
   try {
     // Add a small delay to ensure user sees loading state
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     const response = await fetch(REGISTER_URL, {
       method: 'POST',
       headers: {
@@ -712,25 +723,30 @@ async function handleRegister(form) {
     loginUser(userData, loginResult.token);
 
     setFormSuccess('register');
-    showToast('success', 'Conta criada!', 'Sua conta foi criada com sucesso!', 6000);
-    
+    showToast(
+      'success',
+      'Conta criada!',
+      'Sua conta foi criada com sucesso!',
+      6000
+    );
+
     // Show redirect toast separately
-    setTimeout((() => {
+    setTimeout(() => {
       showToast(
         'info',
         'Redirecionando',
         'Redirecionando para o dashboard...',
         3000
       );
-    }), 1000);
+    }, 1000);
 
     // Clear temporary data
     authState.registrationData = {};
 
     // Redirect to dashboard
-    setTimeout((() => {
+    setTimeout(() => {
       window.location.href = './dashboard.html';
-    }), 3000);
+    }, 3000);
   } catch (error) {
     // Registration error
     showToast(
@@ -760,13 +776,13 @@ function setFormLoading(formType, isLoading) {
     button.disabled = true;
 
     const inputs = form.querySelectorAll('input, button');
-    inputs.forEach((input) => (input.disabled = true));
+    inputs.forEach(input => (input.disabled = true));
   } else {
     button.classList.remove('loading');
     button.disabled = false;
 
     const inputs = form.querySelectorAll('input, button');
-    inputs.forEach((input) => (input.disabled = false));
+    inputs.forEach(input => (input.disabled = false));
   }
 }
 
@@ -784,12 +800,12 @@ function showToast(type, title, message, duration = 5000) {
   const toast = createToastElement(type, title, message);
   elements.toastContainer.appendChild(toast);
 
-  setTimeout((() => {
+  setTimeout(() => {
     removeToast(toast);
-  }), duration);
+  }, duration);
 
   const closeBtn = toast.querySelector('.toast-close');
-  closeBtn.addEventListener('click', (() => removeToast(toast)));
+  closeBtn.addEventListener('click', () => removeToast(toast));
 }
 
 function createToastElement(type, title, message) {
@@ -827,8 +843,6 @@ function removeToast(toast) {
     }
   }, 300);
 }
-
-
 
 const style = document.createElement('style');
 style.textContent = `
