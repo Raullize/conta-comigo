@@ -115,6 +115,20 @@ class ExpensesManager {
             endDate: ''
         };
 
+        // Dados do orçamento mensal (simulando dados que virão do banco)
+        this.monthlyBudget = {
+            alimentacao: { limit: null, spent: 0 },
+            transporte: { limit: null, spent: 0 },
+            saude: { limit: null, spent: 0 },
+            lazer: { limit: null, spent: 0 },
+            educacao: { limit: null, spent: 0 },
+            casa: { limit: null, spent: 0 },
+            utilidades: { limit: null, spent: 0 },
+            entretenimento: { limit: null, spent: 0 },
+            salario: { limit: null, spent: 0 },
+            trabalho: { limit: null, spent: 0 },
+            outros: { limit: null, spent: 0 }
+        };
 
     }
 
@@ -122,6 +136,8 @@ class ExpensesManager {
         this.setupEventListeners();
         this.renderTransactions();
         this.updatePagination();
+        this.renderBudgetSection();
+        this.calculateSpentAmounts();
     }
 
     setupEventListeners() {
@@ -202,7 +218,6 @@ class ExpensesManager {
         }
 
         // Debug: log dos filtros aplicados
-        console.log('Filtros aplicados:', { categoryFilter, typeFilter, startDate, endDate });
 
         this.filteredTransactions = this.transactions.filter(transaction => {
             let matches = true;
@@ -231,14 +246,6 @@ class ExpensesManager {
             }
 
             // Debug: log de cada transação filtrada
-            if (startDate || endDate) {
-                console.log(`Transação ${transaction.title} (${transaction.date}):`, {
-                    transactionDate,
-                    startDate: startDate ? new Date(startDate) : null,
-                    endDate: endDate ? new Date(endDate) : null,
-                    matches
-                });
-            }
 
             return matches;
         });
@@ -488,7 +495,7 @@ class ExpensesManager {
         // });
         // return response.json();
         
-        console.log(`Transação ${transactionId} classificada como ${category} - Pronto para integração com API`);
+
     }
 
     showNotification(message) {
@@ -515,6 +522,235 @@ class ExpensesManager {
             notification.style.animation = 'slideOut 0.3s ease';
             setTimeout(() => notification.remove(), 300);
         }, 3000);
+    }
+
+    // Funções do Orçamento Mensal
+    renderBudgetSection() {
+        const budgetContainer = document.getElementById('budgetCategories');
+        if (!budgetContainer) {
+            console.error('budgetCategories container não encontrado!');
+            return;
+        }
+
+        budgetContainer.innerHTML = '';
+
+        Object.keys(this.monthlyBudget).forEach(categoryKey => {
+            const categoryData = this.monthlyBudget[categoryKey];
+            const categoryName = this.availableCategories[categoryKey];
+            const categoryIcon = this.categoryIcons[categoryKey];
+
+            const budgetCard = document.createElement('div');
+            budgetCard.className = 'budget-category';
+            budgetCard.dataset.category = categoryKey;
+            budgetCard.innerHTML = `
+                <div class="budget-category-info">
+                    <div class="budget-category-name">
+                        <i class="${categoryIcon} budget-category-icon"></i>
+                        ${categoryName}
+                    </div>
+                    <div class="budget-category-details">
+                        <div class="budget-category-limit">
+                            ${categoryData.limit ? `Limite: R$ ${categoryData.limit.toFixed(2).replace('.', ',')}` : 'Limite não definido'}
+                        </div>
+                    </div>
+                </div>
+                <div class="budget-category-status ${this.getBudgetStatusClass(categoryData)}">
+                    ${this.getBudgetStatusText(categoryData)}
+                </div>
+            `;
+
+            budgetContainer.appendChild(budgetCard);
+        });
+
+        this.setupBudgetEventListeners();
+    }
+
+    setupBudgetEventListeners() {
+        // Event listeners para os cards de categoria
+        const budgetCards = document.querySelectorAll('.budget-category');
+        
+        budgetCards.forEach((card) => {
+            const category = card.dataset.category;
+            
+            card.addEventListener('click', (e) => {
+                const category = e.currentTarget.dataset.category;
+                this.openBudgetModal(category);
+            });
+        });
+
+        // Event listeners para o modal (apenas se ainda não foram configurados)
+        if (!this.budgetModalListenersSetup) {
+            this.setupBudgetModalListeners();
+            this.budgetModalListenersSetup = true;
+        }
+    }
+
+    setupBudgetModalListeners() {
+        const modal = document.getElementById('budgetModal');
+        const closeBtn = document.getElementById('closeBudgetModal');
+        const cancelBtn = document.getElementById('cancelBudgetBtn');
+        const saveBtn = document.getElementById('saveBudgetBtn');
+        const input = document.getElementById('budgetModalInput');
+
+        if (!modal || !closeBtn || !cancelBtn || !saveBtn || !input) {
+            console.warn('Elementos do modal de orçamento não encontrados');
+            return;
+        }
+
+        // Fechar modal
+        [closeBtn, cancelBtn].forEach(btn => {
+            btn.addEventListener('click', () => this.closeBudgetModal());
+        });
+
+        // Fechar modal clicando fora
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closeBudgetModal();
+            }
+        });
+
+        // Fechar modal com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('show')) {
+                this.closeBudgetModal();
+            }
+        });
+
+        // Salvar orçamento
+        saveBtn.addEventListener('click', () => this.saveBudgetFromModal());
+        
+        // Salvar com Enter
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.saveBudgetFromModal();
+            }
+        });
+    }
+
+    openBudgetModal(category) {
+        const categoryData = this.monthlyBudget[category];
+        const categoryName = this.availableCategories[category];
+        const categoryIcon = this.categoryIcons[category];
+
+        // Verificar se os elementos do modal existem
+        const modal = document.getElementById('budgetModal');
+        const title = document.getElementById('budgetModalTitle');
+        const icon = document.getElementById('budgetModalIcon');
+        const name = document.getElementById('budgetModalCategoryName');
+        const currentValue = document.getElementById('budgetModalCurrentValue');
+        const input = document.getElementById('budgetModalInput');
+        const statusElement = document.getElementById('budgetModalStatus');
+
+        if (!modal || !title || !icon || !name || !currentValue || !input || !statusElement) {
+            console.error('Elementos do modal não encontrados!');
+            return;
+        }
+
+        // Preencher dados do modal
+        title.textContent = `Configurar Orçamento - ${categoryName}`;
+        icon.className = categoryIcon;
+        name.textContent = categoryName;
+        currentValue.textContent = `R$ ${categoryData.spent.toFixed(2).replace('.', ',')}`;
+        input.value = categoryData.limit || '';
+        
+        // Aplicar status com cores
+        const statusClass = this.getBudgetStatusClass(categoryData);
+        const statusText = this.getBudgetStatusText(categoryData);
+        statusElement.className = `budget-category-status ${statusClass}`;
+        statusElement.textContent = statusText;
+        
+        // Armazenar categoria atual
+        this.currentBudgetCategory = category;
+        
+        // Mostrar modal
+        modal.classList.add('show');
+        
+        // Focar no input
+        setTimeout(() => {
+            input.focus();
+        }, 100);
+    }
+
+    closeBudgetModal() {
+        const modal = document.getElementById('budgetModal');
+        if (modal) {
+            modal.classList.remove('show');
+        }
+        const input = document.getElementById('budgetModalInput');
+        if (input) {
+            input.value = '';
+        }
+        this.currentBudgetCategory = null;
+    }
+
+    saveBudgetFromModal() {
+        const input = document.getElementById('budgetModalInput');
+        const value = parseFloat(input.value);
+
+        if (isNaN(value) || value < 0) {
+            this.showNotification('Por favor, insira um valor válido.');
+            return;
+        }
+
+        this.monthlyBudget[this.currentBudgetCategory].limit = value;
+        
+        // Aqui será feita a integração com o backend no futuro
+        // await this.updateBudgetInDatabase(this.currentBudgetCategory, value);
+        
+        this.showNotification(`Orçamento para ${this.availableCategories[this.currentBudgetCategory]} salvo com sucesso!`);
+        this.closeBudgetModal();
+        this.renderBudgetSection();
+    }
+
+    calculateSpentAmounts() {
+        // Resetar valores gastos
+        Object.keys(this.monthlyBudget).forEach(category => {
+            this.monthlyBudget[category].spent = 0;
+        });
+
+        // Calcular gastos por categoria baseado nas transações
+        this.transactions.forEach(transaction => {
+            if (transaction.type === 'gasto' && transaction.category !== 'desconhecida') {
+                if (this.monthlyBudget[transaction.category]) {
+                    this.monthlyBudget[transaction.category].spent += transaction.amount;
+                }
+            }
+        });
+    }
+
+    getBudgetStatusClass(categoryData) {
+        if (!categoryData.limit) return 'budget-status-undefined';
+        
+        const percentage = (categoryData.spent / categoryData.limit) * 100;
+        
+        if (percentage > 100) return 'budget-status-danger';
+        if (percentage > 80) return 'budget-status-warning';
+        return 'budget-status-safe';
+    }
+
+    getBudgetStatusText(categoryData) {
+        if (!categoryData.limit) return 'Indefinido';
+        
+        const percentage = (categoryData.spent / categoryData.limit) * 100;
+        
+        if (percentage > 100) return 'Excedido';
+        if (percentage > 80) return 'Atenção';
+        return 'No limite';
+    }
+
+    // Função para atualizar orçamento no banco (será implementada no futuro)
+    async updateBudgetInDatabase(category, limit) {
+        // const response = await fetch('/api/budget', {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Authorization': `Bearer ${localStorage.getItem('token')}`
+        //     },
+        //     body: JSON.stringify({ category, limit })
+        // });
+        // return response.json();
+        
+
     }
 }
 
