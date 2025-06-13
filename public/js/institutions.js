@@ -237,7 +237,7 @@ function renderEmptyState() {
             </div>
             <h3 class="empty-title">${emptyMessage}</h3>
             <p class="empty-description">${emptyDescription}</p>
-            <button class="btn btn-primary" onclick="handleConnectInstitution()">Conectar Primeira Instituição</button>
+            <button class="btn btn-primary" onclick="handleConnectInstitution()">Vincular Primeira Conta</button>
         </div>
     `;
 }
