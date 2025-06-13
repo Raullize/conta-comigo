@@ -38,6 +38,8 @@ class userController {
         cpf: user.cpf,
         email: user.email,
         birth_date: user.birth_date,
+        created_at: user.created_at,
+        updated_at: user.updated_at
       });
     } catch (error) {
       console.error("Error we can't creat user", error);
