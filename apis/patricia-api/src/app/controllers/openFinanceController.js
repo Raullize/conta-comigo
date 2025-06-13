@@ -42,11 +42,12 @@ const getDataAccount = async (req, res) => {
       cpf: user.cpf,
       institution: institution.nome,
       balance: account.saldo,
-      transacoes: transactions.map(transaction => ({
+      transactions: transactions.map(transaction => ({
         id: transaction.id,
         date: transaction.data,
         description: transaction.descricao,
         value: transaction.valor,
+        type: transction.tipo === 'entrada' ? 'credit' : 'debit'
       })),
     });
   } catch (error) {

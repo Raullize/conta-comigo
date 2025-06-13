@@ -43,7 +43,6 @@ const getDataAccount = async (req, res) => {
       },
     });
 
-    // Junta e ordena por data (opcional)
     const transactions = [...sentTransactions, ...receivedTransactions].sort(
       (a, b) => new Date(a.created_at) - new Date(b.created_at)
     );
@@ -52,7 +51,7 @@ const getDataAccount = async (req, res) => {
       id_bank: 4,
       cpf: user.cpf,
       balance: account.balance,
-      transacoes: transactions.map(transaction => {
+      transactions: transactions.map(transaction => {
         let type;
         if (transaction.origin_cpf === user.cpf) {
           type = 'debit';
@@ -64,6 +63,7 @@ const getDataAccount = async (req, res) => {
           id: transaction.id,
           date: transaction.created_at,
           description: transaction.description,
+          institution: institution.name,
           value: transaction.value,
           type: type,
           id_bank: 4,

@@ -34,11 +34,11 @@ const getDataAccount = async (req, res) => {
     });
 
     res.json({
-      idBank: 4,
+      id_bank: 4,
       cpf: user.cpf,
       institution: account.bank_name,
       balance: account.balance,
-      transacoes: transactions.map(transaction => ({
+      transactions: transactions.map(transaction => ({
         id: transaction.id,
         date: transaction.date,
         description: transaction.description,

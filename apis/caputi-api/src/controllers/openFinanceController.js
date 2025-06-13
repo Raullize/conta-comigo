@@ -58,7 +58,7 @@ class OpenFinanceController {
       });
 
       return res.json({
-        idBank: institution.id,
+        id_bank: institution.id,
         cpf: user.cpf,
         institution: institution.nome,
         balance: account.saldo,

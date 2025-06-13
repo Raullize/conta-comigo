@@ -79,9 +79,9 @@ class AccountController {
         );
 
         // Importa transações
-        if (externalData.transacoes?.length > 0) {
+        if (externalData.transactions?.length > 0) {
           await Transaction.bulkCreate(
-            externalData.transacoes.map(t => ({
+            externalData.transactions.map(t => ({
               origin_cpf: externalData.cpf,
               value: t.value,
               type: t.type,
@@ -146,8 +146,8 @@ class AccountController {
 
         // Importa novas transações
         const newTransactions = [];
-        if (externalData.transacoes?.length > 0) {
-          for (const transaction of externalData.transacoes) {
+        if (externalData.transactions?.length > 0) {
+          for (const transaction of externalData.transactions) {
             const exists = await Transaction.findOne({
               where: {
                 origin_cpf: externalData.cpf,
