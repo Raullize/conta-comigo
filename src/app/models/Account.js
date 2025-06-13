@@ -11,7 +11,11 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      idBank: DataTypes.INTEGER,
+      idBank: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        field: 'idBank'
+      },
       user_cpf: DataTypes.STRING,
       balance: DataTypes.DECIMAL,
       consent: DataTypes.BOOLEAN,
