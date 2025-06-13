@@ -2,7 +2,12 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('users', {
-      user_cpf: {
+      id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      cpf: {
         type: Sequelize.STRING(11), // Tamanho fixo para CPF
         allowNull: false,
         primaryKey: true, // ← Defina como chave primária

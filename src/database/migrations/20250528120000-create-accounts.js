@@ -1,4 +1,3 @@
-// XXXXXXXXXXXXXX-create-accounts.js
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('accounts', {
@@ -8,12 +7,9 @@ module.exports = {
         autoIncrement: true,
       },
       user_cpf: {
-        type: Sequelize.STRING(11), // Tipo igual ao da tabela users
+        type: Sequelize.STRING,
         allowNull: false,
-        references: { 
-          model: 'users', 
-          key: 'user_cpf' // ← Referencia a chave primária de users
-        },
+        references: { model: 'users', key: 'cpf' },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
@@ -26,7 +22,7 @@ module.exports = {
         defaultValue: false,
       },
       idBank: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.INTEGER, // Corrigido para INTEGER
         allowNull: false,
       },
       created_at: {
