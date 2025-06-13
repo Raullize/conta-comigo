@@ -11,10 +11,10 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      idBank: {
+      id_bank: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        field: 'idBank'
+        field: 'id_bank'
       },
       user_cpf: DataTypes.STRING,
       balance: DataTypes.DECIMAL,

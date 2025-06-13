@@ -49,7 +49,7 @@ const getDataAccount = async (req, res) => {
     );
 
     res.json({
-      idBank: 4,
+      id_bank: 4,
       cpf: user.cpf,
       balance: account.balance,
       transacoes: transactions.map(transaction => {
@@ -66,7 +66,7 @@ const getDataAccount = async (req, res) => {
           description: transaction.description,
           value: transaction.value,
           type: type,
-          idBank: 4,
+          id_bank: 4,
         };
       }),
     });

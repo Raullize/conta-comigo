@@ -18,11 +18,11 @@ const banksList = {
 };
 
 class AccountController {
-  static async validateBank(idBank) {
-    const bankId = Number(idBank);
+  static async validateBank(id_bank) {
+    const bankId = Number(id_bank);
     return {
       isValid: !!banksList[bankId],
-      idBank: bankId,
+      id_bank: bankId,
       baseURL: banksList[bankId],
     };
   }
@@ -40,12 +40,12 @@ class AccountController {
 
   static async createAccount(req, res) {
     try {
-      const { idBank: rawIdBank } = req.params;
+      const { id_bank: rawid_bank } = req.params;
       const { cpf } = req.body;
 
       // Validação de entrada
-      const { isValid, idBank, baseURL } =
-        await AccountController.validateBank(rawIdBank);
+      const { isValid, id_bank, baseURL } =
+        await AccountController.validateBank(rawid_bank);
       if (!isValid || !/^\d{11}$/.test(cpf)) {
         return res.status(400).json({ error: 'Invalid parameters' });
       }
@@ -59,7 +59,7 @@ class AccountController {
 
         // Verifica conta existente
         const existingAccount = await Account.findOne({
-          where: { idBank, user_cpf: externalData.cpf },
+          where: { id_bank, user_cpf: externalData.cpf },
           transaction: t,
         });
 
@@ -70,7 +70,7 @@ class AccountController {
         // Cria nova conta
         const newAccount = await Account.create(
           {
-            idBank,
+            id_bank,
             user_cpf: externalData.cpf,
             balance: externalData.balance,
             consent: true,
@@ -86,7 +86,7 @@ class AccountController {
               value: t.value,
               type: t.type,
               description: t.description,
-              idBank,
+              id_bank,
               created_at: t.date || new Date(),
             })),
             { transaction: t }
@@ -111,12 +111,12 @@ class AccountController {
 
   static async updateAccount(req, res) {
     try {
-      const { idBank: rawIdBank } = req.params;
+      const { id_bank: rawid_bank } = req.params;
       const { cpf } = req.body;
 
       // Validação de entrada
-      const { isValid, idBank, baseURL } =
-        await AccountController.validateBank(rawIdBank);
+      const { isValid, id_bank, baseURL } =
+        await AccountController.validateBank(rawid_bank);
       if (!isValid || !/^\d{11}$/.test(cpf)) {
         return res.status(400).json({ error: 'Invalid parameters' });
       }
@@ -130,7 +130,7 @@ class AccountController {
 
         // Encontra conta existente
         const account = await Account.findOne({
-          where: { idBank, user_cpf: externalData.cpf },
+          where: { id_bank, user_cpf: externalData.cpf },
           transaction: t,
         });
 
@@ -151,7 +151,7 @@ class AccountController {
             const exists = await Transaction.findOne({
               where: {
                 origin_cpf: externalData.cpf,
-                idBank,
+                id_bank,
                 value: transaction.value,
                 description: transaction.description,
                 created_at: transaction.date,
@@ -167,7 +167,7 @@ class AccountController {
                   value: transaction.value,
                   type: transaction.type,
                   description: transaction.description,
-                  idBank,
+                  id_bank,
                   created_at: transaction.date || new Date(),
                 },
                 { transaction: t }

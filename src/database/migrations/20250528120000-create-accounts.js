@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
       },
-      idBank: {
+      id_bank: {
         type: Sequelize.INTEGER, // Corrigido para INTEGER
         allowNull: false,
       },
@@ -36,9 +36,9 @@ module.exports = {
     });
 
     await queryInterface.addConstraint('accounts', {
-      fields: ['user_cpf', 'idBank'],
+      fields: ['user_cpf', 'id_bank'],
       type: 'unique',
-      name: 'accounts_user_cpf_idBank_key',
+      name: 'accounts_user_cpf_id_bank_key',
     });
   },
 

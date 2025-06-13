@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       value: DataTypes.DECIMAL,
       type: DataTypes.CHAR,
       description: DataTypes.STRING,
-      idBank: DataTypes.INTEGER,
+      id_bank: DataTypes.INTEGER,
     },
     {
       sequelize,

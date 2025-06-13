@@ -20,7 +20,7 @@ routes.put('/users', userController.update);
 routes.delete('/users', userController.delete);
 routes.post('/category', categoryController.createCategory);
 
-routes.post('/open-finance/:idBank', accountController.createAccount);
-routes.patch('/open-finance/:idBank/update', accountController.updateAccount);
+routes.post('/open-finance/:id_bank', accountController.createAccount);
+routes.patch('/open-finance/:id_bank/update', accountController.updateAccount);
 
 module.exports = routes;
