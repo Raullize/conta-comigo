@@ -2,8 +2,6 @@
  * Institutions - Financial Institution Management
  */
 
-// Institutions page JavaScript
-
 // Application state
 let currentFilter = 'recent';
 let institutions = [];
@@ -12,28 +10,20 @@ let isLoading = false;
 // DOM elements
 let institutionsGrid;
 let filterButtons;
-let statsElements;
 
 // Initialize the institutions page
 function initializeInstitutions() {
-    // Get DOM elements
     institutionsGrid = document.getElementById('institutionsGrid');
     filterButtons = document.querySelectorAll('.filter-btn');
     
-    // Load connected institutions
     loadConnectedInstitutions();
-    
-    // Setup event listeners
     setupEventListeners();
     setupCardEventListeners();
     setupModalListeners();
-    
-    console.log('Institutions page initialized');
 }
 
 // Setup event listeners
 function setupEventListeners() {
-    // Filter buttons
     filterButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             const filter = e.target.dataset.filter;
@@ -41,9 +31,6 @@ function setupEventListeners() {
         });
     });
     
-
-    
-    // Refresh button
     const refreshBtn = document.getElementById('refreshData');
     if (refreshBtn) {
         refreshBtn.addEventListener('click', handleRefreshData);
@@ -79,7 +66,6 @@ async function loadConnectedInstitutions() {
         updateStats();
         renderInstitutions();
     } catch (error) {
-        console.error('Error loading institutions:', error);
         showNotification('Erro ao carregar instituições', 'error');
         renderEmptyState();
     } finally {
@@ -91,10 +77,9 @@ async function loadConnectedInstitutions() {
 // Update statistics
 function updateStats() {
     const activeInstitutions = institutions.filter(inst => inst.status === 'active').length;
-    const totalAccounts = activeInstitutions; // 1 conta por instituição
+    const totalAccounts = activeInstitutions;
     const lastSync = getLastSyncTime();
     
-    // Update stat numbers
     const connectedElement = document.getElementById('totalInstitutions');
     const accountsElement = document.getElementById('totalAccounts');
     const lastSyncElement = document.getElementById('lastSync');
@@ -149,10 +134,8 @@ function getFilteredInstitutions() {
     const sortedInstitutions = [...institutions];
     
     if (currentFilter === 'recent') {
-        // Ordenar por última sincronização (mais recente primeiro)
         return sortedInstitutions.sort((a, b) => new Date(b.lastSync) - new Date(a.lastSync));
     } else if (currentFilter === 'oldest') {
-        // Ordenar por sincronização mais antiga (mais antiga primeiro)
         return sortedInstitutions.sort((a, b) => new Date(a.lastSync) - new Date(b.lastSync));
     }
     
@@ -174,7 +157,6 @@ function renderInstitutions() {
         createInstitutionCard(institution)
     ).join('');
     
-    // Setup card event listeners
     setupCardEventListeners();
 }
 
@@ -206,7 +188,7 @@ function createInstitutionCard(institution) {
     `;
 }
 
-// Funções getStatusText e getActionButtons removidas - não mais necessárias
+
 
 // Format date
 function formatDate(dateString) {
@@ -242,12 +224,11 @@ function renderEmptyState() {
     `;
 }
 
-// Get filter label (não mais necessário)
-// function getFilterLabel removida
+
 
 // Setup card event listeners
 function setupCardEventListeners() {
-    // Add any additional card-specific event listeners here
+    // Card-specific event listeners can be added here if needed
 }
 
 // Show/hide loading state
@@ -391,7 +372,6 @@ async function handleSyncInstitution(id) {
         
         showNotification('Dados sincronizados com sucesso', 'success');
     } catch (error) {
-        console.error('Error syncing institution:', error);
         showNotification(error.message || 'Erro ao sincronizar dados', 'error');
     }
 }
@@ -419,14 +399,11 @@ async function handleDisconnectInstitution(id) {
         renderInstitutions();
         showNotification('Instituição desconectada com sucesso', 'success');
     } catch (error) {
-        console.error('Error disconnecting institution:', error);
         showNotification('Erro ao desconectar instituição', 'error');
     }
 }
 
 function handleConnectInstitution() {
-    console.log('Connect new institution');
-    // TODO: Implement connection flow
     showNotification('Funcionalidade em desenvolvimento', 'info');
 }
 

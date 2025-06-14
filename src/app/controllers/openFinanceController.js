@@ -62,7 +62,6 @@ class OpenFinanceController {
             'Content-Type': 'application/json'
           }
         });
-        console.log('Consent updated successfully:', consentResponse.status);
       } catch (error) {
         console.error('Error updating consent in Vitor API:', {
           message: error.message,
@@ -74,7 +73,6 @@ class OpenFinanceController {
         
         // Se a API do Vitor não estiver disponível, simular sucesso para desenvolvimento
         if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-          console.log('Vitor API not available, proceeding with local operation only');
         } else {
           return res.status(400).json({ 
             error: 'Failed to update consent in external API',
@@ -94,7 +92,6 @@ class OpenFinanceController {
             }
           });
           externalData = response.data;
-          console.log('Data fetched from Vitor API successfully');
         } catch (error) {
           console.error('Error fetching data from Vitor API:', {
             message: error.message,
@@ -105,7 +102,6 @@ class OpenFinanceController {
           
           // Se a API do Vitor não estiver disponível, usar dados simulados
           if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-            console.log('Using simulated data for development');
             externalData = {
               balance: 1000.00,
               accountNumber: '12345-6',
