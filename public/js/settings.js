@@ -653,25 +653,7 @@ function addConnectedBank(bankData) {
 
 
 function handleConnectNewAccount() {
-
-    const sampleBanks = [
-        { name: 'Itaú' },
-        { name: 'Bradesco' },
-        { name: 'Santander' },
-        { name: 'Caixa Econômica Federal' }
-    ];
-
-    const availableBanks = sampleBanks.filter(bank => 
-        !connectedBanks.some(connected => connected.name === bank.name)
-    );
-    
-    if (availableBanks.length > 0) {
-        const randomBank = availableBanks[Math.floor(Math.random() * availableBanks.length)];
-        addConnectedBank(randomBank);
-    } else {
-        showToast('Todos os bancos de exemplo já estão conectados!', 'info');
-    }
-
+    showToast('Em desenvolvimento', 'info');
 }
 
 
