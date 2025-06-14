@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { Sequelize } = require('sequelize');
+const sequelize = require('../../database/database.js');
 const {
   models: { Account, Transaction, User },
 } = require('../../database');
@@ -35,7 +36,7 @@ class OpenFinanceController {
     }
   }
 
-  // Vincula uma conta da API do Vitor (id_bank = 4)
+  // Vincula uma conta da API do Vitor (id_bank dinâmico)
   static async linkVitorAccount(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -44,6 +45,8 @@ class OpenFinanceController {
       
       const { cpf } = req.user;
       const { consent } = req.body;
+      
+      // Não usar ID fixo - buscar instituições dinamicamente
 
       if (typeof consent !== 'boolean') {
         return res.status(400).json({ error: 'Consent must be a boolean value' });
@@ -95,33 +98,47 @@ class OpenFinanceController {
         } catch (error) {
           console.error('Error fetching data from Vitor API:', {
             message: error.message,
-            code: error.code,
+            status: error.response?.status,
             url: `${vitorApiUrl}/open-finance/${cpf}`,
-            status: error.response?.status
           });
           
-          // Se a API do Vitor não estiver disponível, usar dados simulados
-          if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
-            externalData = {
-              balance: 1000.00,
-              accountNumber: '12345-6',
-              agency: '0001'
-            };
-          } else {
-            return res.status(400).json({ 
-              error: 'Failed to fetch data from external API',
-              details: error.message
-            });
-          }
+          return res.status(400).json({ 
+            error: 'Failed to fetch data from external API',
+            details: error.message
+          });
         }
         
         if (externalData) {
+          // Buscar a instituição da API do Vitor
+          let institution = null;
+          let institutionName = 'Instituição Desconhecida';
+          let bankId = null;
+          
+          try {
+            const institutionResponse = await axios.get(`${vitorApiUrl}/listInstitutions`);
+            if (institutionResponse.data && Array.isArray(institutionResponse.data) && institutionResponse.data.length > 0) {
+              // Pegar a primeira instituição disponível (já que a API do Vitor permite apenas uma)
+              institution = institutionResponse.data[0];
+              institutionName = institution.name;
+              bankId = institution.id;
+            } else {
+              return res.status(400).json({ 
+                error: 'Nenhuma instituição encontrada na API do Vitor. Cadastre uma instituição primeiro.' 
+              });
+            }
+          } catch (error) {
+            console.error('Error fetching institution from Vitor API:', error.message);
+            return res.status(500).json({ 
+              error: 'Erro ao buscar instituição da API do Vitor',
+              details: error.message 
+            });
+          }
 
           // Verifica se a conta já existe
           let account = await Account.findOne({
             where: { 
               user_cpf: cpf,
-              id_bank: 4 // ID do banco Vitor
+              id_bank: bankId
             }
           });
 
@@ -129,14 +146,16 @@ class OpenFinanceController {
             // Atualiza conta existente
             account.balance = externalData.balance;
             account.consent = true;
+            account.institution_name = institutionName;
             await account.save();
           } else {
             // Cria nova conta
             account = await Account.create({
               user_cpf: cpf,
-              id_bank: 4,
+              id_bank: bankId,
               balance: externalData.balance,
-              consent: true
+              consent: true,
+              institution_name: institutionName
             });
           }
 
@@ -145,7 +164,7 @@ class OpenFinanceController {
             // Remove transações antigas desta conta
             await Transaction.destroy({
               where: {
-                id_bank: 4,
+                id_bank: bankId,
                 [Sequelize.Op.or]: [
                   { origin_cpf: cpf },
                   { destination_cpf: cpf }
@@ -160,7 +179,7 @@ class OpenFinanceController {
               value: parseFloat(transaction.value.toString().replace(/[^\d.-]/g, '')),
               type: transaction.type === 'debit' ? 'D' : 'C',
               description: transaction.description,
-              id_bank: 4,
+              id_bank: bankId,
               created_at: new Date(transaction.date)
             }));
 
@@ -185,7 +204,7 @@ class OpenFinanceController {
           { 
             where: { 
               user_cpf: cpf,
-              id_bank: 4
+              id_bank: bankId
             }
           }
         );
@@ -215,19 +234,9 @@ class OpenFinanceController {
         }
       });
 
-      // Mapeamento dos bancos
-      const bankNames = {
-        1: 'Banco Dante',
-        2: 'Banco Lucas', 
-        3: 'Banco Patricia',
-        4: 'Nubank', // Nome real do banco cadastrado na API do Vitor
-        5: 'Banco Raul',
-        6: 'Banco Caputi'
-      };
-
       const connectedAccounts = linkedAccounts.map(account => ({
         id: account.id_bank,
-        name: bankNames[account.id_bank] || `Banco ${account.id_bank}`,
+        name: account.institution_name || `Instituição ${account.id_bank}`,
         balance: account.balance,
         connected: true
       }));
@@ -333,7 +342,7 @@ class OpenFinanceController {
 
       // Validação de entrada
       const id_bank = parseInt(rawid_bank);
-      if (isNaN(id_bank) || id_bank < 1 || id_bank > 6) {
+      if (isNaN(id_bank)) {
         return res.status(400).json({ error: 'Invalid bank ID' });
       }
 
@@ -350,33 +359,67 @@ class OpenFinanceController {
         return res.status(404).json({ error: 'Account not found or not linked' });
       }
 
-      // Importa o AccountController para usar a funcionalidade de sincronização
-      const AccountController = require('./accountController');
+      // Sincronizar diretamente com a API do Vitor
+      const vitorApiUrl = process.env.VITOR_API_URL || `http://localhost:${process.env.VITOR_API_EXT_PORT || '4005'}`;
       
-      // Chama o método de atualização que já existe
-      const mockReq = {
-        params: { id_bank: rawid_bank },
-        body: { cpf }
-      };
-      
-      const mockRes = {
-        status: (code) => ({
-          json: (data) => ({ statusCode: code, data })
-        }),
-        json: (data) => ({ statusCode: 200, data })
-      };
-
-      const result = await AccountController.updateAccount(mockReq, mockRes);
-      
-      if (result.statusCode === 200) {
+      try {
+        // Buscar dados atualizados da API do Vitor
+        const response = await axios.get(`${vitorApiUrl}/open-finance/${cpf}`);
+        const externalData = response.data;
+        
+        if (!externalData) {
+          return res.status(404).json({ error: 'No data found for this user' });
+        }
+        
+        // Atualizar saldo da conta
+        const oldBalance = account.balance;
+        await account.update({
+          balance: externalData.balance
+        });
+        
+        // Importar novas transações
+        let newTransactionsCount = 0;
+        if (externalData.transactions && externalData.transactions.length > 0) {
+          // Remover transações antigas desta conta
+          await Transaction.destroy({
+            where: {
+              id_bank: id_bank,
+              [Sequelize.Op.or]: [
+                { origin_cpf: cpf },
+                { destination_cpf: cpf }
+              ]
+            }
+          });
+          
+          // Inserir novas transações
+          const transactionsToCreate = externalData.transactions.map(transaction => ({
+            origin_cpf: transaction.type === 'debit' ? cpf : null,
+            destination_cpf: transaction.type === 'credit' ? cpf : null,
+            value: Math.abs(transaction.value),
+            type: transaction.type === 'debit' ? 'D' : 'C',
+            description: transaction.description,
+            id_bank: id_bank,
+            created_at: new Date(transaction.date)
+          }));
+          
+          await Transaction.bulkCreate(transactionsToCreate);
+          newTransactionsCount = transactionsToCreate.length;
+        }
+        
+        // Retornar sucesso
         return res.json({
           message: 'Account synchronized successfully',
-          newBalance: result.data.newBalance,
-          newTransactionsCount: result.data.newTransactions?.length || 0,
+          newBalance: externalData.balance,
+          newTransactionsCount: newTransactionsCount,
           lastSync: new Date().toISOString()
         });
-      } else {
-        return res.status(result.statusCode).json(result.data);
+        
+      } catch (apiError) {
+        console.error('Error fetching data from Vitor API:', apiError.message);
+        return res.status(500).json({ 
+          error: 'Failed to sync with Vitor API',
+          details: apiError.message 
+        });
       }
     } catch (error) {
       console.error('Error syncing account:', error);
@@ -387,16 +430,22 @@ class OpenFinanceController {
   // Lista todas as instituições disponíveis
   static async listAvailableInstitutions(req, res) {
     try {
-      const institutions = [
-        { id: 1, name: 'Banco do Brasil', port: 3001 },
-        { id: 2, name: 'Caixa Econômica Federal', port: 3002 },
-        { id: 3, name: 'Itaú', port: 3003 },
-        { id: 4, name: 'Vitor Bank', port: 3004 },
-        { id: 5, name: 'Santander', port: 3005 },
-        { id: 6, name: 'Bradesco', port: 3006 }
-      ];
-
-      return res.json({ institutions });
+      const vitorApiUrl = process.env.VITOR_API_URL || `http://localhost:${process.env.VITOR_API_EXT_PORT || '4005'}`;
+      
+      // Buscar instituições da API do Vitor
+      const institutionsResponse = await axios.get(`${vitorApiUrl}/listInstitutions`);
+      
+      if (institutionsResponse.data && Array.isArray(institutionsResponse.data)) {
+        const institutions = institutionsResponse.data.map(institution => ({
+          id: institution.id,
+          name: institution.name,
+          port: 3004 // Porta padrão da API do Vitor
+        }));
+        
+        return res.json({ institutions });
+      } else {
+        return res.json({ institutions: [] });
+      }
     } catch (error) {
       console.error('Error listing institutions:', error);
       return res.status(500).json({ error: 'Internal server error' });

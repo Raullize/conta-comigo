@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       user_cpf: DataTypes.STRING,
       balance: DataTypes.DECIMAL,
       consent: DataTypes.BOOLEAN,
+      institution_name: DataTypes.STRING,
     },
     {
       sequelize,
