@@ -6,6 +6,9 @@ class userController {
     try {
       const { name, cpf, email, birth_date, password } = req.body;
 
+      // Remover formatação do CPF (pontos e hífens)
+      const cleanCpf = cpf.replace(/[.-]/g, '');
+
       // Verificar se o usuário já existe por e-mail
       const userExistsByEmail = await User.findOne({
         where: { email },
@@ -17,7 +20,7 @@ class userController {
 
       // Verificar se o usuário já existe por CPF
       const userExistsByCpf = await User.findOne({
-        where: { cpf },
+        where: { cpf: cleanCpf },
       });
 
       if (userExistsByCpf) {
@@ -26,7 +29,7 @@ class userController {
 
       const user = await User.create({
         name,
-        cpf,
+        cpf: cleanCpf,
         email,
         birthDate: birth_date,
         password,
