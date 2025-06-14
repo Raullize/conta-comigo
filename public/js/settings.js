@@ -125,10 +125,11 @@ function setupEventListeners() {
     }
 
     setupModalEventListeners();
-    setupSingleDisconnectModalListeners();
     if (deleteConfirmationInput) {
         deleteConfirmationInput.addEventListener('input', handleDeleteConfirmationInput);
     }
+    
+    setupSingleDisconnectModalListeners();
 }
 
 
@@ -538,21 +539,33 @@ function setupIndividualDisconnectButtons() {
 
 function setupSingleDisconnectModalListeners() {
     const singleDisconnectModal = document.getElementById('disconnectSingleModal');
-    const closeSingleDisconnectModal = document.getElementById('closeSingleDisconnectModal');
-    const cancelSingleDisconnectBtn = document.getElementById('cancelSingleDisconnectBtn');
-    const confirmSingleDisconnectBtn = document.getElementById('confirmSingleDisconnectBtn');
+    const closeSingleDisconnectModal = document.getElementById('closeDisconnectSingleModal');
+    const cancelSingleDisconnectBtn = document.getElementById('cancelDisconnectSingleBtn');
+    const confirmSingleDisconnectBtn = document.getElementById('confirmDisconnectSingleBtn');
 
     if (closeSingleDisconnectModal) {
-        closeSingleDisconnectModal.addEventListener('click', hideSingleDisconnectModal);
+        closeSingleDisconnectModal.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            hideSingleDisconnectModal();
+        });
     }
     if (cancelSingleDisconnectBtn) {
-        cancelSingleDisconnectBtn.addEventListener('click', hideSingleDisconnectModal);
+        cancelSingleDisconnectBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            hideSingleDisconnectModal();
+        });
     }
     if (confirmSingleDisconnectBtn) {
-        confirmSingleDisconnectBtn.addEventListener('click', handleSingleDisconnect);
+        confirmSingleDisconnectBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSingleDisconnect();
+        });
     }
 
-
+    // Click outside modal to close
     if (singleDisconnectModal) {
         window.addEventListener('click', function(event) {
             if (event.target === singleDisconnectModal) {
