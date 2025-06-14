@@ -39,24 +39,7 @@ let profileForm, passwordForm, deleteConfirmationInput;
 let disconnectModal, deleteAccountModal;
 let passwordToggles = [];
 let currentUser = null;
-const connectedBanks = [
-    {
-        id: 1,
-        name: 'Banco do Brasil'
-    },
-    {
-        id: 2,
-        name: 'Banrisul'
-    },
-    {
-        id: 3,
-        name: 'Nubank'
-    },
-    {
-        id: 4,
-        name: 'Bradesco'
-    }
-];
+let connectedBanks = [];
 
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -65,8 +48,41 @@ document.addEventListener('DOMContentLoaded', function() {
     loadUserData();
     setupPasswordStrength();
     setupPasswordToggles();
-    renderConnectedAccounts();
+    loadConnectedAccounts();
 });
+
+// Carrega as contas conectadas do banco de dados
+async function loadConnectedAccounts() {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('No token found');
+            return;
+        }
+
+        const response = await fetch('/open-finance/connected-accounts', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            connectedBanks = data.accounts || [];
+            renderConnectedAccounts();
+        } else {
+            console.error('Failed to load connected accounts:', response.status);
+            connectedBanks = [];
+            renderConnectedAccounts();
+        }
+    } catch (error) {
+        console.error('Error loading connected accounts:', error);
+        connectedBanks = [];
+        renderConnectedAccounts();
+    }
+}
 
 
 function initializeElements() {
@@ -433,9 +449,36 @@ function hideDisconnectModal() {
 }
 
 
-function handleDisconnectAccounts() {
+async function handleDisconnectAccounts() {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            showToast('Erro: Token de autenticação não encontrado', 'error');
+            hideDisconnectModal();
+            return;
+        }
 
-    showToast('Funcionalidade em desenvolvimento', 'info');
+        const response = await fetch('/open-finance/disconnect-all', {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            // Recarrega as contas conectadas
+            await loadConnectedAccounts();
+            showToast('Todas as contas foram desvinculadas com sucesso!', 'success');
+        } else {
+            const errorData = await response.json();
+            showToast(`Erro ao desvincular contas: ${errorData.error || 'Erro desconhecido'}`, 'error');
+        }
+    } catch (error) {
+        console.error('Error disconnecting all accounts:', error);
+        showToast('Erro ao desvincular todas as contas', 'error');
+    }
+    
     hideDisconnectModal();
 }
 
@@ -486,7 +529,8 @@ function setupIndividualDisconnectButtons() {
     disconnectButtons.forEach(button => {
         button.addEventListener('click', function() {
             const bankName = this.getAttribute('data-bank');
-            showSingleDisconnectModal(bankName);
+            const bankId = this.getAttribute('data-bank-id');
+            showSingleDisconnectModal(bankName, bankId);
         });
     });
 }
@@ -519,7 +563,7 @@ function setupSingleDisconnectModalListeners() {
 }
 
 
-function showSingleDisconnectModal(bankName) {
+function showSingleDisconnectModal(bankName, bankId) {
     const singleDisconnectModal = document.getElementById('disconnectSingleModal');
     const bankNameSpan = document.getElementById('bankNameToDisconnect');
     
@@ -528,6 +572,7 @@ function showSingleDisconnectModal(bankName) {
         singleDisconnectModal.classList.add('show');
 
         singleDisconnectModal.setAttribute('data-bank', bankName);
+        singleDisconnectModal.setAttribute('data-bank-id', bankId);
     }
 }
 
@@ -537,27 +582,52 @@ function hideSingleDisconnectModal() {
     if (singleDisconnectModal) {
         singleDisconnectModal.classList.remove('show');
         singleDisconnectModal.removeAttribute('data-bank');
+        singleDisconnectModal.removeAttribute('data-bank-id');
     }
 }
 
 
-function handleSingleDisconnect() {
+async function handleSingleDisconnect() {
     const singleDisconnectModal = document.getElementById('disconnectSingleModal');
     const bankName = singleDisconnectModal ? singleDisconnectModal.getAttribute('data-bank') : '';
+    const bankId = singleDisconnectModal ? singleDisconnectModal.getAttribute('data-bank-id') : '';
     
+    if (!bankId) {
+        showToast('Erro: ID do banco não encontrado', 'error');
+        hideSingleDisconnectModal();
+        return;
+    }
 
-    const bankIndex = connectedBanks.findIndex(bank => bank.name === bankName);
-    if (bankIndex > -1) {
-        connectedBanks.splice(bankIndex, 1);
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            showToast('Erro: Token de autenticação não encontrado', 'error');
+            hideSingleDisconnectModal();
+            return;
+        }
 
-        renderConnectedAccounts();
-        showToast(`${bankName} desvinculado com sucesso!`, 'success');
-    } else {
+        const response = await fetch(`/open-finance/disconnect/${bankId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            // Recarrega as contas conectadas
+            await loadConnectedAccounts();
+            showToast(`${bankName} desvinculado com sucesso!`, 'success');
+        } else {
+            const errorData = await response.json();
+            showToast(`Erro ao desvincular ${bankName}: ${errorData.error || 'Erro desconhecido'}`, 'error');
+        }
+    } catch (error) {
+        console.error('Error disconnecting account:', error);
         showToast(`Erro ao desvincular ${bankName}`, 'error');
     }
     
     hideSingleDisconnectModal();
-
 }
 
 

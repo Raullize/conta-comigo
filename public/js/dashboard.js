@@ -2,12 +2,37 @@
  * Dashboard - Specific functions for the dashboard page
  */
 import { showLogoutModal } from './auth-utils.js';
+import OpenFinanceModal from './components/openFinanceModal.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+let openFinanceModal;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Inicializa o modal de Open Finance
+  openFinanceModal = new OpenFinanceModal();
+  
+  // Verifica se o usuário tem contas vinculadas
+  await checkOpenFinanceAccounts();
+  
   loadFinancialData();
   setupUIEvents();
   initializeFinancialTips();
 });
+
+// Função para verificar contas vinculadas
+async function checkOpenFinanceAccounts() {
+  try {
+    const result = await OpenFinanceModal.checkLinkedAccounts();
+    
+    if (!result.hasLinkedAccounts) {
+      // Se não tem contas vinculadas, mostra o modal
+      setTimeout(() => {
+        openFinanceModal.show();
+      }, 1000); // Delay de 1 segundo para melhor UX
+    }
+  } catch (error) {
+    console.error('Erro ao verificar contas vinculadas:', error);
+  }
+}
 
 function loadFinancialData() {
   const financialData = {

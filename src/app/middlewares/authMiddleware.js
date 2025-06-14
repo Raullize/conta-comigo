@@ -15,6 +15,7 @@ module.exports = async (req, res, next) => {
     const decoded = await promisify(jwt.verify)(token, authValidators.secret);
 
     req.userId = decoded.id;
+    req.user = decoded; // Usar o objeto decoded completo
 
     return next();
   } catch (err) {

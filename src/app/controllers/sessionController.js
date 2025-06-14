@@ -28,7 +28,7 @@ class sessionController {
           cpf,
           birth_date,
         },
-        token: jwt.sign({ id }, authValidators.secret, {
+        token: jwt.sign({ id, cpf }, authValidators.secret, {
           expiresIn: authValidators.expiresIn,
         }),
       });
