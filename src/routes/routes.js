@@ -25,6 +25,7 @@ routes.post('/category', categoryController.createCategory);
 routes.get('/open-finance/check-accounts', openFinanceController.checkLinkedAccounts);
 routes.get('/open-finance/connected-accounts', openFinanceController.getConnectedAccounts);
 routes.post('/open-finance/link-vitor', openFinanceController.linkVitorAccount);
+routes.post('/open-finance/sync/:id_bank', openFinanceController.syncAccount);
 routes.delete('/open-finance/disconnect/:id_bank', openFinanceController.disconnectAccount);
 routes.delete('/open-finance/disconnect-all', openFinanceController.disconnectAllAccounts);
 routes.get('/open-finance/institutions', openFinanceController.listAvailableInstitutions);

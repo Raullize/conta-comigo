@@ -80,21 +80,7 @@
                         <!-- Institutions will be dynamically loaded here -->
                     </div>
                     
-                    <!-- Card para o botão de Vincular Nova Conta -->
-                    <div class="connect-card">
-                        <div class="connect-card-content">
-                            <div class="connect-card-icon">
-                                <i class="fas fa-plus-circle"></i>
-                            </div>
-                            <div class="connect-card-text">
-                                <h3>Adicionar nova instituição</h3>
-                                <p>Conecte uma nova conta bancária via Open Finance</p>
-                            </div>
-                            <button class="btn btn-primary" id="connectNewInstitution">
-                                <i class="fas fa-plus"></i>Vincular Nova Conta
-                            </button>
-                        </div>
-                    </div>
+
 
                     <!-- Empty State -->
                     <div class="empty-state" id="emptyState" style="display: none;">
@@ -132,6 +118,51 @@
         </div>
     </div>
 
+    <!-- Modal de Confirmação de Sincronização -->
+    <div id="syncModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Sincronizar Dados</h3>
+                <span class="close" id="closeSyncModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Deseja sincronizar os dados da instituição <strong id="syncInstitutionName"></strong>?</p>
+                <p class="text-muted">Esta ação irá atualizar todas as informações da conta.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelSyncBtn">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmSyncBtn">
+                    <i class="fas fa-sync-alt"></i>
+                    Sincronizar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Desconexão -->
+    <div id="disconnectModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Desconectar Instituição</h3>
+                <span class="close" id="closeDisconnectModal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja desconectar a instituição <strong id="disconnectInstitutionName"></strong>?</p>
+                <p class="text-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Esta ação irá remover todas as informações e transações desta conta.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelDisconnectBtn">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDisconnectBtn">
+                    <i class="fas fa-unlink"></i>
+                    Desconectar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import SidebarComponent from '../js/components/sidebar.js';
         import HeaderComponent from '../js/components/header.js';
@@ -141,7 +172,7 @@
             // Initialize components
             const sidebar = new SidebarComponent();
             const header = new HeaderComponent({
-                pageTitle: 'Instituições',
+                pageTitle: 'Minhas Instituições',
                 pageSubtitle: 'Gerencie suas contas bancárias',
                 showBreadcrumb: true
             });

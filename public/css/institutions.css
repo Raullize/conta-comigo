@@ -32,9 +32,7 @@
   gap: var(--spacing-md);
 }
 
-#connectNewInstitution i {
-  margin-right: var(--spacing-sm);
-}
+
 
 /* Stats Grid */
 .stats-grid {
@@ -159,57 +157,7 @@
   gap: var(--spacing-lg);
 }
 
-/* Connect Card */
-.connect-card {
-    margin-top: var(--spacing-xl);
-    margin-bottom: var(--spacing-lg);
-}
 
-.connect-card-content {
-    background: white;
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-sm);
-    padding: var(--spacing-lg);
-    transition: var(--transition-base);
-    border: 1px solid var(--gray-200);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-lg);
-}
-
-.connect-card-content:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-2px);
-}
-
-.connect-card-icon {
-    width: 48px;
-    height: 48px;
-    background: var(--primary-50);
-    border-radius: var(--border-radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--primary-600);
-    font-size: 1.5rem;
-    flex-shrink: 0;
-}
-
-.connect-card-text {
-    flex-grow: 1;
-}
-
-.connect-card-text h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    color: var(--gray-900);
-}
-
-.connect-card-text p {
-    margin: 0.25rem 0 0;
-    font-size: 0.9rem;
-    color: var(--gray-600);
-}
 
 .institution-card {
   background: white;
@@ -477,4 +425,147 @@
   .empty-state {
     padding: var(--spacing-2xl) var(--spacing-lg);
   }
+}
+
+/* Modal Styles */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: var(--z-modal-backdrop);
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.modal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+}
+
+.modal-content {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-xl);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: scale(0.9);
+  transition: transform var(--transition-normal);
+  z-index: var(--z-modal);
+  position: relative;
+}
+
+.modal.show .modal-content {
+  transform: scale(1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xl);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: var(--primary-blue);
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+}
+
+.modal-header .close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-header .close:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: var(--text-primary);
+}
+
+.modal-body {
+  padding: var(--spacing-xl);
+}
+
+.modal-body p {
+  margin-bottom: var(--spacing-md);
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+}
+
+.modal-body p:last-child {
+  margin-bottom: 0;
+}
+
+.modal-body .text-muted {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.modal-body .text-warning {
+  color: #f59e0b;
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  padding: var(--spacing-xl);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-3xl);
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 102, 204, 0.2);
+  border-top: 3px solid var(--primary-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: var(--spacing-lg);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-state p {
+  color: var(--text-secondary);
+  font-size: var(--font-size-lg);
+  margin: 0;
 }

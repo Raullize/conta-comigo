@@ -4,43 +4,10 @@
 
 // Institutions page JavaScript
 
-// Temporary data for institutions
-const temporaryInstitutions = [
-    {
-        id: 1,
-        name: 'Banco do Brasil',
-        status: 'active',
-        lastSync: '2025-06-12T10:30:00Z'
-    },
-    {
-        id: 2,
-        name: 'Itaú Unibanco',
-        status: 'active',
-        lastSync: '2025-06-12T09:15:00Z'
-    },
-    {
-        id: 3,
-        name: 'Nubank',
-        status: 'active',
-        lastSync: '2025-06-11T16:45:00Z'
-    },
-    {
-        id: 4,
-        name: 'Santander',
-        status: 'active',
-        lastSync: '2025-06-10T14:20:00Z'
-    },
-    {
-        id: 5,
-        name: 'Bradesco',
-        status: 'active',
-        lastSync: '2025-06-12T11:00:00Z'
-    }
-];
-
 // Application state
 let currentFilter = 'recent';
-let institutions = [...temporaryInstitutions];
+let institutions = [];
+let isLoading = false;
 
 // DOM elements
 let institutionsGrid;
@@ -53,14 +20,13 @@ function initializeInstitutions() {
     institutionsGrid = document.getElementById('institutionsGrid');
     filterButtons = document.querySelectorAll('.filter-btn');
     
-    // Initialize stats
-    updateStats();
+    // Load connected institutions
+    loadConnectedInstitutions();
     
     // Setup event listeners
     setupEventListeners();
-    
-    // Render institutions
-    renderInstitutions();
+    setupCardEventListeners();
+    setupModalListeners();
     
     console.log('Institutions page initialized');
 }
@@ -75,16 +41,50 @@ function setupEventListeners() {
         });
     });
     
-    // Connect new institution button
-    const connectBtn = document.getElementById('connectInstitution');
-    if (connectBtn) {
-        connectBtn.addEventListener('click', handleConnectInstitution);
-    }
+
     
     // Refresh button
     const refreshBtn = document.getElementById('refreshData');
     if (refreshBtn) {
         refreshBtn.addEventListener('click', handleRefreshData);
+    }
+}
+
+// Load connected institutions from backend
+async function loadConnectedInstitutions() {
+    try {
+        isLoading = true;
+        showLoadingState();
+        
+        const response = await fetch('/open-finance/connected-accounts', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to load institutions');
+        }
+        
+        const data = await response.json();
+        institutions = data.accounts.map(account => ({
+            id: account.id,
+            name: account.name,
+            status: 'active',
+            lastSync: new Date().toISOString()
+        }));
+        
+        updateStats();
+        renderInstitutions();
+    } catch (error) {
+        console.error('Error loading institutions:', error);
+        showNotification('Erro ao carregar instituições', 'error');
+        renderEmptyState();
+    } finally {
+        isLoading = false;
+        hideLoadingState();
     }
 }
 
@@ -250,21 +250,177 @@ function setupCardEventListeners() {
     // Add any additional card-specific event listeners here
 }
 
+// Show/hide loading state
+function showLoadingState() {
+    institutionsGrid.innerHTML = `
+        <div class="loading-state">
+            <div class="loading-spinner"></div>
+            <p>Carregando instituições...</p>
+        </div>
+    `;
+}
+
+function hideLoadingState() {
+    // Loading state will be replaced by renderInstitutions or renderEmptyState
+}
+
+// Modal elements
+let syncModal, disconnectModal;
+let currentInstitutionId = null;
+
+function setupModalListeners() {
+    // Get modal elements
+    syncModal = document.getElementById('syncModal');
+    disconnectModal = document.getElementById('disconnectModal');
+    
+    // Sync modal listeners
+    document.getElementById('closeSyncModal').addEventListener('click', hideSyncModal);
+    document.getElementById('cancelSyncBtn').addEventListener('click', hideSyncModal);
+    document.getElementById('confirmSyncBtn').addEventListener('click', () => {
+        if (currentInstitutionId) {
+            handleSyncInstitution(currentInstitutionId);
+            hideSyncModal();
+        }
+    });
+    
+    // Disconnect modal listeners
+    document.getElementById('closeDisconnectModal').addEventListener('click', hideDisconnectModal);
+    document.getElementById('cancelDisconnectBtn').addEventListener('click', hideDisconnectModal);
+    document.getElementById('confirmDisconnectBtn').addEventListener('click', () => {
+        if (currentInstitutionId) {
+            handleDisconnectInstitution(currentInstitutionId);
+            hideDisconnectModal();
+        }
+    });
+    
+    // Close modals when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === syncModal) {
+            hideSyncModal();
+        }
+        if (event.target === disconnectModal) {
+            hideDisconnectModal();
+        }
+    });
+    
+    // Close modals with ESC key
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            hideSyncModal();
+            hideDisconnectModal();
+        }
+    });
+}
+
+// Show sync modal
+function showSyncModal(institution) {
+    currentInstitutionId = institution.id;
+    document.getElementById('syncInstitutionName').textContent = institution.name;
+    syncModal.classList.add('show');
+}
+
+// Hide sync modal
+function hideSyncModal() {
+    syncModal.classList.remove('show');
+    currentInstitutionId = null;
+}
+
+// Show disconnect modal
+function showDisconnectModal(institution) {
+    currentInstitutionId = institution.id;
+    document.getElementById('disconnectInstitutionName').textContent = institution.name;
+    disconnectModal.classList.add('show');
+}
+
+// Hide disconnect modal
+function hideDisconnectModal() {
+    disconnectModal.classList.remove('show');
+    currentInstitutionId = null;
+}
+
 // Action handlers
 function syncInstitution(id) {
-    console.log('Syncing institution:', id);
-    // TODO: Implement sync functionality
-    showNotification('Sincronização iniciada', 'success');
+    const institution = institutions.find(inst => inst.id === id);
+    if (institution) {
+        showSyncModal(institution);
+    }
 }
 
 function disconnectInstitution(id) {
-    if (confirm('Tem certeza que deseja desconectar esta instituição?')) {
-        console.log('Disconnecting institution:', id);
+    const institution = institutions.find(inst => inst.id === id);
+    if (institution) {
+        showDisconnectModal(institution);
+    }
+}
+
+// Make functions globally available for onclick handlers
+window.syncInstitution = syncInstitution;
+window.disconnectInstitution = disconnectInstitution;
+
+// Sync institution
+async function handleSyncInstitution(id) {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Token de autenticação não encontrado');
+        }
+        
+        const response = await fetch(`/open-finance/sync/${id}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Erro ao sincronizar instituição');
+        }
+        
+        const data = await response.json();
+        
+        // Update last sync time
+        const institution = institutions.find(inst => inst.id === id);
+        if (institution) {
+            institution.lastSync = data.lastSync || new Date().toISOString();
+        }
+        
+        updateStats();
+        renderInstitutions();
+        
+        showNotification('Dados sincronizados com sucesso', 'success');
+    } catch (error) {
+        console.error('Error syncing institution:', error);
+        showNotification(error.message || 'Erro ao sincronizar dados', 'error');
+    }
+}
+
+// Disconnect institution
+async function handleDisconnectInstitution(id) {
+    try {
+        showNotification('Desconectando instituição...', 'info');
+        
+        const response = await fetch(`/open-finance/disconnect/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to disconnect institution');
+        }
+        
         // Remove institution from list
         institutions = institutions.filter(inst => inst.id !== id);
         updateStats();
         renderInstitutions();
-        showNotification('Instituição desconectada', 'success');
+        showNotification('Instituição desconectada com sucesso', 'success');
+    } catch (error) {
+        console.error('Error disconnecting institution:', error);
+        showNotification('Erro ao desconectar instituição', 'error');
     }
 }
 
@@ -274,12 +430,11 @@ function handleConnectInstitution() {
     showNotification('Funcionalidade em desenvolvimento', 'info');
 }
 
+// Make function globally available for onclick handlers
+window.handleConnectInstitution = handleConnectInstitution;
+
 function handleRefreshData() {
-    console.log('Refreshing data');
-    // Simulate data refresh
-    showNotification('Dados atualizados', 'success');
-    updateStats();
-    renderInstitutions();
+    loadConnectedInstitutions();
 }
 
 // Utility function to show notifications

@@ -325,16 +325,79 @@ class OpenFinanceController {
     }
   }
 
+  // Sincroniza dados de uma conta específica
+  static async syncAccount(req, res) {
+    try {
+      if (!req.user || !req.user.cpf) {
+        return res.status(401).json({ error: 'User authentication failed' });
+      }
+
+      const { id_bank: rawid_bank } = req.params;
+      const { cpf } = req.user;
+
+      // Validação de entrada
+      const id_bank = parseInt(rawid_bank);
+      if (isNaN(id_bank) || id_bank < 1 || id_bank > 6) {
+        return res.status(400).json({ error: 'Invalid bank ID' });
+      }
+
+      // Verifica se a conta existe e está vinculada
+      const account = await Account.findOne({
+        where: { 
+          id_bank, 
+          user_cpf: cpf,
+          consent: true 
+        }
+      });
+
+      if (!account) {
+        return res.status(404).json({ error: 'Account not found or not linked' });
+      }
+
+      // Importa o AccountController para usar a funcionalidade de sincronização
+      const AccountController = require('./accountController');
+      
+      // Chama o método de atualização que já existe
+      const mockReq = {
+        params: { id_bank: rawid_bank },
+        body: { cpf }
+      };
+      
+      const mockRes = {
+        status: (code) => ({
+          json: (data) => ({ statusCode: code, data })
+        }),
+        json: (data) => ({ statusCode: 200, data })
+      };
+
+      const result = await AccountController.updateAccount(mockReq, mockRes);
+      
+      if (result.statusCode === 200) {
+        return res.json({
+          message: 'Account synchronized successfully',
+          newBalance: result.data.newBalance,
+          newTransactionsCount: result.data.newTransactions?.length || 0,
+          lastSync: new Date().toISOString()
+        });
+      } else {
+        return res.status(result.statusCode).json(result.data);
+      }
+    } catch (error) {
+      console.error('Error syncing account:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
   // Lista todas as instituições disponíveis
   static async listAvailableInstitutions(req, res) {
     try {
       const institutions = [
-        { id: 1, name: 'Banco Dante', port: process.env.DANTE_API_EXT_PORT },
-        { id: 2, name: 'Banco Lucas', port: process.env.LUCAS_API_EXT_PORT },
-        { id: 3, name: 'Banco Patricia', port: process.env.PATRICIA_API_EXT_PORT },
-        { id: 4, name: 'Nubank', port: process.env.VITOR_API_EXT_PORT },
-        { id: 5, name: 'Banco Raul', port: process.env.RAUL_API_EXT_PORT },
-        { id: 6, name: 'Banco Caputi', port: process.env.CAPUTI_API_EXT_PORT }
+        { id: 1, name: 'Banco do Brasil', port: 3001 },
+        { id: 2, name: 'Caixa Econômica Federal', port: 3002 },
+        { id: 3, name: 'Itaú', port: 3003 },
+        { id: 4, name: 'Vitor Bank', port: 3004 },
+        { id: 5, name: 'Santander', port: 3005 },
+        { id: 6, name: 'Bradesco', port: 3006 }
       ];
 
       return res.json({ institutions });
