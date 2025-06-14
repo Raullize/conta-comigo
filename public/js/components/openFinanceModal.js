@@ -17,7 +17,7 @@ class OpenFinanceModal {
 
   createModal() {
     const modalHTML = `
-      <div id="openFinanceModal" class="modal-overlay" style="display: none;">
+      <div id="openFinanceModal" class="modal-overlay open-finance-modal" style="display: none;">
         <div class="modal-container">
           <div class="modal-header">
             <h2>Vincular Conta Bancária</h2>
