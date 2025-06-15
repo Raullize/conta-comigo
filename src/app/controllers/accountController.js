@@ -81,14 +81,42 @@ class AccountController {
         // Importa transações
         if (externalData.transactions?.length > 0) {
           await Transaction.bulkCreate(
-            externalData.transactions.map(t => ({
-              origin_cpf: externalData.cpf,
-              value: t.value,
-              type: t.type,
-              description: t.description,
-              id_bank,
-              created_at: t.date || new Date(),
-            })),
+            externalData.transactions.map(transaction => {
+              // Mapear corretamente origin_cpf e destination_cpf baseado no tipo
+              let origin_cpf = null;
+              let destination_cpf = null;
+              
+              // Normalizar tipos das diferentes APIs
+              const normalizedType = transaction.type?.toLowerCase();
+              
+              if (normalizedType === 'deposit' || normalizedType === 'deposito' || normalizedType === 'credit') {
+                // Para depósitos/créditos: usuário é o destino
+                destination_cpf = externalData.cpf;
+                origin_cpf = transaction.origin_cpf || null;
+              } else if (normalizedType === 'withdrawal' || normalizedType === 'saque' || normalizedType === 'debit') {
+                // Para saques/débitos: usuário é a origem
+                origin_cpf = externalData.cpf;
+                destination_cpf = transaction.destination_cpf || null;
+              } else if (normalizedType === 'transfer' || normalizedType === 'transferencia') {
+                // Para transferências: usar os CPFs fornecidos ou o usuário como origem
+                origin_cpf = transaction.origin_cpf || externalData.cpf;
+                destination_cpf = transaction.destination_cpf;
+              } else {
+                // Fallback: usar o usuário como origem
+                origin_cpf = externalData.cpf;
+                destination_cpf = transaction.destination_cpf || null;
+              }
+              
+              return {
+                origin_cpf,
+                destination_cpf,
+                value: transaction.value,
+                type: transaction.type,
+                description: transaction.description,
+                id_bank,
+                created_at: transaction.date || new Date(),
+              };
+            }),
             { transaction: t }
           );
         }

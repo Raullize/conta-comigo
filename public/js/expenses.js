@@ -32,73 +32,8 @@ class ExpensesManager {
             outros: 'Outros'
         };
 
-        // Dados temporários das transações (simulando dados vindos do banco)
-        this.transactions = [
-            {
-                id: 1,
-                title: 'Supermercado Extra',
-                category: 'desconhecida',
-                type: 'gasto',
-                amount: 150.50,
-                date: '2025-06-08'
-            },
-            {
-                id: 2,
-                title: 'Salário',
-                category: 'desconhecida',
-                type: 'receita',
-                amount: 3500.00,
-                date: '2025-06-01'
-            },
-            {
-                id: 3,
-                title: 'Conta de Luz',
-                category: 'desconhecida',
-                type: 'gasto',
-                amount: 89.30,
-                date: '2025-06-05'
-            },
-            {
-                id: 4,
-                title: 'Uber',
-                category: 'desconhecida',
-                type: 'gasto',
-                amount: 25.80,
-                date: '2025-06-10'
-            },
-            {
-                id: 5,
-                title: 'Netflix',
-                category: 'desconhecida',
-                type: 'gasto',
-                amount: 29.90,
-                date: '2025-06-03'
-            },
-            {
-                id: 6,
-                title: 'Freelance',
-                category: 'desconhecida',
-                type: 'receita',
-                amount: 800.00,
-                date: '2025-06-07'
-            },
-            {
-                id: 7,
-                title: 'Farmácia',
-                category: 'desconhecida',
-                type: 'gasto',
-                amount: 45.60,
-                date: '2025-06-09'
-            },
-            {
-                id: 8,
-                title: 'Restaurante',
-                category: 'desconhecida',
-                type: 'gasto',
-                amount: 78.90,
-                date: '2025-06-06'
-            }
-        ];
+        // Transações serão carregadas do backend
+        this.transactions = [];
 
 
 
@@ -132,8 +67,9 @@ class ExpensesManager {
 
     }
 
-    init() {
+    async init() {
         this.setupEventListeners();
+        await this.loadTransactions();
         this.renderTransactions();
         this.updatePagination();
         this.renderBudgetSection();
@@ -751,6 +687,56 @@ class ExpensesManager {
         // return response.json();
         
 
+    }
+
+    // Método para carregar transações do backend
+    async loadTransactions() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.error('Token de autenticação não encontrado');
+                return;
+            }
+
+            const response = await fetch('/transactions', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erro ao buscar transações: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            // Converter os dados do backend para o formato esperado pelo frontend
+            this.transactions = data.transactions.map(transaction => {
+                return {
+                    id: transaction.id,
+                    title: transaction.title,
+                    category: transaction.category,
+                    type: transaction.type === 'C' ? 'receita' : 'gasto', // Converter C/D para receita/gasto
+                    amount: transaction.amount,
+                    date: transaction.date,
+                    origin_cpf: transaction.origin_cpf,
+                    destination_cpf: transaction.destination_cpf,
+                    id_bank: transaction.id_bank
+                };
+            });
+
+            // Atualizar filteredTransactions
+            this.filteredTransactions = [...this.transactions];
+            
+            console.log(`Carregadas ${this.transactions.length} transações do backend`);
+        } catch (error) {
+            console.error('Erro ao carregar transações:', error);
+            // Em caso de erro, manter array vazio
+            this.transactions = [];
+            this.filteredTransactions = [];
+        }
     }
 }
 

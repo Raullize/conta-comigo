@@ -30,6 +30,9 @@ routes.delete('/open-finance/disconnect/:id_bank', openFinanceController.disconn
 routes.delete('/open-finance/disconnect-all', openFinanceController.disconnectAllAccounts);
 routes.get('/open-finance/institutions', openFinanceController.listAvailableInstitutions);
 
+// Rota para buscar transações do usuário
+routes.get('/transactions', openFinanceController.getUserTransactions);
+
 // Rotas antigas (manter compatibilidade)
 routes.post('/open-finance/:id_bank', accountController.createAccount);
 routes.patch('/open-finance/:id_bank/update', accountController.updateAccount);

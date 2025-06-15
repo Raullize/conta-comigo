@@ -451,6 +451,59 @@ class OpenFinanceController {
       return res.status(500).json({ error: 'Internal server error' });
     }
   }
+
+  // Busca todas as transações do usuário logado
+  static async getUserTransactions(req, res) {
+    try {
+      if (!req.user || !req.user.cpf) {
+        return res.status(401).json({ error: 'User authentication failed' });
+      }
+      
+      const { cpf } = req.user;
+      
+      // Busca todas as transações onde o usuário é origem ou destino
+      const transactions = await Transaction.findAll({
+        where: {
+          [Sequelize.Op.or]: [
+            { origin_cpf: cpf },
+            { destination_cpf: cpf }
+          ]
+        },
+        order: [['created_at', 'DESC']],
+        limit: 100 // Limitar a 100 transações mais recentes
+      });
+
+      // Formatar as transações para o frontend
+      const formattedTransactions = transactions.map(transaction => {
+        // Determinar se é crédito ou débito baseado no CPF do usuário
+        const isCredit = transaction.destination_cpf === cpf;
+        const isDebit = transaction.origin_cpf === cpf;
+        
+        // Garantir que temos uma data válida
+        const transactionDate = transaction.created_at || transaction.updatedAt || new Date();
+        
+        return {
+          id: transaction.id,
+          title: transaction.description || 'Transação',
+          category: 'desconhecida', // Por enquanto todas como não classificadas
+          type: isCredit ? 'C' : 'D', // C para crédito, D para débito
+          amount: parseFloat(transaction.value),
+          date: transactionDate.toISOString().split('T')[0], // Formato YYYY-MM-DD
+          origin_cpf: transaction.origin_cpf,
+          destination_cpf: transaction.destination_cpf,
+          id_bank: transaction.id_bank
+        };
+      });
+
+      return res.json({
+        transactions: formattedTransactions,
+        total: formattedTransactions.length
+      });
+    } catch (error) {
+      console.error('Error fetching user transactions:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
 }
 
 module.exports = OpenFinanceController;
