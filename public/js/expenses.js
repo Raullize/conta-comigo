@@ -80,8 +80,8 @@ class ExpensesManager {
         await this.loadTransactions();
         this.renderTransactions();
         this.updatePagination();
-        this.renderBudgetSection();
         this.calculateSpentAmounts();
+        this.renderBudgetSection();
     }
 
     setupEventListeners() {
@@ -662,6 +662,7 @@ class ExpensesManager {
             
             this.showNotification(`Orçamento para ${this.availableCategories[this.currentBudgetCategory]} salvo com sucesso!`);
             this.closeBudgetModal();
+            this.calculateSpentAmounts();
             this.renderBudgetSection();
         } catch (error) {
             console.error('Erro ao salvar orçamento:', error);
@@ -702,7 +703,7 @@ class ExpensesManager {
         
         if (percentage > 100) return 'Excedido';
         if (percentage > 80) return 'Atenção';
-        return 'No limite';
+        return 'Dentro do limite';
     }
 
     // Função para atualizar orçamento no banco
