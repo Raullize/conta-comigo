@@ -50,8 +50,6 @@ async function apiRequest(endpoint, options = {}) {
   }
 }
 
-
-
 document.addEventListener('DOMContentLoaded', async () => {
   // Initialize Open Finance modal
   openFinanceModal = new OpenFinanceModal();
@@ -222,6 +220,25 @@ async function loadCategoryChart() {
   }
 }
 
+// Função para formatar nomes de categorias
+function formatCategoryName(category) {
+  const categoryNames = {
+    alimentacao: 'Alimentação',
+    transporte: 'Transporte',
+    saude: 'Saúde',
+    lazer: 'Lazer',
+    educacao: 'Educação',
+    casa: 'Casa',
+    utilidades: 'Utilidades',
+    entretenimento: 'Entretenimento',
+    salario: 'Salário',
+    trabalho: 'Trabalho',
+    outros: 'Outros',
+    'Não classificado': 'Não classificado'
+  };
+  return categoryNames[category] || category.charAt(0).toUpperCase() + category.slice(1);
+}
+
 // Update category legend
 function updateCategoryLegend(categories) {
   const legendContainer = document.getElementById('categoryLegend');
@@ -230,14 +247,12 @@ function updateCategoryLegend(categories) {
     <div class="legend-item">
       <div class="legend-color" style="background-color: ${category.color}"></div>
       <div class="legend-info">
-        <div class="legend-name">${category.name}</div>
+        <div class="legend-name">${formatCategoryName(category.name)}</div>
         <div class="legend-value">${formatCurrency(category.value)} (${category.percentage.toFixed(1)}%)</div>
       </div>
     </div>
   `).join('');
 }
-
-
 
 // Load budget data
 async function loadBudgetData() {
@@ -269,7 +284,7 @@ function updateBudgetCategories(categories) {
     return `
       <div class="budget-category">
         <div class="budget-category-info">
-          <div class="budget-category-name">${category.category || category.name || 'Categoria'}</div>
+          <div class="budget-category-name">${formatCategoryName(category.category || category.name || 'Categoria')}</div>
           <div class="budget-category-values">
             ${formatCurrency(spent)} de ${formatCurrency(limit)} 
             (${formatCurrency(remaining)} restante)
@@ -311,7 +326,7 @@ async function loadRecentTransactions() {
           </div>
           <div class="transaction-details">
             <div class="transaction-description">${transaction.description}</div>
-            <div class="transaction-category">${transaction.category}</div>
+            <div class="transaction-category">${formatCategoryName(transaction.category)}</div>
           </div>
           <div class="transaction-info">
             <div class="transaction-amount ${transactionType}">
@@ -350,8 +365,6 @@ function formatDate(dateString) {
     year: 'numeric'
   }).format(date);
 }
-
-
 
 // Export functions for potential external use
 export {

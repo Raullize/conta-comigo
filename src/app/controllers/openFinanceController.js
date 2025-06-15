@@ -187,7 +187,7 @@ class OpenFinanceController {
 
             // Criar mapa de transações existentes para preservar categorias
             const existingTransactionsMap = new Map();
-            console.log(`[SYNC] Encontradas ${existingTransactions.length} transações existentes para preservar categorias`);
+
             
             existingTransactions.forEach(t => {
               // Normalizar valores para comparação consistente
@@ -216,15 +216,13 @@ class OpenFinanceController {
               
               const key = `${t.description}_${normalizedDate}_${normalizedValue}`;
               
-              if (t.category && t.category !== 'desconhecida') {
+              if (t.category && t.category !== 'Não classificado') {
                 existingTransactionsMap.set(key, t.category);
-                console.log(`[SYNC] Mapeando categoria: ${key} -> ${t.category}`);
+
               }
             });
 
-            console.log(`[SYNC] Mapa de categorias criado com ${existingTransactionsMap.size} entradas`);
-
-            // Insere novas transações preservando categorias existentes
+             // Insere novas transações preservando categorias existentes
             const transactionsToInsert = externalData.transactions.map(transaction => {
               // Normalizar valores da mesma forma
               const normalizedValue = Math.abs(parseFloat(transaction.value.toString().replace(/[^\d.-]/g, '')));
@@ -254,12 +252,7 @@ class OpenFinanceController {
               
               const existingCategory = existingTransactionsMap.get(transactionKey);
               
-              if (existingCategory) {
-                console.log(`[SYNC] Categoria preservada: ${transactionKey} -> ${existingCategory}`);
-              } else {
-                console.log(`[SYNC] Categoria NÃO encontrada para: ${transactionKey}`);
-                console.log(`[SYNC] Chaves disponíveis no mapa:`, Array.from(existingTransactionsMap.keys()).slice(0, 3));
-              }
+
               
               return {
                 origin_cpf: transaction.type === 'debit' ? cpf : transaction.origin_cpf || null,
@@ -268,7 +261,7 @@ class OpenFinanceController {
                 type: transaction.type === 'debit' ? 'D' : 'C',
                 description: transaction.description,
                 id_bank: bankId,
-                category: existingCategory || 'desconhecida',
+                category: existingCategory || 'Não classificado',
                 created_at: new Date(transaction.date)
               };
             });
@@ -484,7 +477,7 @@ class OpenFinanceController {
 
           // Criar mapa de transações existentes para preservar categorias
           const existingTransactionsMap = new Map();
-          console.log(`[SYNC-UPDATE] Encontradas ${existingTransactions.length} transações existentes para preservar categorias`);
+
           
           existingTransactions.forEach(t => {
              // Normalizar valores para comparação consistente (consistente com syncAccount)
@@ -513,15 +506,13 @@ class OpenFinanceController {
              
              const key = `${t.description}_${normalizedDate}_${normalizedValue}`;
              
-             if (t.category && t.category !== 'desconhecida') {
+             if (t.category && t.category !== 'Não classificado') {
                existingTransactionsMap.set(key, t.category);
-               console.log(`[SYNC-UPDATE] Mapeando categoria: ${key} -> ${t.category}`);
+
              }
            });
 
-          console.log(`[SYNC-UPDATE] Mapa de categorias criado com ${existingTransactionsMap.size} entradas`);
-
-          // SEGUNDO: Remover transações antigas desta conta
+            // SEGUNDO: Remover transações antigas desta conta
           await Transaction.destroy({
             where: {
               id_bank: id_bank,
@@ -562,12 +553,7 @@ class OpenFinanceController {
              
              const existingCategory = existingTransactionsMap.get(transactionKey);
              
-             if (existingCategory) {
-               console.log(`[SYNC-UPDATE] Categoria preservada: ${transactionKey} -> ${existingCategory}`);
-             } else {
-               console.log(`[SYNC-UPDATE] Categoria NÃO encontrada para: ${transactionKey}`);
-               console.log(`[SYNC-UPDATE] Chaves disponíveis no mapa:`, Array.from(existingTransactionsMap.keys()).slice(0, 3));
-             }
+
 
             return {
               origin_cpf: transaction.type === 'debit' ? cpf : null,
@@ -576,7 +562,7 @@ class OpenFinanceController {
               type: transaction.type === 'debit' ? 'D' : 'C',
               description: transaction.description,
               id_bank: id_bank,
-              category: existingCategory || 'desconhecida',
+              category: existingCategory || 'Não classificado',
               created_at: new Date(transaction.date)
             };
           });
@@ -664,7 +650,7 @@ class OpenFinanceController {
         return {
           id: transaction.id,
           title: transaction.description || 'Transação',
-          category: transaction.category || 'desconhecida', // Usar categoria salva ou 'desconhecida'
+          category: transaction.category || 'Não classificado', // Usar categoria salva ou 'Não classificado'
           type: isCredit ? 'C' : 'D', // C para crédito, D para débito
           amount: parseFloat(transaction.value),
           date: transactionDate.toISOString().split('T')[0], // Formato YYYY-MM-DD

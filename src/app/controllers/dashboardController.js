@@ -146,7 +146,7 @@ class DashboardController {
           category: {
             [Op.ne]: null,
             [Op.ne]: '',
-            [Op.ne]: 'desconhecida' // Excluir transações não classificadas do gráfico
+            [Op.ne]: 'Não classificado' // Excluir transações não classificadas do gráfico
           }
         },
         group: ['category'],
@@ -201,7 +201,7 @@ class DashboardController {
           category: {
             [Op.ne]: null,
             [Op.ne]: '',
-            [Op.ne]: 'desconhecida'
+            [Op.ne]: 'Não classificado'
           }
         },
         group: ['category']
@@ -319,7 +319,7 @@ class DashboardController {
             category: {
               [Op.ne]: null,
               [Op.ne]: '',
-              [Op.ne]: 'desconhecida'
+              [Op.ne]: 'Não classificado'
             }
           },
           group: ['category'],

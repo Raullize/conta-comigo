@@ -14,7 +14,7 @@ class ExpensesManager {
             salario: 'fas fa-money-bill-wave',
             trabalho: 'fas fa-briefcase',
             outros: 'fas fa-ellipsis-h',
-            desconhecida: 'fas fa-question-circle'
+            'Não classificado': 'fas fa-question-circle'
         };
 
         // Categorias disponíveis para classificação
@@ -161,8 +161,6 @@ class ExpensesManager {
             document.getElementById('endDate').value = endDate;
         }
 
-        // Debug: log dos filtros aplicados
-
         this.filteredTransactions = this.transactions.filter(transaction => {
             let matches = true;
             const transactionDate = new Date(transaction.date);
@@ -189,7 +187,7 @@ class ExpensesManager {
                 }
             }
 
-            // Debug: log de cada transação filtrada
+
 
             return matches;
         });
@@ -237,7 +235,7 @@ class ExpensesManager {
         }
 
         container.innerHTML = pageTransactions.map(transaction => {
-            const isUnclassified = transaction.category === 'desconhecida';
+            const isUnclassified = transaction.category === 'Não classificado';
             const categoryDisplay = isUnclassified ? 
                 '<span class="unclassified-label">Não classificada - Clique para classificar</span>' : 
                 `<span class="classified-label">${this.getCategoryName(transaction.category)} - Clique para reclassificar</span>`;
@@ -314,7 +312,7 @@ class ExpensesManager {
             salario: 'Salário',
             trabalho: 'Trabalho',
             outros: 'Outros',
-            desconhecida: 'Não classificada'
+            'Não classificado': 'Não classificado'
         };
         return categoryNames[category] || 'Outros';
     }
@@ -683,7 +681,7 @@ class ExpensesManager {
 
         // Calcular gastos por categoria baseado nas transações
         this.transactions.forEach(transaction => {
-            if (transaction.type === 'gasto' && transaction.category !== 'desconhecida') {
+            if (transaction.type === 'gasto' && transaction.category !== 'Não classificado') {
                 if (this.monthlyBudget[transaction.category]) {
                     this.monthlyBudget[transaction.category].spent += transaction.amount;
                 }

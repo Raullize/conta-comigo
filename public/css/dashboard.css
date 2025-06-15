@@ -264,8 +264,6 @@
   color: var(--text-secondary);
 }
 
-
-
 /* Budget Card */
 .budget-section {
   grid-column: 1 / -1;
