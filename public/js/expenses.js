@@ -746,8 +746,6 @@ class ExpensesManager {
 
             // Atualizar filteredTransactions
             this.filteredTransactions = [...this.transactions];
-            
-            console.log(`Carregadas ${this.transactions.length} transações do backend`);
         } catch (error) {
             console.error('Erro ao carregar transações:', error);
             // Em caso de erro, manter array vazio
