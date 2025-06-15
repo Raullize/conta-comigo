@@ -34,7 +34,12 @@ routes.get('/open-finance/institutions', openFinanceController.listAvailableInst
 routes.get('/transactions', openFinanceController.getUserTransactions);
 
 // Rota para atualizar categoria de transação
-routes.patch('/transactions/:transactionId/category', openFinanceController.updateTransactionCategory);
+routes.patch('/transactions/:id/category', openFinanceController.updateTransactionCategory);
+
+// Rotas de orçamento mensal
+routes.get('/budgets', openFinanceController.getBudgets);
+routes.post('/budgets', openFinanceController.saveBudget);
+routes.delete('/budgets/:id', openFinanceController.deleteBudget);
 
 // Rotas antigas (manter compatibilidade)
 routes.post('/open-finance/:id_bank', accountController.createAccount);

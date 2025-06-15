@@ -69,6 +69,14 @@ class ExpensesManager {
 
     async init() {
         this.setupEventListeners();
+        
+        // Carregar orçamentos do banco de dados
+        try {
+            await this.loadBudgetsFromDatabase();
+        } catch (error) {
+            console.error('Erro ao carregar orçamentos:', error);
+        }
+        
         await this.loadTransactions();
         this.renderTransactions();
         this.updatePagination();
@@ -636,7 +644,7 @@ class ExpensesManager {
         this.currentBudgetCategory = null;
     }
 
-    saveBudgetFromModal() {
+    async saveBudgetFromModal() {
         const input = document.getElementById('budgetModalInput');
         const value = parseFloat(input.value);
 
@@ -645,14 +653,20 @@ class ExpensesManager {
             return;
         }
 
-        this.monthlyBudget[this.currentBudgetCategory].limit = value;
-        
-        // Aqui será feita a integração com o backend no futuro
-        // await this.updateBudgetInDatabase(this.currentBudgetCategory, value);
-        
-        this.showNotification(`Orçamento para ${this.availableCategories[this.currentBudgetCategory]} salvo com sucesso!`);
-        this.closeBudgetModal();
-        this.renderBudgetSection();
+        try {
+            // Salvar no banco de dados
+            await this.updateBudgetInDatabase(this.currentBudgetCategory, value);
+
+            // Atualizar no objeto local
+            this.monthlyBudget[this.currentBudgetCategory].limit = value;
+            
+            this.showNotification(`Orçamento para ${this.availableCategories[this.currentBudgetCategory]} salvo com sucesso!`);
+            this.closeBudgetModal();
+            this.renderBudgetSection();
+        } catch (error) {
+            console.error('Erro ao salvar orçamento:', error);
+            this.showNotification('Erro ao salvar orçamento. Tente novamente.', 'error');
+        }
     }
 
     calculateSpentAmounts() {
@@ -691,20 +705,59 @@ class ExpensesManager {
         return 'No limite';
     }
 
-    // Função para atualizar orçamento no banco (será implementada no futuro)
-    async updateBudgetInDatabase(category, limit) {
-        // const response = await fetch('/api/budget', {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': `Bearer ${localStorage.getItem('token')}`
-        //     },
-        //     body: JSON.stringify({ category, limit })
-        // });
-        // return response.json();
-        
+    // Função para atualizar orçamento no banco
+    async loadBudgetsFromDatabase() {
+    try {
+      const response = await fetch('/budgets', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
 
+      if (!response.ok) {
+        throw new Error('Erro ao carregar orçamentos');
+      }
+
+      const data = await response.json();
+      
+      // Atualizar orçamentos locais com dados do banco
+      if (data.success && data.budgets) {
+        data.budgets.forEach(budget => {
+          if (this.monthlyBudget[budget.category]) {
+            this.monthlyBudget[budget.category].limit = budget.limit_amount;
+          }
+        });
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Erro ao carregar orçamentos do banco:', error);
+      throw error;
     }
+  }
+
+  async updateBudgetInDatabase(category, limit) {
+    try {
+      const response = await fetch('/budgets', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ category, limit })
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao salvar orçamento');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Erro ao atualizar orçamento no banco:', error);
+      throw error;
+    }
+  }
 
     // Método para carregar transações do backend
     async loadTransactions() {

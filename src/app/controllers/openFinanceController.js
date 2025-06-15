@@ -4,6 +4,7 @@ const sequelize = require('../../database/database.js');
 const {
   models: { Account, Transaction, User },
 } = require('../../database');
+const Budget = require('../models/Budget');
 
 class OpenFinanceController {
   // Verifica se o usuário tem pelo menos uma conta vinculada
@@ -507,44 +508,36 @@ class OpenFinanceController {
 
   static async updateTransactionCategory(req, res) {
     try {
+      const { id } = req.params;
+      const { category } = req.body;
+      
       if (!req.user || !req.user.cpf) {
         return res.status(401).json({ error: 'User authentication failed' });
       }
-      
-      const { transactionId } = req.params;
-      const { category } = req.body;
-      const { cpf: userCpf } = req.user;
 
-      // Validar se a categoria é válida
-      const validCategories = [
-        'alimentacao', 'transporte', 'saude', 'lazer', 'educacao',
-        'casa', 'utilidades', 'entretenimento', 'salario', 'trabalho', 'outros'
-      ];
+      const { cpf } = req.user;
 
-      if (!validCategories.includes(category)) {
-        return res.status(400).json({ error: 'Categoria inválida' });
-      }
-
-      // Buscar a transação e verificar se pertence ao usuário
+      // Verificar se a transação existe e pertence ao usuário
       const transaction = await Transaction.findOne({
         where: {
-          id: transactionId,
+          id: id,
           [Op.or]: [
-            { origin_cpf: userCpf },
-            { destination_cpf: userCpf }
+            { origin_cpf: cpf },
+            { destination_cpf: cpf }
           ]
         }
       });
 
       if (!transaction) {
-        return res.status(404).json({ error: 'Transação não encontrada' });
+        return res.status(404).json({ error: 'Transaction not found' });
       }
 
       // Atualizar a categoria
       await transaction.update({ category });
 
       return res.json({
-        message: 'Categoria atualizada com sucesso',
+        success: true,
+        message: 'Transaction category updated successfully',
         transaction: {
           id: transaction.id,
           category: transaction.category
@@ -552,6 +545,136 @@ class OpenFinanceController {
       });
     } catch (error) {
       console.error('Error updating transaction category:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  // Métodos para gerenciamento de orçamento mensal
+  static async getBudgets(req, res) {
+    try {
+      if (!req.user || !req.user.cpf) {
+        return res.status(401).json({ error: 'User authentication failed' });
+      }
+
+      const { cpf } = req.user;
+      const { month, year } = req.query;
+
+      const currentDate = new Date();
+      const targetMonth = month ? parseInt(month) : currentDate.getMonth() + 1;
+      const targetYear = year ? parseInt(year) : currentDate.getFullYear();
+
+      const budgets = await Budget.findAll({
+        where: {
+          user_cpf: cpf,
+          month: targetMonth,
+          year: targetYear
+        }
+      });
+
+      return res.json({
+        success: true,
+        budgets: budgets.map(budget => ({
+          id: budget.id,
+          category: budget.category,
+          limit_amount: parseFloat(budget.limit_amount),
+          month: budget.month,
+          year: budget.year
+        }))
+      });
+    } catch (error) {
+      console.error('Error fetching budgets:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  static async saveBudget(req, res) {
+    try {
+      if (!req.user || !req.user.cpf) {
+        return res.status(401).json({ error: 'User authentication failed' });
+      }
+
+      const { cpf } = req.user;
+      const { category, limit } = req.body;
+
+      if (!category || !limit || limit <= 0) {
+        return res.status(400).json({ error: 'Category and valid limit are required' });
+      }
+
+      const currentDate = new Date();
+      const month = currentDate.getMonth() + 1;
+      const year = currentDate.getFullYear();
+
+      // Verificar se já existe um orçamento para esta categoria no mês/ano atual
+      const existingBudget = await Budget.findOne({
+        where: {
+          user_cpf: cpf,
+          category: category,
+          month: month,
+          year: year
+        }
+      });
+
+      let budget;
+      if (existingBudget) {
+        // Atualizar orçamento existente
+        await existingBudget.update({ limit_amount: limit });
+        budget = existingBudget;
+      } else {
+        // Criar novo orçamento
+        budget = await Budget.create({
+          user_cpf: cpf,
+          category: category,
+          limit_amount: limit,
+          month: month,
+          year: year
+        });
+      }
+
+      return res.json({
+        success: true,
+        message: 'Budget saved successfully',
+        budget: {
+          id: budget.id,
+          category: budget.category,
+          limit_amount: parseFloat(budget.limit_amount),
+          month: budget.month,
+          year: budget.year
+        }
+      });
+    } catch (error) {
+      console.error('Error saving budget:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  static async deleteBudget(req, res) {
+    try {
+      if (!req.user || !req.user.cpf) {
+        return res.status(401).json({ error: 'User authentication failed' });
+      }
+
+      const { cpf } = req.user;
+      const { id } = req.params;
+
+      const budget = await Budget.findOne({
+        where: {
+          id: id,
+          user_cpf: cpf
+        }
+      });
+
+      if (!budget) {
+        return res.status(404).json({ error: 'Budget not found' });
+      }
+
+      await budget.destroy();
+
+      return res.json({
+        success: true,
+        message: 'Budget deleted successfully'
+      });
+    } catch (error) {
+      console.error('Error deleting budget:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
   }
