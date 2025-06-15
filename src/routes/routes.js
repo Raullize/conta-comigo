@@ -7,6 +7,7 @@ const sessionController = require('../app/controllers/sessionController');
 const categoryController = require('../app/controllers/categoryController');
 const accountController = require('../app/controllers/accountController');
 const openFinanceController = require('../app/controllers/openFinanceController');
+const dashboardController = require('../app/controllers/dashboardController');
 const routes = new Router();
 
 // Rotas públicas
@@ -40,6 +41,13 @@ routes.patch('/transactions/:id/category', openFinanceController.updateTransacti
 routes.get('/budgets', openFinanceController.getBudgets);
 routes.post('/budgets', openFinanceController.saveBudget);
 routes.delete('/budgets/:id', openFinanceController.deleteBudget);
+
+// Rotas da Dashboard
+routes.get('/dashboard/overview', dashboardController.getOverviewData);
+routes.get('/dashboard/categories', dashboardController.getCategoryExpenses);
+routes.get('/dashboard/budget', dashboardController.getBudgetData);
+routes.get('/dashboard/transactions', dashboardController.getRecentTransactions);
+routes.get('/dashboard/insights', dashboardController.getInsights);
 
 // Rotas antigas (manter compatibilidade)
 routes.post('/open-finance/:id_bank', accountController.createAccount);

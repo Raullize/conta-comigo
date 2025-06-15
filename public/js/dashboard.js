@@ -5,351 +5,359 @@ import { showLogoutModal } from './auth-utils.js';
 import OpenFinanceModal from './components/openFinanceModal.js';
 
 let openFinanceModal;
+let categoryChart;
+
+// Configuração da API
+const API_BASE_URL = window.location.origin;
+
+// Função para fazer requisições autenticadas
+async function apiRequest(endpoint, options = {}) {
+  const token = localStorage.getItem('token');
+  
+  const defaultOptions = {
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token ? `Bearer ${token}` : ''
+    }
+  };
+  
+  const mergedOptions = {
+    ...defaultOptions,
+    ...options,
+    headers: {
+      ...defaultOptions.headers,
+      ...options.headers
+    }
+  };
+  
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, mergedOptions);
+    
+    if (!response.ok) {
+      if (response.status === 401) {
+        // Token expirado ou inválido
+        localStorage.removeItem('token');
+        window.location.href = '/pages/login.html';
+        return;
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('API request failed:', error);
+    throw error;
+  }
+}
+
+
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Inicializa o modal de Open Finance
+  // Initialize Open Finance modal
   openFinanceModal = new OpenFinanceModal();
   
-  // Verifica se o usuário tem contas vinculadas
+  // Check linked accounts
   await checkOpenFinanceAccounts();
   
-  loadFinancialData();
+  // Load dashboard data
+  loadDashboardData();
+  
+  // Setup UI events
   setupUIEvents();
-  initializeFinancialTips();
 });
 
-// Função para verificar contas vinculadas
+// Check Open Finance accounts
 async function checkOpenFinanceAccounts() {
   try {
     const result = await OpenFinanceModal.checkLinkedAccounts();
     
     if (!result.hasLinkedAccounts) {
-      // Se não tem contas vinculadas, mostra o modal
       setTimeout(() => {
         openFinanceModal.show();
-      }, 1000); // Delay de 1 segundo para melhor UX
+      }, 1000);
     }
   } catch (error) {
     console.error('Erro ao verificar contas vinculadas:', error);
   }
 }
 
-function loadFinancialData() {
-  const financialData = {
-    balance: {
-      total: 'R$ 5.750,00',
-      income: 'R$ 7.200,00',
-      expenses: 'R$ 1.450,00',
-    },
-    expenses: {
-      total: 'R$ 1.450,00',
-      categories: [
-        { name: 'Alimentação', value: 'R$ 650,00', percentage: '45%' },
-        { name: 'Transporte', value: 'R$ 350,00', percentage: '24%' },
-        { name: 'Lazer', value: 'R$ 250,00', percentage: '17%' },
-        { name: 'Outros', value: 'R$ 200,00', percentage: '14%' },
-      ],
-    },
-
-    transactions: [
-      {
-        type: 'income',
-        description: 'Salário',
-        category: 'Receita',
-        value: 'R$ 5.000,00',
-        date: '05/06/2023',
-      },
-      {
-        type: 'expense',
-        description: 'Supermercado',
-        category: 'Alimentação',
-        value: 'R$ 350,00',
-        date: '10/06/2023',
-      },
-      {
-        type: 'income',
-        description: 'Freelance',
-        category: 'Receita Extra',
-        value: 'R$ 1.200,00',
-        date: '15/06/2023',
-      },
-      {
-        type: 'expense',
-        description: 'Restaurante',
-        category: 'Alimentação',
-        value: 'R$ 120,00',
-        date: '18/06/2023',
-      },
-      {
-        type: 'expense',
-        description: 'Uber',
-        category: 'Transporte',
-        value: 'R$ 35,00',
-        date: '20/06/2023',
-      },
-    ],
-    budget: [
-      {
-        category: 'Alimentação',
-        spent: 650,
-        limit: 800,
-        percentage: 81,
-        status: 'safe',
-      },
-      {
-        category: 'Transporte',
-        spent: 350,
-        limit: 400,
-        percentage: 88,
-        status: 'warning',
-      },
-      {
-        category: 'Moradia',
-        spent: 1200,
-        limit: 1500,
-        percentage: 80,
-        status: 'safe',
-      },
-      {
-        category: 'Lazer',
-        spent: 250,
-        limit: 300,
-        percentage: 83,
-        status: 'warning',
-      },
-      {
-        category: 'Saúde',
-        spent: 180,
-        limit: 200,
-        percentage: 90,
-        status: 'warning',
-      },
-      {
-        category: 'Educação',
-        spent: 320,
-        limit: 400,
-        percentage: 80,
-        status: 'safe',
-      },
-    ],
-  };
-
-  displayFinancialData(financialData);
-  return financialData;
+// Load all dashboard data
+function loadDashboardData() {
+  loadOverviewData();
+  loadCategoryChart();
+  loadBudgetData();
+  loadRecentTransactions();
 }
 
-function displayFinancialData(data) {
-  if (!data) {
-    return;
+// Load overview cards data
+async function loadOverviewData() {
+  try {
+    const data = await apiRequest('/dashboard/overview');
+    
+    // Total Balance
+    document.getElementById('totalBalance').textContent = formatCurrency(parseFloat(data.totalBalance));
+    updateChangeIndicator('balanceChange', data.balanceChange);
+    
+    // Monthly Expenses
+    document.getElementById('monthlyExpenses').textContent = formatCurrency(parseFloat(data.monthlyExpenses));
+    updateChangeIndicator('expensesChange', data.expensesChange);
+    
+    // Monthly Income
+    document.getElementById('monthlyIncome').textContent = formatCurrency(parseFloat(data.monthlyIncome));
+    updateChangeIndicator('incomeChange', data.incomeChange);
+  } catch (error) {
+    console.error('Erro ao carregar dados de visão geral:', error);
+    // Show error state
+    document.getElementById('totalBalance').textContent = 'R$ 0,00';
+    document.getElementById('monthlyExpenses').textContent = 'R$ 0,00';
+    document.getElementById('monthlyIncome').textContent = 'R$ 0,00';
   }
-
-  updateBalanceCard(data.balance);
-  updateExpensesCard(data.expenses);
-  updateTransactions(data.transactions);
-  updateBudget(data.budget);
 }
 
-function updateBalanceCard(balance) {
-  updateCard('balance-card', balance, '+2,5% desde o mês passado');
-}
-
-function updateExpensesCard(expenses) {
-  updateCard('expenses-card', expenses, '-5,2% desde o mês passado');
-}
-
-function updateCard(cardClass, data, changeText = null) {
-  if (!data) return;
-
-  const valueElement = document.querySelector(`.${cardClass} .balance-value`);
-  const changeElement = document.querySelector(`.${cardClass} .balance-change`);
-  const iconElement = document.querySelector(`.${cardClass} .balance-change i`);
-  const spanElement = document.querySelector(`.${cardClass} .balance-change span`);
-
-  if (valueElement) {
-    valueElement.textContent = data.total || 'R$ 0,00';
+// Update change indicators
+function updateChangeIndicator(elementId, changeValue) {
+  const element = document.getElementById(elementId);
+  const icon = element.querySelector('i');
+  const span = element.querySelector('span');
+  
+  // Handle both number and object formats
+  let percentage, isPositive;
+  if (typeof changeValue === 'object' && changeValue !== null) {
+    percentage = parseFloat(changeValue.percentage || 0);
+    isPositive = changeValue.isPositive !== undefined ? changeValue.isPositive : percentage >= 0;
+  } else {
+    percentage = parseFloat(changeValue || 0);
+    isPositive = percentage >= 0;
   }
+  
+  const isNegative = percentage < 0;
+  
+  // Update classes
+  element.classList.remove('positive', 'negative');
+  if (isPositive && percentage !== 0) {
+    element.classList.add('positive');
+    icon.className = 'fas fa-arrow-up';
+  } else if (isNegative) {
+    element.classList.add('negative');
+    icon.className = 'fas fa-arrow-down';
+  } else {
+    icon.className = 'fas fa-minus';
+  }
+  
+  // Update text
+  const prefix = isPositive && percentage > 0 ? '+' : '';
+  span.textContent = `${prefix}${Math.abs(percentage).toFixed(1)}% em relação ao mês anterior`;
+}
 
-  if (changeElement && changeText) {
-    const isPositive = changeText.includes('+');
-    changeElement.className = `balance-change ${isPositive ? 'balance-positive' : 'balance-negative'}`;
-
-    if (iconElement) {
-      iconElement.className = `fas ${isPositive ? 'fa-arrow-up' : 'fa-arrow-down'}`;
+// Load category expenses chart
+async function loadCategoryChart() {
+  try {
+    const data = await apiRequest('/dashboard/categories');
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    
+    if (!data || data.length === 0) {
+      document.getElementById('categoryChart').style.display = 'none';
+      document.getElementById('categoryLegend').innerHTML = '<p>Nenhum gasto por categoria encontrado este mês.</p>';
+      return;
     }
-
-    if (spanElement) {
-      spanElement.textContent = changeText;
-    }
-  }
-}
-
-
-
-function getCategoryIcon(category) {
-  const iconMap = {
-    'Alimentação': 'fa-utensils',
-    'Transporte': 'fa-car',
-    'Moradia': 'fa-home',
-    'Compras': 'fa-shopping-bag',
-    'Receita': 'fa-money-check-alt',
-    'Receita Extra': 'fa-money-check-alt'
-  };
-  return iconMap[category] || 'fa-receipt';
-}
-
-function updateTransactions(transactions) {
-  if (!transactions?.length) return;
-
-  const transactionsList = document.querySelector('.transaction-list');
-  if (!transactionsList) return;
-
-  transactionsList.innerHTML = '';
-
-  transactions.slice(0, 4).forEach(transaction => {
-    const icon = getCategoryIcon(transaction.category);
-    const transactionItem = document.createElement('div');
-    transactionItem.className = `transaction-item transaction-${transaction.type}`;
-
-    transactionItem.innerHTML = `
-      <div class="transaction-icon">
-        <i class="fas ${icon}"></i>
-      </div>
-      <div class="transaction-details">
-        <div class="transaction-title">${transaction.description}</div>
-        <div class="transaction-category">${transaction.category}</div>
-      </div>
-      <div class="transaction-info">
-        <div class="transaction-amount">${transaction.type === 'income' ? '+ ' : '- '}${transaction.value}</div>
-        <div class="transaction-date">${transaction.date}</div>
-      </div>
-    `;
-
-    transactionsList.appendChild(transactionItem);
-  });
-}
-
-function getBudgetStatus(percentage) {
-  if (percentage > 100) return 'budget-danger';
-  if (percentage > 80) return 'budget-warning';
-  return 'budget-safe';
-}
-
-function formatCurrency(value) {
-  return `R$ ${value.toFixed(2).replace('.', ',')}`;
-}
-
-function updateBudget(budget) {
-  if (!budget?.length) return;
-
-  const budgetProgress = document.querySelector('.budget-progress');
-  if (!budgetProgress) return;
-
-  budgetProgress.innerHTML = '';
-
-  budget.forEach(category => {
-    const statusClass = getBudgetStatus(category.percentage);
-    const spentFormatted = formatCurrency(category.spent);
-    const limitFormatted = formatCurrency(category.limit);
-
-    const budgetCategory = document.createElement('div');
-    budgetCategory.className = 'budget-category';
-
-    budgetCategory.innerHTML = `
-      <div class="budget-category-header">
-        <div class="budget-category-name">${category.category}</div>
-        <div class="budget-category-values">
-          <span class="budget-category-spent">${spentFormatted}</span> / ${limitFormatted}
-        </div>
-      </div>
-      <div class="budget-bar">
-        <div class="budget-progress-bar ${statusClass}" style="width: ${Math.min(category.percentage, 100)}%"></div>
-      </div>
-    `;
-
-    budgetProgress.appendChild(budgetCategory);
-  });
-}
-
-function setupUIEvents() {
-  setupUserDropdown();
-  setupViewAllLinks();
-  setupFinancialTipsButton();
-}
-
-function setupUserDropdown() {
-  const userAvatar = document.querySelector('.user-avatar');
-  const userDropdown = document.getElementById('userDropdown');
-  const dropdownLogoutBtn = document.getElementById('dropdownLogoutBtn');
-
-  if (userAvatar && userDropdown) {
-    userAvatar.addEventListener('click', e => {
-      e.stopPropagation();
-      userDropdown.classList.toggle('show');
+    
+    // Transform API data to chart format
+    const totalAmount = data.reduce((sum, item) => sum + parseFloat(item.amount), 0);
+    const categories = data.map((item, index) => {
+      const amount = parseFloat(item.amount);
+      const percentage = totalAmount > 0 ? (amount / totalAmount) * 100 : 0;
+      const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8'];
+      
+      return {
+        name: item.category || 'Outros',
+        value: amount,
+        percentage: percentage,
+        color: colors[index % colors.length]
+      };
     });
-
-    document.addEventListener('click', e => {
-      if (
-        userDropdown.classList.contains('show') &&
-        !userDropdown.contains(e.target) &&
-        !userAvatar.contains(e.target)
-      ) {
-        userDropdown.classList.remove('show');
+    
+    // Destroy existing chart if it exists
+    if (categoryChart) {
+      categoryChart.destroy();
+    }
+    
+    categoryChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: categories.map(cat => cat.name),
+        datasets: [{
+          data: categories.map(cat => cat.value),
+          backgroundColor: categories.map(cat => cat.color),
+          borderWidth: 0,
+          cutout: '60%'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const value = formatCurrency(context.parsed);
+                const percentage = categories[context.dataIndex].percentage;
+                return `${context.label}: ${value} (${percentage.toFixed(1)}%)`;
+              }
+            }
+          }
+        }
       }
     });
-  }
-
-  if (dropdownLogoutBtn) {
-    dropdownLogoutBtn.addEventListener('click', e => {
-      e.preventDefault();
-      showLogoutModal();
-    });
-  }
-}
-
-function setupViewAllLinks() {
-  const viewAllLinks = document.querySelectorAll('.view-all');
-  viewAllLinks.forEach(link => {
-    link.addEventListener('click', e => {
-      e.preventDefault();
-    });
-  });
-}
-
-function setupFinancialTipsButton() {
-  const refreshTipBtn = document.getElementById('refreshTip');
-  if (refreshTipBtn) {
-    refreshTipBtn.addEventListener('click', displayRandomTip);
+    
+    // Update legend
+    updateCategoryLegend(categories);
+  } catch (error) {
+    console.error('Erro ao carregar gráfico de categorias:', error);
+    // Show error state
+    document.getElementById('categoryChart').style.display = 'none';
+    document.getElementById('categoryLegend').innerHTML = '<p>Erro ao carregar dados de categorias.</p>';
   }
 }
 
-const financialTips = [
-  "Crie um orçamento mensal e acompanhe seus gastos para ter controle total das suas finanças.",
-  "Reserve pelo menos 20% da sua renda para uma reserva de emergência antes de investir.",
-  "Quite primeiro as dívidas com juros mais altos, como cartão de crédito e cheque especial.",
-  "Diversifique seus investimentos para reduzir riscos e aumentar as chances de retorno.",
-  "Automatize suas economias: programe transferências mensais para sua conta poupança.",
-  "Compare preços antes de fazer compras grandes e pesquise por promoções e descontos.",
-  "Evite compras por impulso: espere 24 horas antes de comprar algo que não estava planejado.",
-  "Negocie suas contas fixas anualmente: telefone, internet, seguros e planos de saúde.",
-  "Invista em educação financeira: conhecimento é a melhor ferramenta para multiplicar seu dinheiro.",
-  "Use a regra 50-30-20: 50% para necessidades, 30% para desejos e 20% para poupança e investimentos."
-];
-
-function initializeFinancialTips() {
-  displayRandomTip();
-}
-
-function displayRandomTip() {
-  const tipElement = document.getElementById('dailyTip');
-  if (!tipElement || !financialTips.length) return;
-
-  const randomIndex = Math.floor(Math.random() * financialTips.length);
-  const selectedTip = financialTips[randomIndex];
+// Update category legend
+function updateCategoryLegend(categories) {
+  const legendContainer = document.getElementById('categoryLegend');
   
-  tipElement.style.opacity = '0';
-  
-  setTimeout(() => {
-    tipElement.textContent = selectedTip;
-    tipElement.style.opacity = '1';
-  }, 150);
+  legendContainer.innerHTML = categories.map(category => `
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: ${category.color}"></div>
+      <div class="legend-info">
+        <div class="legend-name">${category.name}</div>
+        <div class="legend-value">${formatCurrency(category.value)} (${category.percentage.toFixed(1)}%)</div>
+      </div>
+    </div>
+  `).join('');
 }
+
+
+
+// Load budget data
+async function loadBudgetData() {
+  try {
+    const data = await apiRequest('/dashboard/budget');
+    
+    if (!data || data.length === 0) {
+      document.getElementById('budgetCategories').innerHTML = '<p>Nenhum orçamento configurado.</p>';
+      return;
+    }
+    
+    updateBudgetCategories(data);
+  } catch (error) {
+    console.error('Erro ao carregar dados de orçamento:', error);
+    document.getElementById('budgetCategories').innerHTML = '<p>Erro ao carregar dados de orçamento.</p>';
+  }
+}
+
+// Update budget categories
+function updateBudgetCategories(categories) {
+  const container = document.getElementById('budgetCategories');
+  
+  container.innerHTML = categories.map(category => {
+    const spent = parseFloat(category.spent || 0);
+    const limit = parseFloat(category.limit || 0);
+    const percentage = limit > 0 ? (spent / limit) * 100 : 0;
+    const remaining = limit - spent;
+    
+    return `
+      <div class="budget-category">
+        <div class="budget-category-info">
+          <div class="budget-category-name">${category.category || category.name || 'Categoria'}</div>
+          <div class="budget-category-values">
+            ${formatCurrency(spent)} de ${formatCurrency(limit)} 
+            (${formatCurrency(remaining)} restante)
+          </div>
+        </div>
+        <div class="budget-progress-bar">
+          <div class="budget-progress-fill ${category.status}" style="width: ${Math.min(percentage, 100)}%"></div>
+        </div>
+        <div class="budget-status-indicator budget-status-${category.status}"></div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Load recent transactions
+async function loadRecentTransactions() {
+  try {
+    const data = await apiRequest('/dashboard/transactions');
+    const container = document.getElementById('transactionsList');
+    
+    if (!data || data.length === 0) {
+      container.innerHTML = '<p>Nenhuma transação encontrada.</p>';
+      return;
+    }
+    
+    const recentTransactions = data.slice(0, 5);
+    
+    container.innerHTML = recentTransactions.map(transaction => {
+      // Map transaction type correctly: 'income' for C/credit, 'expense' for D/debit
+      const isIncome = transaction.type === 'income' || transaction.type === 'C';
+      const transactionType = isIncome ? 'income' : 'expense';
+      const formattedDate = formatDate(transaction.date);
+      const formattedAmount = formatCurrency(parseFloat(transaction.amount));
+      
+      return `
+        <div class="transaction-item">
+          <div class="transaction-icon ${transactionType}">
+            <i class="fas ${isIncome ? 'fa-arrow-up' : 'fa-arrow-down'}"></i>
+          </div>
+          <div class="transaction-details">
+            <div class="transaction-description">${transaction.description}</div>
+            <div class="transaction-category">${transaction.category}</div>
+          </div>
+          <div class="transaction-info">
+            <div class="transaction-amount ${transactionType}">
+              ${isIncome ? '+' : '-'}${formattedAmount}
+            </div>
+            <div class="transaction-date">${formattedDate}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (error) {
+    console.error('Erro ao carregar transações recentes:', error);
+    const container = document.getElementById('transactionsList');
+    container.innerHTML = '<p>Erro ao carregar transações.</p>';
+  }
+}
+
+// Setup UI events
+function setupUIEvents() {
+  // UI events can be added here as needed
+}
+
+// Utility functions
+function formatCurrency(value) {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(value);
+}
+
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  }).format(date);
+}
+
+
+
+// Export functions for potential external use
+export {
+  loadDashboardData,
+  loadOverviewData,
+  loadCategoryChart,
+  loadBudgetData,
+  loadRecentTransactions
+};

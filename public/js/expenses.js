@@ -51,6 +51,7 @@ class ExpensesManager {
         };
 
         // Dados do orçamento mensal (simulando dados que virão do banco)
+        // Nota: salário foi removido pois não faz sentido ter limite para receita
         this.monthlyBudget = {
             alimentacao: { limit: null, spent: 0 },
             transporte: { limit: null, spent: 0 },
@@ -60,7 +61,6 @@ class ExpensesManager {
             casa: { limit: null, spent: 0 },
             utilidades: { limit: null, spent: 0 },
             entretenimento: { limit: null, spent: 0 },
-            salario: { limit: null, spent: 0 },
             trabalho: { limit: null, spent: 0 },
             outros: { limit: null, spent: 0 }
         };
@@ -496,6 +496,11 @@ class ExpensesManager {
         budgetContainer.innerHTML = '';
 
         Object.keys(this.monthlyBudget).forEach(categoryKey => {
+            // Filtrar salário do orçamento mensal (não faz sentido ter limite para salário)
+            if (categoryKey === 'salario') {
+                return;
+            }
+            
             const categoryData = this.monthlyBudget[categoryKey];
             const categoryName = this.availableCategories[categoryKey];
             const categoryIcon = this.categoryIcons[categoryKey];
@@ -725,7 +730,8 @@ class ExpensesManager {
       // Atualizar orçamentos locais com dados do banco
       if (data.success && data.budgets) {
         data.budgets.forEach(budget => {
-          if (this.monthlyBudget[budget.category]) {
+          // Filtrar salário dos orçamentos (não faz sentido ter limite para receita)
+          if (budget.category !== 'salario' && this.monthlyBudget[budget.category]) {
             this.monthlyBudget[budget.category].limit = budget.limit_amount;
           }
         });

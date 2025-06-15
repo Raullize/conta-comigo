@@ -162,7 +162,19 @@ class OpenFinanceController {
 
           // Sincroniza transações
           if (externalData.transactions && externalData.transactions.length > 0) {
-            // Remove transações antigas desta conta
+            // PRIMEIRO: Buscar transações existentes para preservar categorias (ANTES de remover)
+            const existingTransactions = await Transaction.findAll({
+              where: {
+                id_bank: bankId,
+                [Op.or]: [
+                  { origin_cpf: cpf },
+                  { destination_cpf: cpf }
+                ]
+              },
+              attributes: ['description', 'category', 'created_at', 'value']
+            });
+
+            // SEGUNDO: Remove transações antigas desta conta
             await Transaction.destroy({
               where: {
                 id_bank: bankId,
@@ -173,16 +185,93 @@ class OpenFinanceController {
               }
             });
 
-            // Insere novas transações
-            const transactionsToInsert = externalData.transactions.map(transaction => ({
-              origin_cpf: transaction.type === 'debit' ? cpf : transaction.origin_cpf || null,
-              destination_cpf: transaction.type === 'credit' ? cpf : transaction.destination_cpf || null,
-              value: parseFloat(transaction.value.toString().replace(/[^\d.-]/g, '')),
-              type: transaction.type === 'debit' ? 'D' : 'C',
-              description: transaction.description,
-              id_bank: bankId,
-              created_at: new Date(transaction.date)
-            }));
+            // Criar mapa de transações existentes para preservar categorias
+            const existingTransactionsMap = new Map();
+            console.log(`[SYNC] Encontradas ${existingTransactions.length} transações existentes para preservar categorias`);
+            
+            existingTransactions.forEach(t => {
+              // Normalizar valores para comparação consistente
+              const normalizedValue = Math.abs(parseFloat(t.value.toString().replace(/[^\d.-]/g, '')));
+              
+              // Normalizar data de forma consistente - sempre usar YYYY-MM-DD se possível
+              let normalizedDate;
+              try {
+                const date = new Date(t.created_at);
+                if (isNaN(date.getTime())) {
+                  // Se a data é inválida, tentar extrair da string
+                  const dateStr = t.created_at.toString();
+                  const dateMatch = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+                  if (dateMatch) {
+                    normalizedDate = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+                  } else {
+                    // Se não conseguir extrair, usar data atual como fallback
+                    normalizedDate = new Date().toISOString().split('T')[0];
+                  }
+                } else {
+                  normalizedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+                }
+              } catch (e) {
+                normalizedDate = new Date().toISOString().split('T')[0];
+              }
+              
+              const key = `${t.description}_${normalizedDate}_${normalizedValue}`;
+              
+              if (t.category && t.category !== 'desconhecida') {
+                existingTransactionsMap.set(key, t.category);
+                console.log(`[SYNC] Mapeando categoria: ${key} -> ${t.category}`);
+              }
+            });
+
+            console.log(`[SYNC] Mapa de categorias criado com ${existingTransactionsMap.size} entradas`);
+
+            // Insere novas transações preservando categorias existentes
+            const transactionsToInsert = externalData.transactions.map(transaction => {
+              // Normalizar valores da mesma forma
+              const normalizedValue = Math.abs(parseFloat(transaction.value.toString().replace(/[^\d.-]/g, '')));
+              
+              // Normalizar data de forma consistente - sempre usar YYYY-MM-DD se possível
+              let normalizedDate;
+              try {
+                const date = new Date(transaction.date);
+                if (isNaN(date.getTime())) {
+                  // Se a data é inválida, tentar extrair da string
+                  const dateStr = transaction.date.toString();
+                  const dateMatch = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+                  if (dateMatch) {
+                    normalizedDate = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+                  } else {
+                    // Se não conseguir extrair, usar data atual como fallback
+                    normalizedDate = new Date().toISOString().split('T')[0];
+                  }
+                } else {
+                  normalizedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+                }
+              } catch (e) {
+                normalizedDate = new Date().toISOString().split('T')[0];
+              }
+              
+              const transactionKey = `${transaction.description}_${normalizedDate}_${normalizedValue}`;
+              
+              const existingCategory = existingTransactionsMap.get(transactionKey);
+              
+              if (existingCategory) {
+                console.log(`[SYNC] Categoria preservada: ${transactionKey} -> ${existingCategory}`);
+              } else {
+                console.log(`[SYNC] Categoria NÃO encontrada para: ${transactionKey}`);
+                console.log(`[SYNC] Chaves disponíveis no mapa:`, Array.from(existingTransactionsMap.keys()).slice(0, 3));
+              }
+              
+              return {
+                origin_cpf: transaction.type === 'debit' ? cpf : transaction.origin_cpf || null,
+                destination_cpf: transaction.type === 'credit' ? cpf : transaction.destination_cpf || null,
+                value: Math.abs(parseFloat(transaction.value.toString().replace(/[^\d.-]/g, ''))),
+                type: transaction.type === 'debit' ? 'D' : 'C',
+                description: transaction.description,
+                id_bank: bankId,
+                category: existingCategory || 'desconhecida',
+                created_at: new Date(transaction.date)
+              };
+            });
 
             await Transaction.bulkCreate(transactionsToInsert);
           }
@@ -381,7 +470,58 @@ class OpenFinanceController {
         // Importar novas transações
         let newTransactionsCount = 0;
         if (externalData.transactions && externalData.transactions.length > 0) {
-          // Remover transações antigas desta conta
+          // PRIMEIRO: Buscar transações existentes para preservar categorias (ANTES de remover)
+          const existingTransactions = await Transaction.findAll({
+            where: {
+              id_bank: id_bank,
+              [Op.or]: [
+                { origin_cpf: cpf },
+                { destination_cpf: cpf }
+              ]
+            },
+            attributes: ['description', 'category', 'created_at', 'value']
+          });
+
+          // Criar mapa de transações existentes para preservar categorias
+          const existingTransactionsMap = new Map();
+          console.log(`[SYNC-UPDATE] Encontradas ${existingTransactions.length} transações existentes para preservar categorias`);
+          
+          existingTransactions.forEach(t => {
+             // Normalizar valores para comparação consistente (consistente com syncAccount)
+             const normalizedValue = Math.abs(parseFloat(t.value.toString().replace(/[^\d.-]/g, '')));
+             
+             // Normalizar data de forma consistente - sempre usar YYYY-MM-DD se possível
+             let normalizedDate;
+             try {
+               const date = new Date(t.created_at);
+               if (isNaN(date.getTime())) {
+                 // Se a data é inválida, tentar extrair da string
+                 const dateStr = t.created_at.toString();
+                 const dateMatch = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+                 if (dateMatch) {
+                   normalizedDate = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+                 } else {
+                   // Se não conseguir extrair, usar data atual como fallback
+                   normalizedDate = new Date().toISOString().split('T')[0];
+                 }
+               } else {
+                 normalizedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+               }
+             } catch (e) {
+               normalizedDate = new Date().toISOString().split('T')[0];
+             }
+             
+             const key = `${t.description}_${normalizedDate}_${normalizedValue}`;
+             
+             if (t.category && t.category !== 'desconhecida') {
+               existingTransactionsMap.set(key, t.category);
+               console.log(`[SYNC-UPDATE] Mapeando categoria: ${key} -> ${t.category}`);
+             }
+           });
+
+          console.log(`[SYNC-UPDATE] Mapa de categorias criado com ${existingTransactionsMap.size} entradas`);
+
+          // SEGUNDO: Remover transações antigas desta conta
           await Transaction.destroy({
             where: {
               id_bank: id_bank,
@@ -392,16 +532,54 @@ class OpenFinanceController {
             }
           });
           
-          // Inserir novas transações
-          const transactionsToCreate = externalData.transactions.map(transaction => ({
-            origin_cpf: transaction.type === 'debit' ? cpf : null,
-            destination_cpf: transaction.type === 'credit' ? cpf : null,
-            value: Math.abs(transaction.value),
-            type: transaction.type === 'debit' ? 'D' : 'C',
-            description: transaction.description,
-            id_bank: id_bank,
-            created_at: new Date(transaction.date)
-          }));
+          // TERCEIRO: Inserir novas transações preservando categorias
+           const transactionsToCreate = externalData.transactions.map(transaction => {
+             // Normalizar valores da mesma forma (consistente com syncAccount)
+             const normalizedValue = Math.abs(parseFloat(transaction.value.toString().replace(/[^\d.-]/g, '')));
+             
+             // Normalizar data de forma consistente - sempre usar YYYY-MM-DD se possível
+             let normalizedDate;
+             try {
+               const date = new Date(transaction.date);
+               if (isNaN(date.getTime())) {
+                 // Se a data é inválida, tentar extrair da string
+                 const dateStr = transaction.date.toString();
+                 const dateMatch = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
+                 if (dateMatch) {
+                   normalizedDate = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
+                 } else {
+                   // Se não conseguir extrair, usar data atual como fallback
+                   normalizedDate = new Date().toISOString().split('T')[0];
+                 }
+               } else {
+                 normalizedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+               }
+             } catch (e) {
+               normalizedDate = new Date().toISOString().split('T')[0];
+             }
+             
+             const transactionKey = `${transaction.description}_${normalizedDate}_${normalizedValue}`;
+             
+             const existingCategory = existingTransactionsMap.get(transactionKey);
+             
+             if (existingCategory) {
+               console.log(`[SYNC-UPDATE] Categoria preservada: ${transactionKey} -> ${existingCategory}`);
+             } else {
+               console.log(`[SYNC-UPDATE] Categoria NÃO encontrada para: ${transactionKey}`);
+               console.log(`[SYNC-UPDATE] Chaves disponíveis no mapa:`, Array.from(existingTransactionsMap.keys()).slice(0, 3));
+             }
+
+            return {
+              origin_cpf: transaction.type === 'debit' ? cpf : null,
+              destination_cpf: transaction.type === 'credit' ? cpf : null,
+              value: Math.abs(parseFloat(transaction.value.toString().replace(/[^\d.-]/g, ''))),
+              type: transaction.type === 'debit' ? 'D' : 'C',
+              description: transaction.description,
+              id_bank: id_bank,
+              category: existingCategory || 'desconhecida',
+              created_at: new Date(transaction.date)
+            };
+          });
           
           await Transaction.bulkCreate(transactionsToCreate);
           newTransactionsCount = transactionsToCreate.length;

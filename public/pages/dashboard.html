@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="../css/components/header.css">
     <link rel="stylesheet" href="../css/components/openFinanceModal.css">
     <link rel="stylesheet" href="../css/dashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="dashboard-container">
@@ -30,84 +31,105 @@
             <div class="page-content">
                 <!-- Dashboard Cards Grid -->
                 <div class="dashboard-grid">
-                <!-- General Balance -->
-                <div class="card balance-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Saldo Geral</h3>
-                        <div class="card-icon">
-                            <i class="fas fa-wallet"></i>
+                    <!-- Overview Cards -->
+                    <div class="overview-cards">
+                        <div class="overview-card balance-card">
+                            <div class="card-header">
+                                <h3>Saldo Total</h3>
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-value" id="totalBalance">R$ 0,00</div>
+                                <div class="card-change" id="balanceChange">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>Carregando...</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="overview-card expenses-card">
+                            <div class="card-header">
+                                <h3>Gastos do Mês</h3>
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-value" id="monthlyExpenses">R$ 0,00</div>
+                                <div class="card-change" id="expensesChange">
+                                    <i class="fas fa-arrow-down"></i>
+                                    <span>Carregando...</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="overview-card income-card">
+                            <div class="card-header">
+                                <h3>Receitas do Mês</h3>
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-value" id="monthlyIncome">R$ 0,00</div>
+                                <div class="card-change" id="incomeChange">
+                                    <i class="fas fa-arrow-up"></i>
+                                    <span>Carregando...</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="balance-value"></div>
-                    <div class="balance-change">
-                        <i class="fas"></i>
-                        <span></span>
+
+                    <!-- Category Section -->
+                    <section class="category-section-centered">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Gastos por Categoria</h3>
+                            </div>
+                            <div class="card-content">
+                                <div class="chart-container">
+                                    <canvas id="categoryChart"></canvas>
+                                </div>
+                                <div class="chart-legend" id="categoryLegend">
+                                    <!-- Legend items will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Budget Section -->
+                    <section class="budget-section">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Orçamento Mensal</h3>
+                                <a href="/pages/expenses.html" class="budget-action-btn">
+                                    <i class="fas fa-cog"></i>
+                                    Ajustar Orçamento
+                                </a>
+                            </div>
+                            <div class="card-content">
+                                <div class="budget-categories" id="budgetCategories">
+                                    <!-- Budget categories will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Transações Recentes -->
+                    <div class="card transactions-card">
+                        <div class="card-header">
+                            <h3 class="card-title">Transações Recentes</h3>
+                            <div class="card-icon">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="transactions-list" id="transactionsList">
+                                <!-- Transactions will be populated by JavaScript -->
+                            </div>
+                            <a href="./expenses.html" class="view-all-link">
+                                <i class="fas fa-external-link-alt"></i>
+                                Ver todas as transações
+                            </a>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Monthly Expenses -->
-                <div class="card expenses-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Gastos do Mês</h3>
-                        <div class="card-icon">
-                            <i class="fas fa-shopping-cart"></i>
-                        </div>
-                    </div>
-                    <div class="balance-value"></div>
-                    <div class="balance-change">
-                        <i class="fas"></i>
-                        <span></span>
-                    </div>
-                </div>
-
-
-
-                <!-- Financial Tips -->
-                <div class="card tips-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Dica Financeira do Dia</h3>
-                        <div class="card-icon">
-                            <i class="fas fa-lightbulb"></i>
-                        </div>
-                    </div>
-                    <div class="tip-content">
-                        <div class="tip-text" id="dailyTip">
-                            <!-- Daily tip will be populated by JavaScript -->
-                        </div>
-                        <button class="tip-refresh-btn" id="refreshTip" title="Nova dica">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Recent Transactions -->
-                <div class="card transactions-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Transações Recentes</h3>
-                        <div class="card-icon">
-                            <i class="fas fa-exchange-alt"></i>
-                        </div>
-                    </div>
-                    <div class="transaction-list">
-                        <!-- Transactions will be populated by JavaScript -->
-                    </div>
-                    <a href="#" class="view-all">Ver todas as transações</a>
-                </div>
-
-                <!-- Monthly Budget -->
-                <div class="card budget-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Orçamento Mensal</h3>
-                        <div class="card-icon">
-                            <i class="fas fa-thermometer-half"></i>
-                        </div>
-                    </div>
-                    <div class="budget-progress">
-                        <!-- Budget categories will be populated by JavaScript -->
-                    </div>
-                    <a href="#" class="view-all">Ver orçamento completo</a>
-                </div>
-            </div>
             </div>
         </main>
     </div>
