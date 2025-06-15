@@ -33,6 +33,9 @@ routes.get('/open-finance/institutions', openFinanceController.listAvailableInst
 // Rota para buscar transações do usuário
 routes.get('/transactions', openFinanceController.getUserTransactions);
 
+// Rota para atualizar categoria de transação
+routes.patch('/transactions/:transactionId/category', openFinanceController.updateTransactionCategory);
+
 // Rotas antigas (manter compatibilidade)
 routes.post('/open-finance/:id_bank', accountController.createAccount);
 routes.patch('/open-finance/:id_bank/update', accountController.updateAccount);

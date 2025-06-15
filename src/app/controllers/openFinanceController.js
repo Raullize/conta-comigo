@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 const sequelize = require('../../database/database.js');
 const {
   models: { Account, Transaction, User },
@@ -485,7 +485,7 @@ class OpenFinanceController {
         return {
           id: transaction.id,
           title: transaction.description || 'Transação',
-          category: 'desconhecida', // Por enquanto todas como não classificadas
+          category: transaction.category || 'desconhecida', // Usar categoria salva ou 'desconhecida'
           type: isCredit ? 'C' : 'D', // C para crédito, D para débito
           amount: parseFloat(transaction.value),
           date: transactionDate.toISOString().split('T')[0], // Formato YYYY-MM-DD
@@ -501,6 +501,57 @@ class OpenFinanceController {
       });
     } catch (error) {
       console.error('Error fetching user transactions:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  static async updateTransactionCategory(req, res) {
+    try {
+      if (!req.user || !req.user.cpf) {
+        return res.status(401).json({ error: 'User authentication failed' });
+      }
+      
+      const { transactionId } = req.params;
+      const { category } = req.body;
+      const { cpf: userCpf } = req.user;
+
+      // Validar se a categoria é válida
+      const validCategories = [
+        'alimentacao', 'transporte', 'saude', 'lazer', 'educacao',
+        'casa', 'utilidades', 'entretenimento', 'salario', 'trabalho', 'outros'
+      ];
+
+      if (!validCategories.includes(category)) {
+        return res.status(400).json({ error: 'Categoria inválida' });
+      }
+
+      // Buscar a transação e verificar se pertence ao usuário
+      const transaction = await Transaction.findOne({
+        where: {
+          id: transactionId,
+          [Op.or]: [
+            { origin_cpf: userCpf },
+            { destination_cpf: userCpf }
+          ]
+        }
+      });
+
+      if (!transaction) {
+        return res.status(404).json({ error: 'Transação não encontrada' });
+      }
+
+      // Atualizar a categoria
+      await transaction.update({ category });
+
+      return res.json({
+        message: 'Categoria atualizada com sucesso',
+        transaction: {
+          id: transaction.id,
+          category: transaction.category
+        }
+      });
+    } catch (error) {
+      console.error('Error updating transaction category:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
   }

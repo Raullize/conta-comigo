@@ -297,9 +297,12 @@ class ExpensesManager {
         const categoryNames = {
             alimentacao: 'Alimentação',
             transporte: 'Transporte',
-            entretenimento: 'Entretenimento',
-            utilidades: 'Utilidades',
             saude: 'Saúde',
+            lazer: 'Lazer',
+            educacao: 'Educação',
+            casa: 'Casa',
+            utilidades: 'Utilidades',
+            entretenimento: 'Entretenimento',
             salario: 'Salário',
             trabalho: 'Trabalho',
             outros: 'Outros',
@@ -399,51 +402,65 @@ class ExpensesManager {
         }
     }
 
-    classifyTransaction(transactionId, category) {
-        // Encontrar e atualizar a transação
-        const transactionIndex = this.transactions.findIndex(t => t.id === transactionId);
-        if (transactionIndex !== -1) {
-            this.transactions[transactionIndex].category = category;
+    async classifyTransaction(transactionId, category) {
+        try {
+            // Chamar a API para salvar no banco de dados
+            await this.updateTransactionCategory(transactionId, category);
             
-            // Aqui seria feita a chamada para a API para salvar no banco de dados
-            // Exemplo: await this.updateTransactionCategory(transactionId, category);
-            
-            // Atualizar a visualização
-            this.applyFilters();
-            
-            // Fechar modal
-            this.closeCategoryModal();
-            
-            // Mostrar feedback ao usuário
-            this.showNotification(`Transação classificada como ${this.getCategoryName(category)}!`);
+            // Encontrar e atualizar a transação localmente
+            const transactionIndex = this.transactions.findIndex(t => t.id === transactionId);
+            if (transactionIndex !== -1) {
+                this.transactions[transactionIndex].category = category;
+                
+                // Atualizar a visualização
+                this.applyFilters();
+                
+                // Fechar modal
+                this.closeCategoryModal();
+                
+                // Mostrar feedback ao usuário
+                this.showNotification(`Transação classificada como ${this.getCategoryName(category)}!`);
+            }
+        } catch (error) {
+            console.error('Erro ao classificar transação:', error);
+            this.showNotification('Erro ao classificar transação. Tente novamente.', 'error');
         }
     }
 
-    // Método para futuras integrações com API
+    // Método para atualizar categoria da transação via API
     async updateTransactionCategory(transactionId, category) {
-        // Este método será implementado quando integrar com o banco de dados
-        // const response = await fetch(`/api/transactions/${transactionId}/category`, {
-        //     method: 'PATCH',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({ category })
-        // });
-        // return response.json();
+        const token = localStorage.getItem('token');
         
-
+        const response = await fetch(`/transactions/${transactionId}/category`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ category })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'Erro ao atualizar categoria');
+        }
+        
+        return response.json();
     }
 
-    showNotification(message) {
+    showNotification(message, type = 'success') {
         // Criar notificação simples
         const notification = document.createElement('div');
         notification.className = 'notification';
         notification.textContent = message;
+        
+        const backgroundColor = type === 'error' ? '#f44336' : '#4CAF50';
+        
         notification.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #4CAF50;
+            background: ${backgroundColor};
             color: white;
             padding: 12px 20px;
             border-radius: 4px;

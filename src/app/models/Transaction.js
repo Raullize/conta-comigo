@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.CHAR,
       description: DataTypes.STRING,
       id_bank: DataTypes.INTEGER,
+      category: DataTypes.STRING,
     },
     {
       sequelize,
