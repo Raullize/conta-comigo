@@ -321,7 +321,8 @@ class OpenFinanceController {
         id: account.id_bank,
         name: account.institution_name || `Instituição ${account.id_bank}`,
         balance: account.balance,
-        connected: true
+        connected: true,
+        lastSync: account.updated_at
       }));
 
       return res.json({

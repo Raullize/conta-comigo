@@ -39,10 +39,28 @@ function setupEventListeners() {
 
 // Load connected institutions from backend
 async function loadConnectedInstitutions() {
+    if (isLoading) return;
+    
+    isLoading = true;
+    showLoadingState();
+    
     try {
-        isLoading = true;
-        showLoadingState();
+        // Tentar carregar do cache primeiro
+        const cachedData = localStorage.getItem('institutionsCache');
+        const cacheTimestamp = localStorage.getItem('institutionsCacheTimestamp');
+        const now = Date.now();
+        const cacheAge = now - (cacheTimestamp ? parseInt(cacheTimestamp) : 0);
         
+        // Se o cache tem menos de 5 minutos, usar ele
+        if (cachedData && cacheAge < 5 * 60 * 1000) {
+            console.log('Loading institutions from cache');
+            institutions = JSON.parse(cachedData);
+            updateStats();
+            renderInstitutions();
+            return;
+        }
+        
+        console.log('Loading institutions from server');
         const response = await fetch('/open-finance/connected-accounts', {
             method: 'GET',
             headers: {
@@ -60,14 +78,27 @@ async function loadConnectedInstitutions() {
             id: account.id,
             name: account.name,
             status: 'active',
-            lastSync: new Date().toISOString()
+            lastSync: account.lastSync
         }));
+        
+        // Salvar no cache
+        localStorage.setItem('institutionsCache', JSON.stringify(institutions));
+        localStorage.setItem('institutionsCacheTimestamp', now.toString());
         
         updateStats();
         renderInstitutions();
     } catch (error) {
-        showNotification('Erro ao carregar instituições', 'error');
-        renderEmptyState();
+        console.log('Error loading from server, trying cache as fallback');
+        const cachedData = localStorage.getItem('institutionsCache');
+        if (cachedData) {
+            institutions = JSON.parse(cachedData);
+            updateStats();
+            renderInstitutions();
+            showNotification('Dados carregados do cache local', 'warning');
+        } else {
+            showNotification('Erro ao carregar instituições', 'error');
+            renderEmptyState();
+        }
     } finally {
         isLoading = false;
         hideLoadingState();
@@ -92,23 +123,36 @@ function updateStats() {
 // Get last sync time formatted
 function getLastSyncTime() {
     const activeSyncs = institutions
-        .filter(inst => inst.status === 'active')
-        .map(inst => new Date(inst.lastSync))
+        .filter(inst => inst.status === 'active' && inst.lastSync)
+        .map(inst => {
+            const date = new Date(inst.lastSync);
+            // Verificar se a data é válida
+            return isNaN(date.getTime()) ? null : date;
+        })
+        .filter(date => date !== null)
         .sort((a, b) => b - a);
     
-    if (activeSyncs.length === 0) return 'Nunca';
+    if (activeSyncs.length === 0) {
+        return 'Nunca';
+    }
     
     const lastSync = activeSyncs[0];
     const now = new Date();
-    const diffMinutes = Math.floor((now - lastSync) / (1000 * 60));
+    const diffMs = now - lastSync;
+    const diffMinutes = Math.floor(diffMs / (1000 * 60));
     
-    if (diffMinutes < 60) {
-        return `${diffMinutes} min atrás`;
-    } else if (diffMinutes < 1440) {
-        const hours = Math.floor(diffMinutes / 60);
+    // Garantir que diffMinutes não seja negativo
+    const safeDiffMinutes = Math.max(0, diffMinutes);
+    
+    if (safeDiffMinutes === 0) {
+        return 'Agora mesmo';
+    } else if (safeDiffMinutes < 60) {
+        return `${safeDiffMinutes} min atrás`;
+    } else if (safeDiffMinutes < 1440) {
+        const hours = Math.floor(safeDiffMinutes / 60);
         return `${hours}h atrás`;
     } else {
-        const days = Math.floor(diffMinutes / 1440);
+        const days = Math.floor(safeDiffMinutes / 1440);
         return `${days}d atrás`;
     }
 }
@@ -341,6 +385,8 @@ window.disconnectInstitution = disconnectInstitution;
 // Sync institution
 async function handleSyncInstitution(id) {
     try {
+        showNotification('Sincronizando conta...', 'info');
+        
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('Token de autenticação não encontrado');
@@ -365,14 +411,24 @@ async function handleSyncInstitution(id) {
         const institution = institutions.find(inst => inst.id === id);
         if (institution) {
             institution.lastSync = data.lastSync || new Date().toISOString();
+            // Atualizar cache
+            localStorage.setItem('institutionsCache', JSON.stringify(institutions));
+            localStorage.setItem('institutionsCacheTimestamp', Date.now().toString());
         }
         
         updateStats();
         renderInstitutions();
         
-        showNotification('Dados sincronizados com sucesso', 'success');
+        showNotification('Conta sincronizada com sucesso!', 'success');
+        
+        // Reload institutions to get updated data from server
+        setTimeout(() => {
+            loadConnectedInstitutions();
+        }, 1000);
+        
     } catch (error) {
-        showNotification(error.message || 'Erro ao sincronizar dados', 'error');
+        console.error('Error syncing account:', error);
+        showNotification(error.message || 'Erro ao sincronizar conta', 'error');
     }
 }
 
