@@ -6,7 +6,7 @@ Esta API agregadora de contas bancárias foi desenvolvida como um desafio da bol
 
 A ideia é que cada uma das APIs funcione como um banco independente, para que a API principal do ContaComigo possa integrar e consolidar esses dados de múltiplas instituições financeiras.
 
-**Repositório original:** [LucasGabrielFontes/CompassUOL_SP_Challenge02_LucasGabrielFontes](https://github.com/LucasGabrielFontes/CompassUOL_SP_Challenge02_LucasGabrielFontes)
+**Repositório original:** [l-guidotti/desafiosCompass](https://github.com/l-guidotti/desafiosCompass/tree/main/openFinanceAPI)
 
 ---
 
