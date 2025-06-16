@@ -52,7 +52,7 @@ const getDataAccount = async (req, res) => {
         instituicaoId: institution.id,
       },
     });
-    
+
     console.log(`[Dante API] Transações encontradas: ${transactions.length}`);
     transactions.forEach((tx, index) => {
       console.log(`[Dante API] Transação ${index + 1}: ID=${tx.id}, Tipo=${tx.tipo}, Valor=${tx.valor}, Descrição=${tx.descricao}`);
