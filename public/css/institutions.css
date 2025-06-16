@@ -489,6 +489,8 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease, visibility 0.3s ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
 .institutions-modal.show {
@@ -612,3 +614,11 @@
   font-size: var(--font-size-lg);
   margin: 0;
 }
+
+/* Blur effect for specific elements when modal is open */
+.dashboard-container.modal-open #sidebar-container,
+.dashboard-container.modal-open #header-container {
+  filter: blur(3px);
+  transition: filter 0.3s ease;
+}
+

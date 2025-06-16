@@ -366,8 +366,13 @@ function setupModalListeners() {
     // Close modals with ESC key
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-            hideSyncModal();
-            hideDisconnectModal();
+            // Only close if modals are actually open
+            if (syncModal && syncModal.classList.contains('show')) {
+                hideSyncModal();
+            }
+            if (disconnectModal && disconnectModal.classList.contains('show')) {
+                hideDisconnectModal();
+            }
         }
     });
 }
@@ -377,6 +382,8 @@ function showSyncModal(institution) {
     currentInstitutionId = institution.id;
     document.getElementById('syncInstitutionName').textContent = institution.name;
     syncModal.classList.add('show');
+    // Apply blur to specific elements
+    document.querySelector('.dashboard-container').classList.add('modal-open');
 }
 
 // Hide sync modal
@@ -384,6 +391,8 @@ function hideSyncModal() {
     syncModal.classList.remove('show');
     currentInstitutionId = null;
     currentInstitutionName = null;
+    // Remove blur from specific elements
+    document.querySelector('.dashboard-container').classList.remove('modal-open');
 }
 
 // Show disconnect modal
@@ -391,6 +400,8 @@ function showDisconnectModal(institution) {
     currentInstitutionId = institution.id;
     document.getElementById('disconnectInstitutionName').textContent = institution.name;
     disconnectModal.classList.add('show');
+    // Apply blur to specific elements
+    document.querySelector('.dashboard-container').classList.add('modal-open');
 }
 
 // Hide disconnect modal
@@ -398,6 +409,8 @@ function hideDisconnectModal() {
     disconnectModal.classList.remove('show');
     currentInstitutionId = null;
     currentInstitutionName = null;
+    // Remove blur from specific elements
+    document.querySelector('.dashboard-container').classList.remove('modal-open');
 }
 
 // Action handlers
