@@ -1,16 +1,15 @@
 import Sequelize, { Model } from 'sequelize';
 
-class User extends Model {
+class Institution extends Model {
   static init(sequelize) {
     super.init(
       {
         name: Sequelize.STRING,
-        cpf: Sequelize.STRING,
       },
       {
         sequelize,
-        tableName: 'users',
-        timestamps: true,       
+        tableName: 'institutions',
+        timestamps: true,
         underscored: true,
       }
     );
@@ -20,11 +19,10 @@ class User extends Model {
 
   static associate(models) {
     this.hasMany(models.Account, { 
-      foreignKey: 'user_cpf', 
-      sourceKey: 'cpf',
+      foreignKey: 'institution_id', 
       as: 'accounts' 
     });
   }
 }
 
-export default User;
+export default Institution; 

@@ -1,142 +1,154 @@
-import * as Yup from 'yup';
-import BankAccount from '../models/BankAccount.js';
 import User from '../models/User.js';
+import Account from '../models/BankAccount.js';
+import Transaction from '../models/Transaction.js';
+import Institution from '../models/Institution.js';
 
 class UserController {
+  async store(req, res) {
+    try {
+      const { cpf, name } = req.body;
+
+      if (!cpf || !name) {
+        return res.status(400).json({ error: 'CPF and name are required' });
+      }
+
+      // Verificar se o usuário já existe
+      const existingUser = await User.findOne({ where: { cpf } });
+      if (existingUser) {
+        return res.status(400).json({ error: 'User already exists' });
+      }
+
+      const user = await User.create({ cpf, name });
+
+      return res.status(201).json(user);
+    } catch (error) {
+      console.error('Error creating user:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
   async index(req, res) {
+    try {
     const users = await User.findAll({
-      attributes: ['id', 'name', 'email', 'cpf'],
+        order: [['created_at', 'DESC']]
     });
 
-    if (users.length === 0) {
-      return res.json({
-        users: [],
-        message: 'Nenhum usuário cadastrado no sistema.',
-      });
-    }
-
     return res.json(users);
+    } catch (error) {
+      console.error('Error listing users:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
   }
 
   async show(req, res) {
-    const user = await User.findByPk(req.params.id, {
-      attributes: ['id', 'name', 'email', 'cpf'],
-      include: [
-        {
-          model: BankAccount,
-          as: 'accounts',
-          attributes: ['id', 'bank_name', 'agency', 'account_number', 'account_type', 'balance'],
-        },
-      ],
-    });
+    try {
+      const { cpf } = req.params;
 
-    if (!user) {
-      return res.status(404).json({ error: 'Usuário não encontrado.' });
-    }
-
-    if (!user.accounts || user.accounts.length === 0) {
-      return res.json({
-        ...user.get(),
-        accounts: [],
-        message: 'Este usuário não possui contas bancárias cadastradas.',
-      });
-    }
-
-    return res.json(user);
-  }
-
-  async store(req, res) {
-    const schema = Yup.object().shape({
-      name: Yup.string().required(),
-      email: Yup.string().email().required(),
-      cpf: Yup.string().required().length(11),
-      password: Yup.string().required().min(6),
-    });
-
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Falha na validação.' });
-    }
-
-    const userExists = await User.findOne({
-      where: { email: req.body.email },
-    });
-
-    if (userExists) {
-      return res.status(400).json({ error: 'Usuário já existe.' });
-    }
-
-    const cpfExists = await User.findOne({
-      where: { cpf: req.body.cpf },
-    });
-
-    if (cpfExists) {
-      return res.status(400).json({ error: 'CPF já cadastrado.' });
-    }
-
-    const { id, name, email, cpf } = await User.create(req.body);
-
-    return res.json({
-      id,
-      name,
-      email,
-      cpf,
-    });
-  }
-
-  async update(req, res) {
-    const schema = Yup.object().shape({
-      name: Yup.string(),
-      email: Yup.string().email(),
-      cpf: Yup.string().length(11),
-      oldPassword: Yup.string().min(6),
-      password: Yup.string()
-        .min(6)
-        .when('oldPassword', (oldPassword, field) => (oldPassword ? field.required() : field)),
-      confirmPassword: Yup.string().when('password', (password, field) =>
-        password ? field.required().oneOf([Yup.ref('password')]) : field
-      ),
-    });
-
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Falha na validação.' });
-    }
-
-    const { email, cpf, oldPassword } = req.body;
-
-    const user = await User.findByPk(req.userId);
-
-    if (email !== user.email) {
-      const userExists = await User.findOne({
-        where: { email },
-      });
-
-      if (userExists) {
-        return res.status(400).json({ error: 'Usuário já existe.' });
-      }
-    }
-
-    if (cpf && cpf !== user.cpf) {
-      const cpfExists = await User.findOne({
+      const user = await User.findOne({
         where: { cpf },
+        include: [
+          {
+            association: 'accounts',
+            include: ['institution', 'transactions']
+          }
+        ]
       });
 
-      if (cpfExists) {
-        return res.status(400).json({ error: 'CPF já cadastrado.' });
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
       }
+
+      // Calcular total balance para compatibilidade com Open Finance
+      const totalBalance = user.accounts.reduce((sum, account) => {
+        return sum + parseFloat(account.balance || 0);
+      }, 0);
+
+      // Formatar dados no padrão esperado pelo Open Finance
+      const userData = {
+        cpf: user.cpf,
+        name: user.name,
+        total_balance: totalBalance,
+        balance: totalBalance, // Alias para compatibilidade
+        accounts: user.accounts,
+        created_at: user.created_at,
+        updated_at: user.updated_at
+      };
+
+      return res.json(userData);
+    } catch (error) {
+      console.error('Error showing user:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  async getTotalBalance(req, res) {
+    try {
+      const { cpf } = req.params;
+
+      const user = await User.findOne({ where: { cpf } });
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
     }
 
-    if (oldPassword && !(await user.checkPassword(oldPassword))) {
-      return res.status(401).json({ error: 'Senha incorreta.' });
-    }
+      const accounts = await Account.findAll({
+        where: { user_cpf: cpf },
+        include: ['institution']
+      });
 
-    const { id, name } = await user.update(req.body);
+      const totalBalance = accounts.reduce((sum, account) => {
+        return sum + parseFloat(account.balance || 0);
+      }, 0);
+
+      return res.json({
+        user: user.name,
+        total_balance: totalBalance,
+        institutions: accounts.map(account => account.institution)
+      });
+    } catch (error) {
+      console.error('Error getting total balance:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  async getStatement(req, res) {
+    try {
+      const { cpf } = req.params;
+
+      const user = await User.findOne({ where: { cpf } });
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const accounts = await Account.findAll({
+        where: { user_cpf: cpf },
+        include: [
+          'institution',
+          {
+            association: 'transactions',
+            order: [['created_at', 'DESC']]
+          }
+        ]
+      });
+
+      const allTransactions = accounts.reduce((transactions, account) => {
+        const accountTransactions = account.transactions.map(transaction => ({
+          ...transaction.toJSON(),
+          institution: account.institution.name
+        }));
+        return [...transactions, ...accountTransactions];
+      }, []);
+
+      // Ordenar todas as transações por data
+      allTransactions.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
     return res.json({
-      id,
-      name,
-      email: email || user.email,
-      cpf: cpf || user.cpf,
-    });
+        user: user.name,
+        transactions: allTransactions
+      });
+    } catch (error) {
+      console.error('Error getting statement:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
   }
 }
 
