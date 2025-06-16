@@ -1372,6 +1372,15 @@ function showConnectionResults(successCount, errorCount, results) {
 }
 
 function updateConnectionStatus() {
+    // Reset all cards to disconnected first
+    const allCards = document.querySelectorAll('.institution-card-settings');
+    allCards.forEach(card => {
+        const bankId = card.getAttribute('data-bank-id');
+        if (bankId) {
+            setCardConnected(bankId, false);
+        }
+    });
+    
     // This will be called after loading connected accounts to update UI
     if (connectedBanks && connectedBanks.length > 0) {
         connectedBanks.forEach(account => {
@@ -1387,6 +1396,12 @@ function updateConnectionStatus() {
         if (connectedCountDisplay) {
             const count = connectedBanks.length;
             connectedCountDisplay.textContent = `${count} conta${count > 1 ? 's' : ''}`;
+        }
+    } else {
+        // Update connected count display
+        const connectedCountDisplay = document.getElementById('connectedCountDisplay');
+        if (connectedCountDisplay) {
+            connectedCountDisplay.textContent = '0 contas';
         }
     }
 }

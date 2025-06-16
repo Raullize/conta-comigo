@@ -679,7 +679,8 @@ class OpenFinanceController {
         name: account.institution_name || `Instituição ${account.id_bank}`,
         balance: parseFloat(account.balance) || 0,
         connected: true,
-        lastSync: account.updated_at
+        lastSync: account.updated_at,
+        api_source: account.api_source || 'vitor'
       }));
       
       const response = {
