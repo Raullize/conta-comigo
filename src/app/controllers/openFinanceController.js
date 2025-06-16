@@ -42,14 +42,7 @@ class OpenFinanceController {
 
   // Função auxiliar para sincronizar transações
   static async syncTransactions(cpf, accountId, transactions) {
-    console.log(`[OpenFinance] Sincronizando transações para CPF: ${cpf}, Conta ID: ${accountId}`);
-    console.log(`[OpenFinance] Transações recebidas:`, transactions);
-    console.log(`[OpenFinance] Tipo de transações:`, typeof transactions);
-    console.log(`[OpenFinance] É array?:`, Array.isArray(transactions));
-    console.log(`[OpenFinance] Quantidade:`, transactions ? (Array.isArray(transactions) ? transactions.length : 'não é array') : 'undefined');
-    
     if (!transactions || !Array.isArray(transactions) || transactions.length === 0) {
-      console.log(`[OpenFinance] Nenhuma transação para sincronizar`);
       return;
     }
 
@@ -63,9 +56,7 @@ class OpenFinanceController {
         ]
       }
     });
-    console.log(`[OpenFinance] Removidas ${deletedCount} transações antigas`);
 
-    // Adiciona novas transações
     const transactionsToCreate = transactions.map((transaction, index) => {
       // Determinar se é crédito ou débito - compatível com múltiplas APIs
       const isCredit = transaction.type === 'credit' || 
@@ -79,25 +70,9 @@ class OpenFinanceController {
                      transaction.type === 'debit' ||
                      transaction.tipo === 'debito';
       
-      console.log(`[OpenFinance] Transação ${index + 1}: 
-        tipo="${transaction.type}", 
-        tipo_original="${transaction.tipo}", 
-        isCredit=${isCredit},
-        isDebit=${isDebit},
-        valor="${transaction.valor || transaction.value}",
-        descricao="${transaction.descricao || transaction.description}"`);
+      const finalType = isCredit ? 'C' : 'D';
       
-      // Determinar o tipo final da transação
-      let finalType = 'D'; // default para débito
-      if (isCredit) {
-        finalType = 'C';
-      } else if (isDebit) {
-        finalType = 'D';
-      }
-      
-      console.log(`[OpenFinance] Tipo final determinado: ${finalType} (isCredit: ${isCredit}, isDebit: ${isDebit})`);
-      
-      const processedTransaction = {
+      return {
         origin_cpf: finalType === 'C' ? null : cpf,
         destination_cpf: finalType === 'C' ? cpf : null,
         value: Math.abs(parseFloat(transaction.valor || transaction.value || 0)),
@@ -105,15 +80,11 @@ class OpenFinanceController {
         description: transaction.descricao || transaction.description || 'Transação',
         created_at: transaction.data || transaction.date || transaction.createdAt || new Date(),
         id_bank: accountId,
-        category: 'Não classificado' // Categoria padrão
+        category: 'Não classificado'
       };
-      
-      console.log(`[OpenFinance] Transação processada:`, processedTransaction);
-      return processedTransaction;
     });
 
-    const createdTransactions = await Transaction.bulkCreate(transactionsToCreate);
-    console.log(`[OpenFinance] Criadas ${createdTransactions.length} novas transações`);
+    await Transaction.bulkCreate(transactionsToCreate);
   }
   // Verifica se o usuário tem pelo menos uma conta vinculada
   static async checkLinkedAccounts(req, res) {
@@ -208,25 +179,15 @@ class OpenFinanceController {
           // Ignorar erro de transações
         }
         
-        // Obter o nome real da instituição do banco de dados da API Lucas
-        console.log(`[OpenFinance] Estrutura da resposta da API Lucas:`, JSON.stringify(saldoResponse.data, null, 2));
-        
         let institutionName = null;
         
         if (saldoResponse.data.instituicao && Array.isArray(saldoResponse.data.instituicao) && saldoResponse.data.instituicao.length > 0) {
-          // Verifica se o primeiro item tem nomeInstituicao
           institutionName = saldoResponse.data.instituicao[0].nomeInstituicao;
-          console.log(`[OpenFinance] Nome extraído do array instituicao: ${institutionName}`);
-        } else {
-          console.log(`[OpenFinance] Array instituicao não encontrado ou vazio. Dados disponíveis:`, Object.keys(saldoResponse.data));
         }
         
         if (!institutionName) {
-          console.error(`[OpenFinance] ERRO: Não foi possível obter o nome da instituição da API Lucas`);
           return res.status(400).json({ error: 'Nome da instituição não encontrado na API Lucas' });
         }
-        
-        console.log(`[OpenFinance] Nome final da instituição da API Lucas: ${institutionName}`);
         
         // Usar função auxiliar para criar/atualizar conta
         const account = await OpenFinanceController.createOrUpdateAccount(cpf, lucasAccount, institutionName, 'lucas');
@@ -359,10 +320,7 @@ class OpenFinanceController {
       
       try {
         // Usar o endpoint específico do Open Finance da API Dante
-        console.log(`[OpenFinance] Chamando API Dante: ${danteApiUrl}/open-finance/${cpf}`);
         const userResponse = await axios.get(`${danteApiUrl}/open-finance/${cpf}`);
-        
-        console.log(`[OpenFinance] Resposta da API Dante:`, JSON.stringify(userResponse.data, null, 2));
         
         if (!userResponse.data) {
           return res.status(404).json({ 
@@ -441,10 +399,7 @@ class OpenFinanceController {
       
       try {
         // Usar o endpoint correto da API Raul: /users/ em vez de /usuarios/
-        console.log(`[OpenFinance] Chamando API Raul: ${raulApiUrl}/users/${cpf}`);
         const userResponse = await axios.get(`${raulApiUrl}/users/${cpf}`);
-        
-        console.log(`[OpenFinance] Resposta da API Raul:`, JSON.stringify(userResponse.data, null, 2));
         
         if (!userResponse.data) {
           return res.status(404).json({ 
@@ -467,10 +422,8 @@ class OpenFinanceController {
           saldo: userResponse.data.total_balance || userResponse.data.balance || 0
         };
         
-        // Extrair transações dos dados já recebidos
         let transactionsData = [];
         if (userResponse.data.accounts && userResponse.data.accounts.length > 0) {
-          // Pegar todas as transações de todas as contas do usuário
           transactionsData = userResponse.data.accounts.reduce((allTransactions, account) => {
             if (account.transactions && Array.isArray(account.transactions)) {
               return [...allTransactions, ...account.transactions];
@@ -479,10 +432,6 @@ class OpenFinanceController {
           }, []);
         }
         
-        console.log(`[OpenFinance] Transações extraídas da API Raul: ${transactionsData.length} transações`);
-        console.log(`[OpenFinance] Dados das transações:`, JSON.stringify(transactionsData, null, 2));
-        
-        // Extrair o nome da instituição dos dados retornados
         let institutionName = null;
         
         if (userResponse.data.accounts && userResponse.data.accounts.length > 0 && userResponse.data.accounts[0].institution) {
@@ -490,11 +439,8 @@ class OpenFinanceController {
         }
         
         if (!institutionName) {
-          console.error(`[OpenFinance] ERRO: Não foi possível obter o nome da instituição da API Raul`);
           return res.status(400).json({ error: 'Nome da instituição não encontrado na API Raul' });
         }
-        
-        console.log(`[OpenFinance] Nome da instituição da API Raul: ${institutionName}`);
         
         // Usar função auxiliar para criar/atualizar conta
         const account = await OpenFinanceController.createOrUpdateAccount(cpf, accountData, institutionName, 'raul');
@@ -990,17 +936,12 @@ class OpenFinanceController {
           const danteApiUrl = process.env.DANTE_API_URL || 'http://localhost:4002';
           
           // Buscar dados da API do Dante usando endpoint de open-finance
-          console.log(`[OpenFinance] Chamando API Dante: ${danteApiUrl}/open-finance/${cpf}`);
           const response = await axios.get(`${danteApiUrl}/open-finance/${cpf}`);
-          
-          console.log(`[OpenFinance] Resposta da API Dante:`, JSON.stringify(response.data, null, 2));
           
           externalData = {
             balance: response.data.balance || 0,
             transactions: response.data.transactions || []
           };
-          
-          console.log(`[OpenFinance] ExternalData processado:`, JSON.stringify(externalData, null, 2));
           
         } else if (apiSource === 'raul') {
           // Sincronizar com a API do Raul
@@ -1043,9 +984,7 @@ class OpenFinanceController {
           updated_at: new Date()
         });
         
-        console.log(`[OpenFinance] Antes de syncTransactions - externalData.transactions:`, externalData.transactions);
-        console.log(`[OpenFinance] Tipo de externalData.transactions:`, typeof externalData.transactions);
-        console.log(`[OpenFinance] Length de externalData.transactions:`, externalData.transactions ? externalData.transactions.length : 'undefined');
+
         
         // Importar novas transações
         let newTransactionsCount = 0;
@@ -1245,9 +1184,6 @@ class OpenFinanceController {
       
       const { cpf } = req.user;
       
-      console.log(`[OpenFinance] Buscando transações para CPF: ${cpf}`);
-      
-      // Busca todas as transações onde o usuário é origem ou destino
       const transactions = await Transaction.findAll({
         where: {
           [Sequelize.Op.or]: [
@@ -1256,27 +1192,20 @@ class OpenFinanceController {
           ]
         },
         order: [['created_at', 'DESC']],
-        limit: 100 // Limitar a 100 transações mais recentes
+        limit: 100
       });
-      
-      console.log(`[OpenFinance] Encontradas ${transactions.length} transações para CPF: ${cpf}`);
 
-      // Formatar as transações para o frontend
       const formattedTransactions = transactions.map(transaction => {
-        // Determinar se é crédito ou débito baseado no CPF do usuário
         const isCredit = transaction.destination_cpf === cpf;
-        const isDebit = transaction.origin_cpf === cpf;
-        
-        // Garantir que temos uma data válida
         const transactionDate = transaction.created_at || transaction.updatedAt || new Date();
         
         return {
           id: transaction.id,
           title: transaction.description || 'Transação',
-          category: transaction.category || 'Não classificado', // Usar categoria salva ou 'Não classificado'
-          type: isCredit ? 'C' : 'D', // C para crédito, D para débito
+          category: transaction.category || 'Não classificado',
+          type: isCredit ? 'C' : 'D',
           amount: parseFloat(transaction.value),
-          date: transactionDate.toISOString().split('T')[0], // Formato YYYY-MM-DD
+          date: transactionDate.toISOString().split('T')[0],
           origin_cpf: transaction.origin_cpf,
           destination_cpf: transaction.destination_cpf,
           id_bank: transaction.id_bank

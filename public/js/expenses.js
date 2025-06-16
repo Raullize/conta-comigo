@@ -787,27 +787,17 @@ class ExpensesManager {
 
             const data = await response.json();
             
-            // Converter os dados do backend para o formato esperado pelo frontend
-            console.log('[Expenses] Dados recebidos do backend:', data.transactions);
-            
-            this.transactions = data.transactions.map(transaction => {
-                const convertedTransaction = {
-                    id: transaction.id,
-                    title: transaction.title,
-                    category: transaction.category,
-                    type: transaction.type === 'C' ? 'receita' : 'gasto', // Converter C/D para receita/gasto
-                    amount: transaction.amount,
-                    date: transaction.date,
-                    origin_cpf: transaction.origin_cpf,
-                    destination_cpf: transaction.destination_cpf,
-                    id_bank: transaction.id_bank
-                };
-                
-                console.log(`[Expenses] Transação convertida:`, convertedTransaction);
-                return convertedTransaction;
-            });
-            
-            console.log(`[Expenses] Total de transações carregadas: ${this.transactions.length}`);
+            this.transactions = data.transactions.map(transaction => ({
+                id: transaction.id,
+                title: transaction.title,
+                category: transaction.category,
+                type: transaction.type === 'C' ? 'receita' : 'gasto',
+                amount: transaction.amount,
+                date: transaction.date,
+                origin_cpf: transaction.origin_cpf,
+                destination_cpf: transaction.destination_cpf,
+                id_bank: transaction.id_bank
+            }));
 
             // Atualizar filteredTransactions
             this.filteredTransactions = [...this.transactions];
