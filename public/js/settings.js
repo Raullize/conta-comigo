@@ -468,6 +468,10 @@ async function handleDisconnectAccounts() {
         });
 
         if (response.ok) {
+            // Limpar todas as datas de sincronização salvas permanentemente
+            localStorage.removeItem('institutionsSyncDates');
+            console.log('Cleared all saved sync dates after disconnecting all accounts');
+            
             // Recarrega as contas conectadas
             await loadConnectedAccounts();
             showToast('Todas as contas foram desvinculadas com sucesso!', 'success');
@@ -628,6 +632,19 @@ async function handleSingleDisconnect() {
         });
 
         if (response.ok) {
+            // Remover a data de sincronização salva permanentemente para esta instituição
+            const savedSyncDates = localStorage.getItem('institutionsSyncDates');
+            if (savedSyncDates) {
+                try {
+                    const syncDatesObj = JSON.parse(savedSyncDates);
+                    delete syncDatesObj[bankId.toString()];
+                    localStorage.setItem('institutionsSyncDates', JSON.stringify(syncDatesObj));
+                    console.log('Removed saved sync date for disconnected institution:', bankId);
+                } catch (e) {
+                    console.log('Error removing saved sync date:', e);
+                }
+            }
+            
             // Recarrega as contas conectadas
             await loadConnectedAccounts();
             showToast(`${bankName} desvinculado com sucesso!`, 'success');
