@@ -227,6 +227,9 @@ function createInstitutionCard(institution) {
     } else if (institution.name.includes('Raul')) {
         iconClass = 'fas fa-wallet';
         cardClass += ' raul-bank';
+    } else if (institution.name.includes('Caputi')) {
+        iconClass = 'fas fa-key';
+        cardClass += ' caputi-bank';
     }
     
     return `

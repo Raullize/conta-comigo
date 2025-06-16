@@ -189,6 +189,10 @@
   border-left: 4px solid #8b5cf6;
 }
 
+.institution-card.caputi-bank {
+  border-left: 4px solid #f59e0b;
+}
+
 .institution-card.lucas-bank .institution-icon i {
   color: #10b981;
 }
@@ -207,6 +211,10 @@
 
 .institution-card.raul-bank .institution-icon i {
   color: #8b5cf6;
+}
+
+.institution-card.caputi-bank .institution-icon i {
+  color: #f59e0b;
 }
 
 .institution-card:hover {

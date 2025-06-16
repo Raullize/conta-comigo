@@ -42,12 +42,16 @@ class OpenFinanceController {
 
   // Função auxiliar para sincronizar transações
   static async syncTransactions(cpf, accountId, transactions) {
+    console.log(`[OpenFinance] Sincronizando transações para CPF: ${cpf}, Conta ID: ${accountId}`);
+    console.log(`[OpenFinance] Transações recebidas:`, transactions.length);
+    
     if (!transactions || transactions.length === 0) {
+      console.log(`[OpenFinance] Nenhuma transação para sincronizar`);
       return;
     }
 
     // Remove transações antigas desta conta
-    await Transaction.destroy({
+    const deletedCount = await Transaction.destroy({
       where: {
         id_bank: accountId,
         [Sequelize.Op.or]: [
@@ -56,13 +60,16 @@ class OpenFinanceController {
         ]
       }
     });
+    console.log(`[OpenFinance] Removidas ${deletedCount} transações antigas`);
 
     // Adiciona novas transações
-    const transactionsToCreate = transactions.map(transaction => {
-      // Determinar se é crédito ou débito
-      const isCredit = transaction.type === 'credit' || transaction.tipo === 'entrada';
+    const transactionsToCreate = transactions.map((transaction, index) => {
+      // Determinar se é crédito ou débito - agora corrigido para API Dante
+      const isCredit = transaction.type === 'credit' || transaction.tipo === 'credito';
       
-      return {
+      console.log(`[OpenFinance] Transação ${index + 1}: tipo="${transaction.type}", tipo_original="${transaction.tipo}", isCredit=${isCredit}`);
+      
+      const processedTransaction = {
         origin_cpf: isCredit ? null : cpf,
         destination_cpf: isCredit ? cpf : null,
         value: Math.abs(parseFloat(transaction.valor || transaction.value)),
@@ -72,9 +79,13 @@ class OpenFinanceController {
         id_bank: accountId,
         category: 'Não classificado' // Categoria padrão
       };
+      
+      console.log(`[OpenFinance] Transação processada:`, processedTransaction);
+      return processedTransaction;
     });
 
-    await Transaction.bulkCreate(transactionsToCreate);
+    const createdTransactions = await Transaction.bulkCreate(transactionsToCreate);
+    console.log(`[OpenFinance] Criadas ${createdTransactions.length} novas transações`);
   }
   // Verifica se o usuário tem pelo menos uma conta vinculada
   static async checkLinkedAccounts(req, res) {
@@ -289,19 +300,95 @@ class OpenFinanceController {
 
   // Vincula uma conta da API do Dante
   static async linkDanteAccount(req, res) {
-    const danteApiUrl = process.env.DANTE_API_URL || 'http://localhost:4006';
-    return OpenFinanceController.linkGenericAccount(req, res, 'Dante', danteApiUrl, 'Banco Dante');
+    try {
+      if (!req.user || !req.user.cpf) {
+        return res.status(401).json({ error: 'User authentication failed' });
+      }
+      
+      const { cpf } = req.user;
+      const { consent } = req.body;
+      
+      if (!consent) {
+        return res.status(400).json({ error: 'Consent is required' });
+      }
+      
+      const danteApiUrl = process.env.DANTE_API_URL || 'http://localhost:4002';
+      
+      try {
+        // Usar o endpoint específico do Open Finance da API Dante
+        console.log(`[OpenFinance] Chamando API Dante: ${danteApiUrl}/open-finance/${cpf}`);
+        const userResponse = await axios.get(`${danteApiUrl}/open-finance/${cpf}`);
+        
+        console.log(`[OpenFinance] Resposta da API Dante:`, JSON.stringify(userResponse.data, null, 2));
+        
+        if (!userResponse.data) {
+          return res.status(404).json({ 
+            error: 'Usuário não encontrado na API Dante. Cadastre o usuário primeiro.' 
+          });
+        }
+        
+        // Gerar um ID numérico único baseado no CPF para Dante
+        const cpfNumbers = cpf.replace(/\D/g, '');
+        const apiHash = 'Dante'.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        let numericId = 0;
+        for (let i = 0; i < cpfNumbers.length; i++) {
+          numericId = (numericId * 10 + parseInt(cpfNumbers[i])) % 2000000000;
+        }
+        numericId = (numericId + apiHash * 1000) % 2000000000 + 1000000;
+        
+        // Criar objeto de conta baseado nos dados retornados
+        const accountData = {
+          id: numericId,
+          saldo: userResponse.data.saldoTotal || userResponse.data.balance || 0
+        };
+        
+        // Buscar transações se disponível
+        let transactionsData = [];
+        if (userResponse.data.transactions) {
+          transactionsData = userResponse.data.transactions;
+        }
+        
+        // Usar o nome da instituição retornado pela API ou fallback para "Banco Dante"
+        const institutionName = userResponse.data.institution || 'Banco Dante';
+        
+        // Usar função auxiliar para criar/atualizar conta
+        const account = await OpenFinanceController.createOrUpdateAccount(cpf, accountData, institutionName, 'dante');
+        
+        // Usar função auxiliar para sincronizar transações
+        await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
+        
+        return res.json({ 
+          message: 'Conta vinculada com sucesso',
+          account: {
+            id_bank: account.id_bank,
+            balance: account.balance,
+            institution_name: account.institution_name
+          }
+        });
+        
+      } catch (apiError) {
+        console.error('Error connecting to Dante API:', apiError.message);
+        return res.status(400).json({ 
+          error: 'Erro ao conectar com a API Dante',
+          details: apiError.message
+        });
+      }
+      
+    } catch (error) {
+      console.error('Error linking Dante account:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
   }
 
   // Vincula uma conta da API do Raul
   static async linkRaulAccount(req, res) {
-    const raulApiUrl = process.env.RAUL_API_URL || 'http://localhost:4007';
+    const raulApiUrl = process.env.RAUL_API_URL || 'http://localhost:4006';
     return OpenFinanceController.linkGenericAccount(req, res, 'Raul', raulApiUrl, 'Banco Raul');
   }
 
   // Vincula uma conta da API do Caputi
   static async linkCaputiAccount(req, res) {
-    const caputiApiUrl = process.env.CAPUTI_API_URL || 'http://localhost:4008';
+    const caputiApiUrl = process.env.CAPUTI_API_URL || 'http://localhost:4001';
     return OpenFinanceController.linkGenericAccount(req, res, 'Caputi', caputiApiUrl, 'Banco Caputi');
   }
 
@@ -718,6 +805,7 @@ class OpenFinanceController {
       // Determinar qual API usar baseado no api_source
       const apiSource = account.api_source || 'vitor';
       let externalData;
+      let institutionName = account.institution_name || 'Instituição';
       
       try {
         if (apiSource === 'lucas') {
@@ -750,43 +838,36 @@ class OpenFinanceController {
           const patriciaApiUrl = process.env.PATRICIA_API_URL || 'http://localhost:4004';
           
           // Buscar dados da API da Patricia (adaptar conforme endpoints disponíveis)
-          const response = await axios.get(`${patriciaApiUrl}/usuarios/${cpf}`);
+          const response = await axios.get(`${patriciaApiUrl}/open-finance/${cpf}`);
           
           externalData = {
-            balance: response.data.saldo || 0,
-            transactions: response.data.transacoes || []
+            balance: response.data.balance || 0,
+            transactions: response.data.transactions || []
           };
           
         } else if (apiSource === 'dante') {
-          // Sincronizar com a API do Dante
-          const danteApiUrl = process.env.DANTE_API_URL || 'http://localhost:4006';
+          // Sincronizar com a API do Dante - usar endpoint correto
+          const danteApiUrl = process.env.DANTE_API_URL || 'http://localhost:4002';
           
-          // Buscar dados da API do Dante (adaptar conforme endpoints disponíveis)
-          const response = await axios.get(`${danteApiUrl}/usuarios/${cpf}`);
+          // Buscar dados da API do Dante usando endpoint de open-finance
+          console.log(`[OpenFinance] Chamando API Dante: ${danteApiUrl}/open-finance/${cpf}`);
+          const response = await axios.get(`${danteApiUrl}/open-finance/${cpf}`);
+          
+          console.log(`[OpenFinance] Resposta da API Dante:`, JSON.stringify(response.data, null, 2));
           
           externalData = {
-            balance: response.data.saldo || 0,
-            transactions: response.data.transacoes || []
+            balance: response.data.balance || 0,
+            transactions: response.data.transactions || []
           };
+          
+          console.log(`[OpenFinance] ExternalData processado:`, JSON.stringify(externalData, null, 2));
           
         } else if (apiSource === 'raul') {
           // Sincronizar com a API do Raul
-          const raulApiUrl = process.env.RAUL_API_URL || 'http://localhost:4007';
+          const raulApiUrl = process.env.RAUL_API_URL || 'http://localhost:4006';
           
           // Buscar dados da API do Raul (adaptar conforme endpoints disponíveis)
           const response = await axios.get(`${raulApiUrl}/usuarios/${cpf}`);
-          
-          externalData = {
-            balance: response.data.saldo || 0,
-            transactions: response.data.transacoes || []
-          };
-          
-        } else if (apiSource === 'caputi') {
-          // Sincronizar com a API do Caputi
-          const caputiApiUrl = process.env.CAPUTI_API_URL || 'http://localhost:4008';
-          
-          // Buscar dados da API do Caputi (adaptar conforme endpoints disponíveis)
-          const response = await axios.get(`${caputiApiUrl}/usuarios/${cpf}`);
           
           externalData = {
             balance: response.data.saldo || 0,
@@ -821,6 +902,10 @@ class OpenFinanceController {
           balance: newBalance,
           updated_at: new Date()
         });
+        
+        console.log(`[OpenFinance] Antes de syncTransactions - externalData.transactions:`, externalData.transactions);
+        console.log(`[OpenFinance] Tipo de externalData.transactions:`, typeof externalData.transactions);
+        console.log(`[OpenFinance] Length de externalData.transactions:`, externalData.transactions ? externalData.transactions.length : 'undefined');
         
         // Importar novas transações
         let newTransactionsCount = 0;
@@ -971,7 +1056,7 @@ class OpenFinanceController {
           linkEndpoint: '/open-finance/link-patricia'
         },
         {
-          name: 'Banco Dante',
+          name: 'API Dante',
           url: process.env.DANTE_API_URL || 'http://localhost:4006',
           linkEndpoint: '/open-finance/link-dante'
         },
@@ -1006,7 +1091,7 @@ class OpenFinanceController {
       
       return res.json({ institutions });
     } catch (error) {
-      console.error('Error listing institutions:', error);
+      console.error('Error listing available institutions:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
   }
