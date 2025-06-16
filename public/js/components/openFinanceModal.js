@@ -99,16 +99,17 @@ class OpenFinanceModal {
                   </button>
                 </div>
                 
-                <div class="institution-card disabled">
+                <div class="institution-card">
                    <div class="institution-info">
                      <div class="institution-logo caputi">C</div>
                      <div class="institution-details">
                        <h4>Banco Caputi</h4>
-                       <p>Em breve</p>
+                       <p>API Caputi</p>
                      </div>
                    </div>
-                   <button class="btn-coming-soon" disabled>
-                     Em breve
+                   <button class="btn-link-account" data-bank-id="caputi">
+                     <span>🔗</span>
+                     Conectar
                    </button>
                  </div>
               </div>

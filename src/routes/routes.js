@@ -30,6 +30,7 @@ routes.post('/open-finance/link-lucas', openFinanceController.linkLucasAccount);
 routes.post('/open-finance/link-patricia', openFinanceController.linkPatriciaAccount);
 routes.post('/open-finance/link-dante', openFinanceController.linkDanteAccount);
 routes.post('/open-finance/link-raul', openFinanceController.linkRaulAccount);
+routes.post('/open-finance/link-caputi', openFinanceController.linkCaputiAccount);
 routes.post('/open-finance/sync/:id_bank', openFinanceController.syncAccount);
 routes.delete('/open-finance/disconnect/:id_bank', openFinanceController.disconnectAccount);
 routes.delete('/open-finance/disconnect-all', openFinanceController.disconnectAllAccounts);

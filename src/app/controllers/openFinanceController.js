@@ -299,6 +299,12 @@ class OpenFinanceController {
     return OpenFinanceController.linkGenericAccount(req, res, 'Raul', raulApiUrl, 'Banco Raul');
   }
 
+  // Vincula uma conta da API do Caputi
+  static async linkCaputiAccount(req, res) {
+    const caputiApiUrl = process.env.CAPUTI_API_URL || 'http://localhost:4008';
+    return OpenFinanceController.linkGenericAccount(req, res, 'Caputi', caputiApiUrl, 'Banco Caputi');
+  }
+
   // Vincula uma conta da API do Vitor (id_bank dinâmico)
   static async linkVitorAccount(req, res) {
     try {
@@ -769,6 +775,18 @@ class OpenFinanceController {
           
           // Buscar dados da API do Raul (adaptar conforme endpoints disponíveis)
           const response = await axios.get(`${raulApiUrl}/usuarios/${cpf}`);
+          
+          externalData = {
+            balance: response.data.saldo || 0,
+            transactions: response.data.transacoes || []
+          };
+          
+        } else if (apiSource === 'caputi') {
+          // Sincronizar com a API do Caputi
+          const caputiApiUrl = process.env.CAPUTI_API_URL || 'http://localhost:4008';
+          
+          // Buscar dados da API do Caputi (adaptar conforme endpoints disponíveis)
+          const response = await axios.get(`${caputiApiUrl}/usuarios/${cpf}`);
           
           externalData = {
             balance: response.data.saldo || 0,
