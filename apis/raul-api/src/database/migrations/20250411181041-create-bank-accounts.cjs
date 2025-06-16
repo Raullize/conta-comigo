@@ -1,65 +1,56 @@
+'use strict';
+
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  up: (queryInterface, Sequelize) =>
-    queryInterface.createTable('bank_accounts', {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable('accounts', {
       id: {
-        type: Sequelize.INTEGER,
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-      },
-      bank_name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      agency: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      account_number: {
-        type: Sequelize.STRING,
-        allowNull: false,
+        type: Sequelize.INTEGER
       },
       user_cpf: {
+        allowNull: false,
         type: Sequelize.STRING,
-        allowNull: false,
-        references: { model: 'users', key: 'cpf' },
+        references: {
+          model: 'users',
+          key: 'cpf'
+        },
         onUpdate: 'CASCADE',
-        onDelete: 'CASCADE', 
+        onDelete: 'CASCADE'
       },
-      consent: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-      },
-      account_type: {
-        type: Sequelize.ENUM('checking', 'savings', 'investment'),
+      institution_id: {
         allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'institutions',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       balance: {
+        allowNull: false,
         type: Sequelize.DECIMAL(10, 2),
-        allowNull: false,
-        defaultValue: 0,
+        defaultValue: 0.00
       },
-      is_active: {
+      consent: {
+        allowNull: false,
         type: Sequelize.BOOLEAN,
-        defaultValue: true,
-        allowNull: false,
-      },
-      user_id: {
-        type: Sequelize.INTEGER,
-        references: { model: 'users', key: 'id' },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-        allowNull: false,
+        defaultValue: false
       },
       created_at: {
-        type: Sequelize.DATE,
         allowNull: false,
+        type: Sequelize.DATE
       },
       updated_at: {
-        type: Sequelize.DATE,
         allowNull: false,
-      },
-    }),
-
-  down: (queryInterface) => queryInterface.dropTable('bank_accounts'),
+        type: Sequelize.DATE
+      }
+    });
+  },
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable('accounts');
+  }
 };

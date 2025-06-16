@@ -10,24 +10,37 @@ const getDataAccount = async (req, res) => {
   const instituicaoId = 1;
 
   try {
+    console.log(`[Dante API] Buscando dados para CPF: ${cpf}`);
+    
     const user = await User.findOne({ where: { cpf } });
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (!user) {
+      console.log(`[Dante API] Usuário não encontrado para CPF: ${cpf}`);
+      return res.status(404).json({ error: 'User not found' });
+    }
+    console.log(`[Dante API] Usuário encontrado: ${user.nome} (ID: ${user.id})`);
 
     const account = await Account.findOne({
       where: { usuarioCpf: user.cpf },
     });
-    if (!account)
+    if (!account) {
+      console.log(`[Dante API] Conta não encontrada para CPF: ${cpf}`);
       return res
         .status(404)
         .json({ error: 'Account not found for this institution' });
+    }
+    console.log(`[Dante API] Conta encontrada: ID ${account.id}, Saldo: ${account.saldo}`);
 
     const institution = await Institution.findOne({
       where: { id: instituicaoId },
     });
-    if (!institution)
+    if (!institution) {
+      console.log(`[Dante API] Instituição não encontrada: ID ${instituicaoId}`);
       return res.status(404).json({ error: 'Institution not found' });
+    }
+    console.log(`[Dante API] Instituição encontrada: ${institution.nome}`);
 
     if (!account.consent) {
+      console.log(`[Dante API] Consentimento não autorizado para CPF: ${cpf}`);
       return res
         .status(403)
         .json({ error: 'Consent not granted by the user.' });
@@ -40,7 +53,12 @@ const getDataAccount = async (req, res) => {
       },
     });
 
-    res.json({
+    console.log(`[Dante API] Transações encontradas: ${transactions.length}`);
+    transactions.forEach((tx, index) => {
+      console.log(`[Dante API] Transação ${index + 1}: ID=${tx.id}, Tipo=${tx.tipo}, Valor=${tx.valor}, Descrição=${tx.descricao}`);
+    });
+
+    const responseData = {
       id_bank: 1,
       cpf: user.cpf,
       institution: institution.nome,
@@ -50,9 +68,12 @@ const getDataAccount = async (req, res) => {
         date: transaction.data,
         description: transaction.descricao,
         value: transaction.valor,
-        type: transaction.tipo === 'entrada' ? 'credit' : 'debit',
+        type: transaction.tipo === 'credito' ? 'credit' : 'debit',
       })),
-    });
+    };
+    
+    console.log(`[Dante API] Resposta final:`, JSON.stringify(responseData, null, 2));
+    res.json(responseData);
   } catch (error) {
     console.error('Error getting account data for bank 1:', error);
     res.status(500).json({ error: 'Internal server error' });

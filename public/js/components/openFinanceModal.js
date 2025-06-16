@@ -28,36 +28,90 @@ class OpenFinanceModal {
             <div class="institution-selection">
               <h3>Selecione uma instituição financeira:</h3>
               
-              <div class="institution-card" data-bank-id="4">
-                <div class="institution-info">
-                  <div class="institution-logo">
-                    <i class="fas fa-university"></i>
+              <div class="institutions-grid">
+                <div class="institution-card">
+                  <div class="institution-info">
+                    <div class="institution-logo vitor">V</div>
+                    <div class="institution-details">
+                      <h4>Banco Vitor</h4>
+                      <p>API Vitor</p>
+                    </div>
                   </div>
-                  <div class="institution-details">
-                    <h4>Banco Vitor</h4>
-                    <p>Conecte sua conta do Banco Vitor</p>
-                  </div>
+                  <button class="btn-link-account" data-bank-id="vitor">
+                    <span>🔗</span>
+                    Conectar
+                  </button>
                 </div>
-                <button class="btn-link-account" data-bank-id="4">
-                  <i class="fas fa-link"></i>
-                  Conectar
-                </button>
-              </div>
-              
-              <div class="institution-card disabled">
-                <div class="institution-info">
-                  <div class="institution-logo">
-                    <i class="fas fa-university"></i>
+                
+                <div class="institution-card">
+                  <div class="institution-info">
+                    <div class="institution-logo lucas">L</div>
+                    <div class="institution-details">
+                      <h4>Banco Lucas</h4>
+                      <p>API Lucas</p>
+                    </div>
                   </div>
-                  <div class="institution-details">
-                    <h4>Outras Instituições</h4>
-                    <p>Em breve mais bancos estarão disponíveis</p>
-                  </div>
+                  <button class="btn-link-account" data-bank-id="lucas">
+                    <span>🔗</span>
+                    Conectar
+                  </button>
                 </div>
-                <button class="btn-link-account" disabled>
-                  <i class="fas fa-clock"></i>
-                  Em breve
-                </button>
+                
+                <div class="institution-card">
+                  <div class="institution-info">
+                    <div class="institution-logo patricia">P</div>
+                    <div class="institution-details">
+                      <h4>Banco Patricia</h4>
+                      <p>API Patricia</p>
+                    </div>
+                  </div>
+                  <button class="btn-link-account" data-bank-id="patricia">
+                    <span>🔗</span>
+                    Conectar
+                  </button>
+                </div>
+                
+                <div class="institution-card">
+                  <div class="institution-info">
+                    <div class="institution-logo dante">D</div>
+                    <div class="institution-details">
+                      <h4>Banco Dante</h4>
+                      <p>API Dante</p>
+                    </div>
+                  </div>
+                  <button class="btn-link-account" data-bank-id="dante">
+                    <span>🔗</span>
+                    Conectar
+                  </button>
+                </div>
+                
+                <div class="institution-card">
+                  <div class="institution-info">
+                    <div class="institution-logo raul">R</div>
+                    <div class="institution-details">
+                      <h4>Banco Raul</h4>
+                      <p>API Raul</p>
+                    </div>
+                  </div>
+                  <button class="btn-link-account" data-bank-id="raul">
+                    <span>🔗</span>
+                    Conectar
+                  </button>
+                </div>
+                
+                <div class="institution-card">
+                   <div class="institution-info">
+                     <div class="institution-logo caputi">C</div>
+                     <div class="institution-details">
+                       <h4>Banco Caputi</h4>
+                       <p>API Caputi</p>
+                     </div>
+                   </div>
+                   <button class="btn-link-account" data-bank-id="caputi">
+                     <span>🔗</span>
+                     Conectar
+                   </button>
+                 </div>
               </div>
             </div>
             
@@ -183,6 +237,19 @@ class OpenFinanceModal {
     document.getElementById('consentSection').style.display = 'none';
     document.getElementById('loadingSection').style.display = 'none';
     document.getElementById('successSection').style.display = 'block';
+    
+    // Aguardar um pouco para o servidor processar completamente
+    setTimeout(() => {
+      // Limpar cache e recarregar dados das instituições se a função estiver disponível
+      if (typeof window.clearCacheAndReload === 'function') {
+        window.clearCacheAndReload();
+      }
+      
+      // Disparar evento personalizado para notificar outras páginas
+      window.dispatchEvent(new CustomEvent('accountConnected', {
+        detail: { bankId: this.selectedBankId }
+      }));
+    }, 1000);
   }
 
   async linkAccount() {
@@ -194,7 +261,19 @@ class OpenFinanceModal {
         throw new Error('Token de autenticação não encontrado');
       }
 
-      const response = await fetch('/open-finance/link-vitor', {
+      // Determina o endpoint baseado no banco selecionado
+      const endpoints = {
+        vitor: '/open-finance/link-vitor',
+        lucas: '/open-finance/link-lucas',
+        caputi: '/open-finance/link-caputi',
+        dante: '/open-finance/link-dante',
+        raul: '/open-finance/link-raul',
+        patricia: '/open-finance/link-patricia'
+      };
+      
+      const endpoint = endpoints[this.selectedBankId] || endpoints.vitor;
+      
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

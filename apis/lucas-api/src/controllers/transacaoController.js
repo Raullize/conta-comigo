@@ -114,5 +114,51 @@ module.exports = {
         } catch (error) {
             return res.status(500).json({ erro: 'Erro ao buscar saldo por instituição', detalhe: error.message });
         };
+    },
+
+    async listaTransacoes(req, res) {
+        try {
+            const { cpf } = req.params;
+            
+            // Verificar se o usuário existe
+            const usuario = await Usuario.findByPk(cpf);
+            if (!usuario) {
+                return res.status(404).json({ erro: 'Usuário não encontrado' });
+            }
+
+            // Buscar todas as transações do usuário
+            const transacoes = await Transacao.findAll({
+                where: { usuarioCpf: cpf },
+                include: [{
+                    model: Conta,
+                    as: 'conta',
+                    include: [{
+                        model: Instituicao,
+                        as: 'instituicao'
+                    }]
+                }],
+                order: [['data', 'DESC']]
+            });
+
+            // Formatar as transações para o padrão esperado
+            const transacoesFormatadas = transacoes.map(transacao => ({
+                id: transacao.id,
+                description: transacao.descricao || 'Transação',
+                value: parseFloat(transacao.valor),
+                type: transacao.tipo === 'entrada' ? 'credit' : 'debit',
+                date: transacao.data,
+                contaId: transacao.contaId,
+                instituicao: transacao.conta?.instituicao?.nome || 'Banco Lucas'
+            }));
+
+            return res.status(200).json({
+                transacoes: transacoesFormatadas,
+                total: transacoesFormatadas.length
+            });
+
+        } catch (error) {
+            console.error('Erro ao listar transações:', error);
+            return res.status(500).json({ erro: 'Erro ao listar transações', detalhe: error.message });
+        }
     }
 };

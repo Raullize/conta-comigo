@@ -848,3 +848,321 @@ input:checked + .toggle-slider:before {
     align-items: flex-start;
   }
 }
+
+/* Blur effect for specific elements when modal is open */
+.dashboard-container.modal-open #sidebar-container,
+.dashboard-container.modal-open #header-container {
+  filter: blur(3px);
+  transition: filter 0.3s ease;
+}
+
+/* Multi-Connect Section Styles */
+.multi-connect-section {
+  margin-bottom: var(--spacing-2xl);
+  padding: var(--spacing-xl);
+  background: var(--light-gray);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.1), transparent);
+  margin: var(--spacing-2xl) 0;
+}
+
+.institutions-grid-settings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--spacing-lg);
+  margin: var(--spacing-xl) 0;
+}
+
+.institution-card-settings {
+  background: var(--white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  border: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.institution-card-settings:hover {
+  border-color: var(--primary-green);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.institution-card-settings.selected {
+  border-color: var(--primary-green);
+  background: rgba(54, 179, 126, 0.05);
+  box-shadow: 0 0 0 3px rgba(54, 179, 126, 0.1);
+}
+
+.institution-card-settings.connected {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.05);
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.institution-card-settings.connected:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.institution-selection-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+}
+
+.bank-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary-green);
+  cursor: pointer;
+}
+
+.bank-checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.checkbox-label {
+  cursor: pointer;
+  margin: 0;
+}
+
+.institution-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex: 1;
+}
+
+.institution-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+/* Cores específicas para cada banco */
+.institution-logo.vitor {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.institution-logo.lucas {
+  background: linear-gradient(135deg, #10b981, #047857);
+}
+
+.institution-logo.patricia {
+  background: linear-gradient(135deg, #ec4899, #db2777);
+}
+
+.institution-logo.dante {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.institution-logo.raul {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+}
+
+.institution-logo.caputi {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.institution-details h4 {
+  margin: 0 0 var(--spacing-xs) 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+}
+
+.institution-details p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.connection-status {
+  min-width: 120px;
+  text-align: right;
+}
+
+.status-text {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.connection-status.connected .status-text {
+  color: #10b981;
+}
+
+.connection-status.connected::before {
+  content: "✓ ";
+  color: #10b981;
+  font-weight: bold;
+}
+
+.multi-connect-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin-top: var(--spacing-lg);
+}
+
+.selection-info {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.connect-buttons {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+.connect-buttons .btn {
+  font-size: var(--font-size-sm);
+  padding: var(--spacing-sm) var(--spacing-lg);
+}
+
+.connect-buttons .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Progress indicator for connection process */
+.connection-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(54, 179, 126, 0.2);
+  z-index: var(--z-modal);
+  display: none;
+}
+
+.connection-progress-bar {
+  height: 100%;
+  background: var(--primary-green);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* Loading states */
+.institution-card-settings.connecting {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.institution-card-settings.connecting .status-text {
+  color: var(--primary-blue);
+}
+
+.institution-card-settings.connecting .status-text::before {
+  content: "⟳ ";
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Toast notification styles for connection results */
+.connection-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--white);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-md);
+  max-width: 300px;
+  z-index: var(--z-tooltip);
+  border-left: 4px solid var(--primary-green);
+  animation: slideInUp 0.3s ease-out;
+}
+
+.connection-toast.error {
+  border-left-color: #dc3545;
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .institutions-grid-settings {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .institution-card-settings {
+    padding: var(--spacing-md);
+  }
+  
+  .multi-connect-actions {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: stretch;
+  }
+  
+  .connect-buttons {
+    justify-content: stretch;
+  }
+  
+  .connect-buttons .btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .multi-connect-section {
+    padding: var(--spacing-md);
+  }
+  
+  .institution-card-settings {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-sm);
+  }
+  
+  .institution-info {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-sm);
+  }
+  
+  .connection-status {
+    min-width: auto;
+    text-align: center;
+  }
+}

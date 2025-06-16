@@ -15,8 +15,8 @@ module.exports = async (req, res, next) => {
     const decoded = await promisify(jwt.verify)(token, authValidators.secret);
 
     req.userId = decoded.id;
-    req.user = decoded; // Usar o objeto decoded completo
-
+    req.user = decoded;
+    
     return next();
   } catch (err) {
     return res.status(401).json({ error: 'Token invalid ' });

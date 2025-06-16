@@ -4,17 +4,16 @@ class Transaction extends Model {
   static init(sequelize) {
     super.init(
       {
+        account_id: Sequelize.INTEGER,
         description: Sequelize.STRING,
-        amount: Sequelize.DECIMAL(10, 2),
-        type: Sequelize.ENUM('deposit', 'withdrawal', 'transfer'),
-        transaction_date: Sequelize.DATE,
-        category: Sequelize.STRING,
+        type: Sequelize.ENUM('entrada', 'saida'),
+        value: Sequelize.DECIMAL(10, 2),
       },
       {
         sequelize,
-        tableName:"transactions",
-        timestamps: true,       
-        underscored: true
+        tableName: 'transactions',
+        timestamps: true,
+        underscored: true,
       }
     );
 
@@ -22,7 +21,10 @@ class Transaction extends Model {
   }
 
   static associate(models) {
-    this.belongsTo(models.BankAccount, { foreignKey: 'account_id', as: 'account' });
+    this.belongsTo(models.Account, { 
+      foreignKey: 'account_id', 
+      as: 'account' 
+    });
   }
 }
 

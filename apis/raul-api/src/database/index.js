@@ -1,19 +1,20 @@
 import Sequelize from 'sequelize';
 import databaseConfigObject from '../config/database.js';
 
-import BankAccount from '../app/models/BankAccount.js';
-import Transaction from '../app/models/Transaction.js';
 import User from '../app/models/User.js';
+import Institution from '../app/models/Institution.js';
+import Account from '../app/models/BankAccount.js';
+import Transaction from '../app/models/Transaction.js';
 
-const models = [User, BankAccount, Transaction];
+const models = [User, Institution, Account, Transaction];
 
-  class Database {
-    constructor() {
-      this.init();
-    }
-    init() {
-
-    const env =  'development';
+class Database {
+  constructor() {
+    this.init();
+  }
+  
+  init() {
+    const env = 'development';
     
     const envConfig = databaseConfigObject[env];
 
@@ -27,7 +28,6 @@ const models = [User, BankAccount, Transaction];
       envConfig.password,
       envConfig
     );
-
 
     models.forEach((model) => model.init(this.connection));
     models.forEach((model) => {

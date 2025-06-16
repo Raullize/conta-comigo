@@ -352,7 +352,7 @@
 
 
 /* Modal Styles */
-.modal {
+.expenses-modal {
     display: flex;
     position: fixed;
     top: 0;
@@ -369,13 +369,13 @@
     pointer-events: none;
 }
 
-.modal.show {
+.expenses-modal.show {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
 }
 
-.modal-content {
+.expenses-modal .modal-content {
     background-color: var(--white);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-xl);
@@ -700,7 +700,7 @@
     
 
     
-    .modal-content {
+    .expenses-modal-overlay .modal-content {
         margin: 10% auto;
         width: 95%;
     }
@@ -737,7 +737,7 @@
 }
 
 /* Modal de classificação */
-.modal-overlay {
+.expenses-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -751,7 +751,7 @@
     animation: fadeIn 0.3s ease;
 }
 
-.modal-content {
+.expenses-modal-overlay .modal-content {
     background: white;
     border-radius: var(--border-radius-lg);
     max-width: 500px;
@@ -901,7 +901,7 @@
         padding: 0.75rem;
     }
     
-    .modal-content {
+    .expenses-modal .modal-content {
         width: 95%;
         margin: 5% auto;
     }

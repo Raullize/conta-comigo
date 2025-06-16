@@ -1,4 +1,3 @@
-// XXXXXXXXXXXXXX-create-users.js
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('users', {

@@ -14,7 +14,7 @@ class ExpensesManager {
             salario: 'fas fa-money-bill-wave',
             trabalho: 'fas fa-briefcase',
             outros: 'fas fa-ellipsis-h',
-            desconhecida: 'fas fa-question-circle'
+            'Não classificado': 'fas fa-question-circle'
         };
 
         // Categorias disponíveis para classificação
@@ -51,6 +51,7 @@ class ExpensesManager {
         };
 
         // Dados do orçamento mensal (simulando dados que virão do banco)
+        // Nota: salário foi removido pois não faz sentido ter limite para receita
         this.monthlyBudget = {
             alimentacao: { limit: null, spent: 0 },
             transporte: { limit: null, spent: 0 },
@@ -60,7 +61,6 @@ class ExpensesManager {
             casa: { limit: null, spent: 0 },
             utilidades: { limit: null, spent: 0 },
             entretenimento: { limit: null, spent: 0 },
-            salario: { limit: null, spent: 0 },
             trabalho: { limit: null, spent: 0 },
             outros: { limit: null, spent: 0 }
         };
@@ -161,8 +161,6 @@ class ExpensesManager {
             document.getElementById('endDate').value = endDate;
         }
 
-        // Debug: log dos filtros aplicados
-
         this.filteredTransactions = this.transactions.filter(transaction => {
             let matches = true;
             const transactionDate = new Date(transaction.date);
@@ -189,7 +187,7 @@ class ExpensesManager {
                 }
             }
 
-            // Debug: log de cada transação filtrada
+
 
             return matches;
         });
@@ -237,7 +235,7 @@ class ExpensesManager {
         }
 
         container.innerHTML = pageTransactions.map(transaction => {
-            const isUnclassified = transaction.category === 'desconhecida';
+            const isUnclassified = transaction.category === 'Não classificado';
             const categoryDisplay = isUnclassified ? 
                 '<span class="unclassified-label">Não classificada - Clique para classificar</span>' : 
                 `<span class="classified-label">${this.getCategoryName(transaction.category)} - Clique para reclassificar</span>`;
@@ -314,7 +312,7 @@ class ExpensesManager {
             salario: 'Salário',
             trabalho: 'Trabalho',
             outros: 'Outros',
-            desconhecida: 'Não classificada'
+            'Não classificado': 'Não classificado'
         };
         return categoryNames[category] || 'Outros';
     }
@@ -351,7 +349,7 @@ class ExpensesManager {
 
         // Criar modal dinamicamente
         const modalHTML = `
-            <div id="categoryModal" class="modal-overlay">
+            <div id="categoryModal" class="expenses-modal-overlay">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3>Classificar Transação</h3>
@@ -496,6 +494,11 @@ class ExpensesManager {
         budgetContainer.innerHTML = '';
 
         Object.keys(this.monthlyBudget).forEach(categoryKey => {
+            // Filtrar salário do orçamento mensal (não faz sentido ter limite para salário)
+            if (categoryKey === 'salario') {
+                return;
+            }
+            
             const categoryData = this.monthlyBudget[categoryKey];
             const categoryName = this.availableCategories[categoryKey];
             const categoryIcon = this.categoryIcons[categoryKey];
@@ -678,7 +681,7 @@ class ExpensesManager {
 
         // Calcular gastos por categoria baseado nas transações
         this.transactions.forEach(transaction => {
-            if (transaction.type === 'gasto' && transaction.category !== 'desconhecida') {
+            if (transaction.type === 'gasto' && transaction.category !== 'Não classificado') {
                 if (this.monthlyBudget[transaction.category]) {
                     this.monthlyBudget[transaction.category].spent += transaction.amount;
                 }
@@ -725,7 +728,8 @@ class ExpensesManager {
       // Atualizar orçamentos locais com dados do banco
       if (data.success && data.budgets) {
         data.budgets.forEach(budget => {
-          if (this.monthlyBudget[budget.category]) {
+          // Filtrar salário dos orçamentos (não faz sentido ter limite para receita)
+          if (budget.category !== 'salario' && this.monthlyBudget[budget.category]) {
             this.monthlyBudget[budget.category].limit = budget.limit_amount;
           }
         });
@@ -783,20 +787,17 @@ class ExpensesManager {
 
             const data = await response.json();
             
-            // Converter os dados do backend para o formato esperado pelo frontend
-            this.transactions = data.transactions.map(transaction => {
-                return {
-                    id: transaction.id,
-                    title: transaction.title,
-                    category: transaction.category,
-                    type: transaction.type === 'C' ? 'receita' : 'gasto', // Converter C/D para receita/gasto
-                    amount: transaction.amount,
-                    date: transaction.date,
-                    origin_cpf: transaction.origin_cpf,
-                    destination_cpf: transaction.destination_cpf,
-                    id_bank: transaction.id_bank
-                };
-            });
+            this.transactions = data.transactions.map(transaction => ({
+                id: transaction.id,
+                title: transaction.title,
+                category: transaction.category,
+                type: transaction.type === 'C' ? 'receita' : 'gasto',
+                amount: transaction.amount,
+                date: transaction.date,
+                origin_cpf: transaction.origin_cpf,
+                destination_cpf: transaction.destination_cpf,
+                id_bank: transaction.id_bank
+            }));
 
             // Atualizar filteredTransactions
             this.filteredTransactions = [...this.transactions];

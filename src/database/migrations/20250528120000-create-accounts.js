@@ -29,6 +29,12 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      api_source: {
+        type: Sequelize.STRING,
+        allowNull: true,
+        defaultValue: 'vitor',
+        comment: 'Identifica qual API usar: lucas, patricia, dante, raul, vitor, caputi'
+      },
       created_at: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),

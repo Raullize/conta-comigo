@@ -37,7 +37,7 @@
 }
 
 /* Confirmation Modal */
-.modal {
+.common-modal {
   display: flex;
   position: fixed;
   top: 0;
@@ -54,13 +54,13 @@
   pointer-events: none;
 }
 
-.modal.show {
+.common-modal.show {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
 }
 
-.modal-content {
+.common-modal .modal-content {
   background-color: var(--white);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-xl);
@@ -130,15 +130,15 @@
 }
 
 @media (max-width: 576px) {
-  .modal-content {
+  .common-modal .modal-content {
     width: 95%;
   }
   
-  .modal-footer {
+  .common-modal .modal-footer {
     flex-direction: column;
   }
   
-  .modal-footer .btn {
+  .common-modal .modal-footer .btn {
     width: 100%;
   }
 }

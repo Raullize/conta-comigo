@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="../css/components/sidebar.css">
     <link rel="stylesheet" href="../css/components/header.css">
     <link rel="stylesheet" href="../css/institutions.css">
+    <link rel="stylesheet" href="../css/modal.css">
 </head>
 <body>
     <div class="dashboard-container">
@@ -91,10 +92,7 @@
                         <p class="empty-description">
                             Conecte suas contas bancárias para começar a gerenciar suas finanças de forma integrada.
                         </p>
-                        <button class="btn btn-primary" id="connectFirstInstitution">
-                            <i class="fas fa-plus"></i>
-                            Vincular Primeira Conta
-                        </button>
+                        <!-- Botão removido conforme solicitado -->
                     </div>
                 </div>
             </div>
@@ -119,7 +117,7 @@
     </div>
 
     <!-- Modal de Confirmação de Sincronização -->
-    <div id="syncModal" class="modal">
+    <div id="syncModal" class="institutions-modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Sincronizar Dados</h3>
@@ -140,7 +138,7 @@
     </div>
 
     <!-- Modal de Confirmação de Desconexão -->
-    <div id="disconnectModal" class="modal">
+    <div id="disconnectModal" class="institutions-modal">
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Desconectar Instituição</h3>

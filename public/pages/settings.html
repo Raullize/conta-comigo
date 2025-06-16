@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="../css/components/sidebar.css">
     <link rel="stylesheet" href="../css/components/header.css">
     <link rel="stylesheet" href="../css/settings.css">
+    <link rel="stylesheet" href="../css/modal.css">
 </head>
 <body>
     <div class="dashboard-container">
@@ -192,20 +193,147 @@
                                     </div>
                                     
                                     <div class="settings-card">
-                                        <div class="connect-new-account">
-                                            <button type="button" class="btn btn-primary" id="connectNewAccountBtn">
-                                                <i class="fas fa-plus"></i>
-                                                Vincular Nova Conta
+                                        <!-- Seção de Vinculação de Múltiplas Contas -->
+                                        <div class="multi-connect-section">
+                                            <div class="section-header">
+                                                <h4 class="section-title">
+                                                    <i class="fas fa-plus-circle"></i>
+                                                    Vincular Novas Contas
+                                                </h4>
+                                                <p class="section-subtitle">Selecione uma ou mais instituições para conectar simultaneamente</p>
+                                            </div>
+                                            
+                                            <div class="institutions-grid-settings">
+                                                <div class="institution-card-settings" data-bank-id="vitor">
+                                                    <div class="institution-selection-checkbox">
+                                                        <input type="checkbox" id="bank-vitor" class="bank-checkbox">
+                                                        <label for="bank-vitor" class="checkbox-label"></label>
+                                                    </div>
+                                                    <div class="institution-info">
+                                                        <div class="institution-logo vitor">V</div>
+                                                        <div class="institution-details">
+                                                            <h4>Banco Vitor</h4>
+                                                            <p>API Vitor</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="connection-status" id="status-vitor">
+                                                        <span class="status-text">Não conectado</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="institution-card-settings" data-bank-id="lucas">
+                                                    <div class="institution-selection-checkbox">
+                                                        <input type="checkbox" id="bank-lucas" class="bank-checkbox">
+                                                        <label for="bank-lucas" class="checkbox-label"></label>
+                                                    </div>
+                                                    <div class="institution-info">
+                                                        <div class="institution-logo lucas">L</div>
+                                                        <div class="institution-details">
+                                                            <h4>Banco Lucas</h4>
+                                                            <p>API Lucas</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="connection-status" id="status-lucas">
+                                                        <span class="status-text">Não conectado</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="institution-card-settings" data-bank-id="patricia">
+                                                    <div class="institution-selection-checkbox">
+                                                        <input type="checkbox" id="bank-patricia" class="bank-checkbox">
+                                                        <label for="bank-patricia" class="checkbox-label"></label>
+                                                    </div>
+                                                    <div class="institution-info">
+                                                        <div class="institution-logo patricia">P</div>
+                                                        <div class="institution-details">
+                                                            <h4>Banco Patricia</h4>
+                                                            <p>API Patricia</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="connection-status" id="status-patricia">
+                                                        <span class="status-text">Não conectado</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="institution-card-settings" data-bank-id="dante">
+                                                    <div class="institution-selection-checkbox">
+                                                        <input type="checkbox" id="bank-dante" class="bank-checkbox">
+                                                        <label for="bank-dante" class="checkbox-label"></label>
+                                                    </div>
+                                                    <div class="institution-info">
+                                                        <div class="institution-logo dante">D</div>
+                                                        <div class="institution-details">
+                                                            <h4>Banco Dante</h4>
+                                                            <p>API Dante</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="connection-status" id="status-dante">
+                                                        <span class="status-text">Não conectado</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="institution-card-settings" data-bank-id="raul">
+                                                    <div class="institution-selection-checkbox">
+                                                        <input type="checkbox" id="bank-raul" class="bank-checkbox">
+                                                        <label for="bank-raul" class="checkbox-label"></label>
+                                                    </div>
+                                                    <div class="institution-info">
+                                                        <div class="institution-logo raul">R</div>
+                                                        <div class="institution-details">
+                                                            <h4>Banco Raul</h4>
+                                                            <p>API Raul</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="connection-status" id="status-raul">
+                                                        <span class="status-text">Não conectado</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="institution-card-settings" data-bank-id="caputi">
+                                                    <div class="institution-selection-checkbox">
+                                                        <input type="checkbox" id="bank-caputi" class="bank-checkbox">
+                                                        <label for="bank-caputi" class="checkbox-label"></label>
+                                                    </div>
+                                                    <div class="institution-info">
+                                                        <div class="institution-logo caputi">C</div>
+                                                        <div class="institution-details">
+                                                            <h4>Banco Caputi</h4>
+                                                            <p>API Caputi</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="connection-status" id="status-caputi">
+                                                        <span class="status-text">Não conectado</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="multi-connect-actions">
+                                                <div class="selection-info">
+                                                    <span id="selectedCount">0</span> instituição(ões) selecionada(s)
+                                                </div>
+                                                <div class="connect-buttons">
+                                                    <button type="button" class="btn btn-outline" id="selectAllBtn">
+                                                        <i class="fas fa-check-double"></i>
+                                                        Selecionar Todas
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary" id="connectSelectedBtn" disabled>
+                                                        <i class="fas fa-link"></i>
+                                                        Conectar Selecionadas
                                             </button>
-                                            <p class="connect-description">Conecte uma nova conta bancária via Open Finance</p>
+                                                </div>
+                                            </div>
                                         </div>
                                         
+                                        <!-- Separador -->
+                                        <div class="section-divider"></div>
+                                        
+                                        <!-- Seção de Contas Conectadas (existente) -->
                                     <div class="open-finance-info">
                                         <div class="info-item">
                                             <i class="fas fa-link"></i>
                                             <div class="info-content">
                                                 <h4>Contas Conectadas</h4>
-                                                <p>Você possui <strong>3 contas</strong> conectadas via Open Finance</p>
+                                                    <p>Você possui <strong id="connectedCountDisplay">0 contas</strong> conectadas via Open Finance</p>
                                             </div>
                                         </div>
                                 
