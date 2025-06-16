@@ -257,6 +257,44 @@ Para visualizar e gerenciar o banco de dados:
 - `npm run migrate` - Executa migrações do banco de dados
 - `npm run down` - Para todos os containers Docker e remove volumes
 
+## 🔧 Configuração de Dados para Testes
+
+### ⚠️ Importante: Sincronização de CPF
+
+Para conseguir usar o **ContaComigo** corretamente, é **fundamental** que o CPF do usuário criado na plataforma seja **exatamente o mesmo** que o CPF dos usuários cadastrados no banco de dados das APIs dos microserviços. Esta sincronização é necessária para que o sistema consiga correlacionar os dados financeiros com o usuário correto.
+
+### 🛠️ Uso do Insomnia para Cadastro de Dados
+
+É **altamente recomendado** o uso do **Insomnia** (ou similar, como Postman) para fazer o cadastro inicial de dados nas APIs dos microserviços. 
+
+#### 🏦 Importante: Cada API = Uma Instituição Financeira
+
+Cada API funciona como uma **instituição financeira independente**. Isso significa que você precisará cadastrar dados **separadamente em cada API** que desejar testar. Por exemplo:
+- **Caputi-API** = Banco Caputi
+- **Dante-API** = Banco Dante  
+- **Lucas-API** = Banco Lucas
+- **Patricia-API** = Banco Patricia
+- **Raul-API** = Banco Raul
+- **Vitor-API** = Banco Vitor
+
+#### Dados a Cadastrar por API:
+- **🏦 Uma Instituição Financeira** (uma por API)
+- **👤 Um Usuário** (com CPF idêntico ao usado no ContaComigo)
+- **💳 Contas Bancárias** (vinculadas ao usuário)
+- **💰 Transações Financeiras**
+- **📋 Consentimentos Open Finance**
+
+#### Fluxo Recomendado (Repetir para cada API):
+1. **Primeira**: Cadastre uma instituição financeira na API
+2. **Segundo**: Cadastre o usuário com o **mesmo CPF** que será usado no ContaComigo
+3. **Terceiro**: Cadastre contas bancárias vinculadas ao usuário
+4. **Quarto**: Adicione transações financeiras para a conta
+5. **Quinto**: Configure consentimentos Open Finance se necessário
+
+> ⚠️ **Lembre-se**: Repita este processo **individualmente para cada API** que você quiser testar. Quanto mais APIs você configurar, mais instituições financeiras aparecerão no ContaComigo!
+
+> 💡 **Dica**: Mantenha os CPFs sincronizados entre o frontend (ContaComigo) e as APIs para garantir o funcionamento correto da integração entre os serviços.
+
 ## 🌟 Funcionalidades
 
 ### Landing Page
@@ -294,21 +332,21 @@ Para visualizar e gerenciar o banco de dados:
         <img src="https://github.com/Dante-Alsino.png" width="100px;" alt="Dante Alsino"/><br />
         <sub><b>Dante Alsino</b></sub>
       </a><br />
-      <sub>Desenvolvedor Full Stack</sub>
+      <sub>Desenvolvedor Web</sub>
     </td>
     <td align="center">
       <a href="https://github.com/l-guidotti">
         <img src="https://github.com/l-guidotti.png" width="100px;" alt="Lucas Guidotti"/><br />
         <sub><b>Lucas Guidotti da Silveira</b></sub>
       </a><br />
-      <sub>Desenvolvedor Full Stack</sub>
+      <sub>Desenvolvedor Web</sub>
     </td>
     <td align="center">
       <a href="https://github.com/patriciapqa">
         <img src="https://github.com/patriciapqa.png" width="100px;" alt="Patricia Quiroz"/><br />
         <sub><b>Patricia Quiroz Adolpho</b></sub>
       </a><br />
-      <sub>Desenvolvedor Full Stack</sub>
+      <sub>Desenvolvedor Web</sub>
     </td>
   </tr>
   <tr>
@@ -317,21 +355,21 @@ Para visualizar e gerenciar o banco de dados:
         <img src="https://github.com/Raullize.png" width="100px;" alt="Raul Lize"/><br />
         <sub><b>Raul Lize Teixeira</b></sub>
       </a><br />
-      <sub>Desenvolvedor Full Stack</sub>
+      <sub>Desenvolvedor Web</sub>
     </td>
     <td align="center">
       <a href="https://github.com/CaputiDev">
         <img src="https://github.com/CaputiDev.png" width="100px;" alt="Thiago Caputi"/><br />
         <sub><b>Thiago Rodrigues Caputi</b></sub>
       </a><br />
-      <sub>Desenvolvedor Full Stack</sub>
+      <sub>Desenvolvedor Web</sub>
     </td>
     <td align="center">
       <a href="https://github.com/Viitorkm">
         <img src="https://github.com/Viitorkm.png" width="100px;" alt="Vitor Marmitt"/><br />
         <sub><b>Vitor Hugo Kroth Marmitt</b></sub>
       </a><br />
-      <sub>Desenvolvedor Full Stack</sub>
+      <sub>Desenvolvedor Web</sub>
     </td>
   </tr>
 </table>
