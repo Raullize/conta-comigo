@@ -63,9 +63,11 @@ conta-comigo/
 │   │   ├── institutions.css # Estilos da página de instituições
 │   │   ├── simulator.css  # Estilos da página de simulador
 │   │   ├── settings.css   # Estilos da página de configurações
+│   │   ├── modal.css      # Estilos para modais gerais
 │   │   └── components/    # Componentes CSS reutilizáveis
 │   │       ├── header.css # Estilos do cabeçalho
-│   │       └── sidebar.css # Estilos da barra lateral
+│   │       ├── sidebar.css # Estilos da barra lateral
+│   │       └── openFinanceModal.css # Estilos do modal Open Finance
 │   ├── js/                # Scripts JavaScript
 │   │   ├── auth-utils.js  # Utilitários de autenticação
 │   │   ├── utils.js       # Funções utilitárias gerais
@@ -79,7 +81,8 @@ conta-comigo/
 │   │   ├── settings.js    # Funcionalidades da página de configurações
 │   │   └── components/    # Componentes JavaScript reutilizáveis
 │   │       ├── header.js  # Componente de cabeçalho
-│   │       └── sidebar.js # Componente de barra lateral
+│   │       ├── sidebar.js # Componente de barra lateral
+│   │       └── openFinanceModal.js # Componente do modal Open Finance
 │   ├── pages/             # Páginas HTML
 │   │   ├── login.html     # Página de login/cadastro
 │   │   ├── dashboard.html # Dashboard principal
@@ -108,11 +111,15 @@ conta-comigo/
 ├── apis/                  # Microserviços de API (6 APIs independentes)
 ├── docker-compose.yml     # Configuração do Docker Compose
 ├── dockerfile             # Configuração Docker principal
+├── entrypoint.sh          # Script de entrada do Docker
 ├── .env.example           # Exemplo de variáveis de ambiente
+├── .sequelizerc           # Configuração do Sequelize CLI
 ├── package.json           # Dependências e scripts do projeto
 ├── .eslintrc.js           # Configuração do ESLint
 ├── .prettierrc            # Configuração do Prettier
+├── .dockerignore          # Arquivos ignorados pelo Docker
 ├── .gitignore             # Arquivos ignorados pelo Git
+├── .gitattributes         # Configurações de atributos do Git
 ├── README.md              # Documentação em português
 ├── README.en.md           # Documentação em inglês
 └── wait-for-db.js         # Script de espera para o banco de dados

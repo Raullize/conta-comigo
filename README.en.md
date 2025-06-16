@@ -63,9 +63,11 @@ conta-comigo/
 │   │   ├── institutions.css # Institutions page styles
 │   │   ├── simulator.css  # Simulator page styles
 │   │   ├── settings.css   # Settings page styles
+│   │   ├── modal.css      # General modal styles
 │   │   └── components/    # Reusable CSS components
 │   │       ├── header.css # Header styles
-│   │       └── sidebar.css # Sidebar styles
+│   │       ├── sidebar.css # Sidebar styles
+│   │       └── openFinanceModal.css # Open Finance modal styles
 │   ├── js/                # JavaScript scripts
 │   │   ├── auth-utils.js  # Authentication utilities
 │   │   ├── utils.js       # General utility functions
@@ -79,7 +81,8 @@ conta-comigo/
 │   │   ├── settings.js    # Settings page functionalities
 │   │   └── components/    # Reusable JavaScript components
 │   │       ├── header.js  # Header component
-│   │       └── sidebar.js # Sidebar component
+│   │       ├── sidebar.js # Sidebar component
+│   │       └── openFinanceModal.js # Open Finance modal component
 │   ├── pages/             # HTML pages
 │   │   ├── login.html     # Login/registration page
 │   │   ├── dashboard.html # Main dashboard
@@ -106,13 +109,23 @@ conta-comigo/
 │   ├── app.js             # Express application configuration
 │   └── server.js          # HTTP server
 ├── apis/                  # API microservices (6 independent APIs)
+│   ├── caputi-api/        # Authentication Service
+│   ├── dante-api/         # Transactions Service
+│   ├── lucas-api/         # Institutions Service
+│   ├── patricia-api/      # Categories Service
+│   ├── raul-api/          # Users Service
+│   └── vitor-api/         # Investments Service
 ├── docker-compose.yml     # Docker Compose configuration
 ├── dockerfile             # Main Docker configuration
+├── entrypoint.sh          # Docker entry script
 ├── .env.example           # Environment variables example
+├── .sequelizerc           # Sequelize CLI configuration
 ├── package.json           # Project dependencies and scripts
 ├── .eslintrc.js           # ESLint configuration
 ├── .prettierrc            # Prettier configuration
+├── .dockerignore          # Files ignored by Docker
 ├── .gitignore             # Files ignored by Git
+├── .gitattributes         # Git attributes configuration
 ├── README.md              # Portuguese documentation
 ├── README.en.md           # English documentation
 └── wait-for-db.js         # Database wait script
