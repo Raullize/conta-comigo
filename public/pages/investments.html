@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="../css/components/sidebar.css">
     <link rel="stylesheet" href="../css/components/header.css">
     <link rel="stylesheet" href="../css/investments.css">
+
+    <script src="../js/investments.js" defer></script>
+
 </head>
 <body>
     <div class="dashboard-container">
@@ -27,10 +30,124 @@
             
             <!-- Page Content -->
             <div class="page-content">
-                <p>Em desenvolvimento</p>
+                <div class="filters-section">
+                    <div class="search-container">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Buscar investimento..." onkeyup="filterInvestments()">
+                        </div>
+                    </div>
+                    <div class="filter-controls">
+                        <select id="typeFilter" onchange="filterInvestments()">
+                            <option value="">Todos os tipos</option>
+                            <option value="acoes">📈 Ações</option>
+                            <option value="renda-fixa">🏦 Renda Fixa</option>
+                            <option value="fundos">📊 Fundos</option>
+                            <option value="fiis">🏢 FIIs</option>
+                            <option value="cripto">₿ Criptomoedas</option>
+                        </select>
+                        <select id="sortBy" onchange="sortInvestments()">
+                            <option value="name">Ordenar por Nome</option>
+                            <option value="value">Ordenar por Valor</option>
+                            <option value="return">Ordenar por Rentabilidade</option>
+                            <option value="date">Ordenar por Data</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Cards de Resumo -->
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h3 id="totalInvestido">R$ 0,00</h3>
+                            <p>Total Investido</p>
+                            <div class="summary-change">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>Capital aplicado</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h3 id="valorAtual">R$ 0,00</h3>
+                            <p>Valor Atual</p>
+                            <div class="summary-change">
+                                <i class="fas fa-trending-up"></i>
+                                <span>Patrimônio total</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h3 id="rentabilidadeTotal">0,00%</h3>
+                            <p>Rentabilidade</p>
+                            <div class="summary-change" id="rentabilidadeChange">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Performance geral</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="summary-content">
+                            <h3 id="ganhoPerda">R$ 0,00</h3>
+                            <p>Ganho/Perda</p>
+                            <div class="summary-change" id="ganhoChange">
+                                <i class="fas fa-coins"></i>
+                                <span>Resultado líquido</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grid de Investimentos -->
+                <div class="investments-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Minha Carteira de Investimentos</h2>
+                        </div>
+                        <div class="card-content">
+                            <div class="investments-grid" id="investmentsGrid">
+                                <!-- Investimentos serão carregados aqui -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estado Vazio -->
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-illustration">
+                        <i class="fas fa-chart-pie empty-icon"></i>
+                        <div class="empty-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                    <h3>Nenhum investimento encontrado</h3>
+                    <p>Comece adicionando seu primeiro investimento para acompanhar sua carteira</p>
+                    <button class="btn btn-primary btn-sm" onclick="openAddModal()">
+                        <i class="fas fa-plus"></i>
+                        Adicionar Investimento
+                    </button>
+                </div>
+
             </div>
         </main>
     </div>
+
+    
 
     <!-- Logout Modal -->
     <div id="logoutModal" class="modal">
@@ -67,7 +184,7 @@
             header.init(document.getElementById('header-container'));
             
             // Check authentication
-            checkAuthentication();
+            //checkAuthentication();
         });
     </script>
 </body>
