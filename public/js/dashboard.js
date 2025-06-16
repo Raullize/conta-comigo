@@ -65,12 +65,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   // Listen for account connection events
   window.addEventListener('accountConnected', (event) => {
-    console.log('Nova conta conectada, atualizando dashboard...', event.detail);
-    // Aguardar um pouco para garantir que o servidor processou completamente
     setTimeout(() => {
-      loadDashboardData();
+        loadDashboardData();
     }, 2000);
-  });
+});
 });
 
 // Check Open Finance accounts

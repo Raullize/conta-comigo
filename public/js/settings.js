@@ -470,7 +470,7 @@ async function handleDisconnectAccounts() {
         if (response.ok) {
             // Limpar todas as datas de sincronização salvas permanentemente
             localStorage.removeItem('institutionsSyncDates');
-            console.log('Cleared all saved sync dates after disconnecting all accounts');
+            // Datas de sincronização removidas
             
             // Recarrega as contas conectadas
             await loadConnectedAccounts();
@@ -639,9 +639,9 @@ async function handleSingleDisconnect() {
                     const syncDatesObj = JSON.parse(savedSyncDates);
                     delete syncDatesObj[bankId.toString()];
                     localStorage.setItem('institutionsSyncDates', JSON.stringify(syncDatesObj));
-                    console.log('Removed saved sync date for disconnected institution:', bankId);
+                    // Data de sincronização removida
                 } catch (e) {
-                    console.log('Error removing saved sync date:', e);
+                    // Erro ao remover data de sincronização
                 }
             }
             

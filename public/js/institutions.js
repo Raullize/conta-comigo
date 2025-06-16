@@ -52,22 +52,12 @@ async function loadConnectedInstitutions() {
             try {
                 const syncDatesObj = JSON.parse(savedSyncDates);
                 syncDatesMap = new Map(Object.entries(syncDatesObj));
-                console.log('Loaded saved sync dates:', syncDatesObj);
             } catch (e) {
-                console.log('Error parsing saved sync dates:', e);
+                // Ignorar erro de parsing
             }
         }
         
-        console.log('Loading institutions from server');
         const token = localStorage.getItem('token');
-        console.log('Using token:', token ? 'Token found' : 'No token');
-        console.log('Current user CPF from token:', token ? JSON.parse(atob(token.split('.')[1])).cpf : 'No CPF');
-        
-        console.log('Making request to /open-finance/connected-accounts');
-        console.log('Request headers:', {
-            'Content-Type': 'application/json',
-            'Authorization': token ? `Bearer ${token.substring(0, 20)}...` : 'No token'
-        });
         
         const response = await fetch('/open-finance/connected-accounts', {
             method: 'GET',
@@ -77,46 +67,19 @@ async function loadConnectedInstitutions() {
             }
         });
         
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
-        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-        
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('API Error:', errorText);
-            console.error('Full response details:', {
-                status: response.status,
-                statusText: response.statusText,
-                headers: Object.fromEntries(response.headers.entries())
-            });
             throw new Error(`Failed to load institutions: ${response.status} - ${errorText}`);
         }
         
         const data = await response.json();
-        console.log('Loaded accounts from server:', data);
-        console.log('Raw accounts data:', data.accounts);
-        console.log('Accounts count from API:', data.count);
-        console.log('Data type check:', {
-            dataType: typeof data,
-            accountsType: typeof data.accounts,
-            isAccountsArray: Array.isArray(data.accounts),
-            accountsLength: data.accounts ? data.accounts.length : 'undefined'
-        });
         
         if (!data.accounts || !Array.isArray(data.accounts)) {
-            console.warn('No accounts array found in response');
             institutions = [];
         } else {
             institutions = data.accounts.map(account => {
-                console.log('Processing account:', account);
-                console.log('Account lastSync value:', account.lastSync);
-                console.log('Account lastSync type:', typeof account.lastSync);
-                
-                // Usar data salva permanentemente se existir, senão usar do servidor
                 const savedSyncDate = syncDatesMap.get(account.id.toString());
                 const lastSyncToUse = savedSyncDate || account.lastSync;
-                
-                console.log('Using lastSync:', lastSyncToUse, '(saved:', savedSyncDate, ', server:', account.lastSync, ')');
                 
                 return {
                     id: account.id,
@@ -127,26 +90,14 @@ async function loadConnectedInstitutions() {
                 };
             });
         }
-        console.log('Mapped institutions:', institutions);
-        console.log('Total institutions found:', institutions.length);
-        console.log('Will render institutions now...');
         
-        // Cache removido para garantir dados sempre atualizados
+
         
         updateStats();
         renderInstitutions();
     } catch (error) {
-        console.log('Error loading from server, trying cache as fallback');
-        const cachedData = localStorage.getItem('institutionsCache');
-        if (cachedData) {
-            institutions = JSON.parse(cachedData);
-            updateStats();
-            renderInstitutions();
-            showNotification('Dados carregados do cache local', 'warning');
-        } else {
-            showNotification('Erro ao carregar instituições', 'error');
-            renderEmptyState();
-        }
+        showNotification('Erro ao carregar instituições', 'error');
+        renderEmptyState();
     } finally {
         isLoading = false;
         hideLoadingState();
@@ -236,33 +187,22 @@ function getFilteredInstitutions() {
 
 // Render institutions grid
 function renderInstitutions() {
-    console.log('renderInstitutions called');
-    console.log('institutionsGrid element:', institutionsGrid);
-    
     if (!institutionsGrid) {
-        console.error('institutionsGrid element not found!');
         return;
     }
     
     const filteredInstitutions = getFilteredInstitutions();
-    console.log('Filtered institutions for rendering:', filteredInstitutions);
     
     if (filteredInstitutions.length === 0) {
-        console.log('No institutions to render, showing empty state');
         renderEmptyState();
         return;
     }
     
-    console.log('Creating cards for', filteredInstitutions.length, 'institutions');
     const cardsHTML = filteredInstitutions.map(institution => {
-        const cardHTML = createInstitutionCard(institution);
-        console.log('Created card for institution:', institution.name);
-        return cardHTML;
+        return createInstitutionCard(institution);
     }).join('');
     
     institutionsGrid.innerHTML = cardsHTML;
-    console.log('Cards inserted into DOM');
-    
     setupCardEventListeners();
 }
 
@@ -347,8 +287,6 @@ function formatDate(dateString) {
 
 // Render empty state
 function renderEmptyState() {
-    console.log('renderEmptyState called - showing empty state');
-    console.log('Current institutions array:', institutions);
     
     const emptyMessage = 'Nenhuma instituição conectada ainda';
     const emptyDescription = 'Conecte suas contas bancárias para começar a gerenciar suas finanças de forma integrada.';
@@ -465,32 +403,22 @@ function hideDisconnectModal() {
 
 // Action handlers
 function syncInstitution(id, institutionName) {
-    console.log('syncInstitution called with:', id, institutionName);
-    // Converter ID para número se necessário
     const numericId = parseInt(id);
     const institution = institutions.find(inst => inst.id === numericId || inst.id === id);
     if (institution) {
-        // Armazenar informações para uso no modal
         currentInstitutionId = institution.id;
         currentInstitutionName = institutionName || institution.name;
         showSyncModal(institution);
-    } else {
-        console.error('Institution not found:', id, 'Available institutions:', institutions.map(i => ({id: i.id, name: i.name})));
     }
 }
 
 function disconnectInstitution(id, institutionName) {
-    console.log('disconnectInstitution called with:', id, institutionName);
-    // Converter ID para número se necessário
     const numericId = parseInt(id);
     const institution = institutions.find(inst => inst.id === numericId || inst.id === id);
     if (institution) {
-        // Armazenar informações para uso no modal
         currentInstitutionId = institution.id;
         currentInstitutionName = institutionName || institution.name;
         showDisconnectModal(institution);
-    } else {
-        console.error('Institution not found:', id, 'Available institutions:', institutions.map(i => ({id: i.id, name: i.name})));
     }
 }
 
@@ -502,8 +430,6 @@ window.handleDisconnectInstitution = handleDisconnectInstitution;
 
 // Sync institution
 async function handleSyncInstitution(id, institutionName) {
-    console.log('handleSyncInstitution called with:', id, institutionName);
-    // Garantir que o ID seja do tipo correto
     const institutionId = parseInt(id) || id;
     
     try {
@@ -554,12 +480,11 @@ async function handleSyncInstitution(id, institutionName) {
                 try {
                     syncDatesObj = JSON.parse(savedSyncDates);
                 } catch (e) {
-                    console.log('Error parsing saved sync dates:', e);
+                    // Ignorar erro de parsing
                 }
             }
             syncDatesObj[institutionId.toString()] = newSyncDate;
             localStorage.setItem('institutionsSyncDates', JSON.stringify(syncDatesObj));
-            console.log('Saved sync date permanently for institution', institutionId, ':', newSyncDate);
             
             // Atualizar cache
             localStorage.setItem('institutionsCache', JSON.stringify(institutions));
@@ -571,10 +496,7 @@ async function handleSyncInstitution(id, institutionName) {
         
         showNotification(`${institutionName} sincronizado com sucesso!`, 'success');
         
-        // Não recarregar automaticamente para preservar a data de sincronização atualizada
-        
     } catch (error) {
-        console.error('Error syncing account:', error);
         showNotification(`Erro ao sincronizar ${institutionName || 'conta'}: ${error.message}`, 'error');
     } finally {
         // Restaurar botão
@@ -589,8 +511,6 @@ async function handleSyncInstitution(id, institutionName) {
 
 // Disconnect institution
 async function handleDisconnectInstitution(id, institutionName) {
-    console.log('handleDisconnectInstitution called with:', id, institutionName);
-    // Garantir que o ID seja do tipo correto
     const institutionId = parseInt(id) || id;
     
     try {
@@ -625,9 +545,8 @@ async function handleDisconnectInstitution(id, institutionName) {
                 const syncDatesObj = JSON.parse(savedSyncDates);
                 delete syncDatesObj[institutionId.toString()];
                 localStorage.setItem('institutionsSyncDates', JSON.stringify(syncDatesObj));
-                console.log('Removed saved sync date for disconnected institution:', institutionId);
             } catch (e) {
-                console.log('Error removing saved sync date:', e);
+                // Ignorar erro
             }
         }
         
@@ -647,7 +566,6 @@ async function handleDisconnectInstitution(id, institutionName) {
             detail: { institutionId: institutionId, institutionName: institutionName }
         }));
     } catch (error) {
-        console.error('Error disconnecting institution:', error);
         showNotification(`Erro ao desconectar ${institutionName || 'instituição'}: ${error.message}`, 'error');
     } finally {
         // Restaurar botão
@@ -669,16 +587,8 @@ window.handleConnectInstitution = handleConnectInstitution;
 
 // Função para limpar cache e recarregar dados (útil após conectar nova conta)
 function clearCacheAndReload() {
-    console.log('Recarregando dados...');
-    
-    // Resetar variável de loading para forçar nova busca
     isLoading = false;
-    
-    // Limpar array de instituições
     institutions = [];
-    
-    // Recarregar dados
-    console.log('Forçando reload completo dos dados...');
     loadConnectedInstitutions();
 }
 
@@ -747,8 +657,6 @@ function showNotification(message, type = 'info') {
 
 // Listen for account connection events
 window.addEventListener('accountConnected', (event) => {
-    console.log('Nova conta conectada:', event.detail);
-    // Aguardar um pouco para garantir que o servidor processou completamente
     setTimeout(() => {
         clearCacheAndReload();
     }, 2000);
@@ -756,8 +664,6 @@ window.addEventListener('accountConnected', (event) => {
 
 // Listen for account disconnection events
 window.addEventListener('accountDisconnected', (event) => {
-    console.log('Conta desconectada:', event.detail);
-    // Aguardar um pouco para garantir que o servidor processou completamente
     setTimeout(() => {
         clearCacheAndReload();
     }, 2000);

@@ -164,7 +164,7 @@ class OpenFinanceController {
           const transacoesResponse = await axios.get(`${lucasApiUrl}/usuarios/${cpf}/transacoes`);
           transactionsData = transacoesResponse.data.transacoes || [];
         } catch (transError) {
-          console.log('Nenhuma transação encontrada na API do Lucas ou erro ao buscar:', transError.message);
+          // Ignorar erro de transações
         }
         
         // Obter o nome real da instituição do banco de dados
@@ -246,7 +246,7 @@ class OpenFinanceController {
           const transactionsResponse = await axios.get(`${apiUrl}/usuarios/${cpf}/transacoes`);
           transactionsData = transactionsResponse.data.transacoes || transactionsResponse.data.transactions || [];
         } catch (transError) {
-          console.log(`No transactions endpoint available for ${apiName}`);
+          // Endpoint de transações não disponível
         }
         
         // Usar função auxiliar para criar/atualizar conta
@@ -563,16 +563,11 @@ class OpenFinanceController {
   // Lista as contas conectadas do usuário
   static async getConnectedAccounts(req, res) {
     try {
-      console.log('=== getConnectedAccounts called ===');
-      console.log('req.user:', req.user);
-      
       if (!req.user || !req.user.cpf) {
-        console.log('Authentication failed - no user or cpf');
         return res.status(401).json({ error: 'User authentication failed' });
       }
       
       const { cpf } = req.user;
-      console.log('Searching accounts for CPF:', cpf);
       
       const linkedAccounts = await Account.findAll({
         where: { 
@@ -580,23 +575,6 @@ class OpenFinanceController {
           consent: true 
         }
       });
-      
-      console.log('Raw linkedAccounts from database:', linkedAccounts);
-      console.log('Number of accounts found:', linkedAccounts.length);
-      
-      if (linkedAccounts.length > 0) {
-        linkedAccounts.forEach((account, index) => {
-          console.log(`Account ${index + 1}:`, {
-            id: account.id,
-            id_bank: account.id_bank,
-            user_cpf: account.user_cpf,
-            institution_name: account.institution_name,
-            balance: account.balance,
-            consent: account.consent,
-            updated_at: account.updated_at
-          });
-        });
-      }
 
       const connectedAccounts = linkedAccounts.map(account => ({
         id: account.id_bank,
@@ -606,14 +584,11 @@ class OpenFinanceController {
         lastSync: account.updated_at
       }));
       
-      console.log('Mapped connectedAccounts:', connectedAccounts);
-      
       const response = {
         accounts: connectedAccounts,
         count: connectedAccounts.length
       };
       
-      console.log('Final response:', response);
       return res.json(response);
     } catch (error) {
       console.error('Error getting connected accounts:', error);
@@ -751,7 +726,7 @@ class OpenFinanceController {
             const transacoesResponse = await axios.get(`${lucasApiUrl}/usuarios/${cpf}/transacoes`);
             transactions = transacoesResponse.data.transacoes || [];
           } catch (transError) {
-            console.log('Nenhuma transação encontrada na API do Lucas:', transError.message);
+            // Ignorar erro de transações
           }
           
           externalData = {
