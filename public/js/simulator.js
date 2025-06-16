@@ -1012,7 +1012,7 @@ const performanceStart = performance.now()
 
 window.addEventListener("load", () => {
   const loadTime = performance.now() - performanceStart
-  console.log(`Página carregada em ${loadTime.toFixed(2)}ms`)
+  
 })
 
 // Error handling

@@ -691,7 +691,7 @@ let connectionProgress = 0;
 
 function handleConnectNewAccount() {
     // This function is now replaced by the multi-connect functionality
-    console.log('Multi-connect functionality is now active');
+    
 }
 
 
@@ -1368,7 +1368,7 @@ function showConnectionResults(successCount, errorCount, results) {
     }
     
     // Log detailed results for debugging
-    console.log('Connection results:', results);
+    
 }
 
 function updateConnectionStatus() {
