@@ -226,6 +226,44 @@ To view and manage the database:
 - `npm run migrate` - Runs database migrations
 - `npm run down` - Stops all Docker containers and removes volumes
 
+## 🔧 Data Configuration for Testing
+
+### ⚠️ Important: CPF Synchronization
+
+To use **ContaComigo** correctly, it is **essential** that the CPF of the user created on the platform is **exactly the same** as the CPF of users registered in the microservices APIs databases. This synchronization is necessary for the system to correlate financial data with the correct user.
+
+### 🛠️ Using Insomnia for Data Registration
+
+It is **highly recommended** to use **Insomnia** (or similar tools like Postman) for initial data registration in the microservices APIs.
+
+#### 🏦 Important: Each API = One Financial Institution
+
+Each API functions as an **independent financial institution**. This means you need to register data **separately in each API** you want to test. For example:
+- **Caputi-API** = Caputi Bank
+- **Dante-API** = Dante Bank  
+- **Lucas-API** = Lucas Bank
+- **Patricia-API** = Patricia Bank
+- **Raul-API** = Raul Bank
+- **Vitor-API** = Vitor Bank
+
+#### Data to Register per API:
+- **🏦 One Financial Institution** (one per API)
+- **👤 One User** (with identical CPF used in ContaComigo)
+- **💳 Bank Accounts** (linked to the user)
+- **💰 Financial Transactions**
+- **📋 Open Finance Consents**
+
+#### Recommended Flow (Repeat for each API):
+1. **First**: Register a financial institution in the API
+2. **Second**: Register the user with the **same CPF** that will be used in ContaComigo
+3. **Third**: Register bank accounts linked to the user
+4. **Fourth**: Add financial transactions for the account
+5. **Fifth**: Configure Open Finance consents if necessary
+
+> ⚠️ **Remember**: Repeat this process **individually for each API** you want to test. The more APIs you configure, the more financial institutions will appear in ContaComigo!
+
+> 💡 **Tip**: Keep CPFs synchronized between the frontend (ContaComigo) and the APIs to ensure proper integration between services.
+
 ## 🌟 Features
 
 ### Landing Page
@@ -263,21 +301,21 @@ To view and manage the database:
         <img src="https://github.com/Dante-Alsino.png" width="100px;" alt="Dante Alsino"/><br />
         <sub><b>Dante Alsino</b></sub>
       </a><br />
-      <sub>Full Stack Developer</sub>
+      <sub>Web Developer</sub>
     </td>
     <td align="center">
       <a href="https://github.com/l-guidotti">
         <img src="https://github.com/l-guidotti.png" width="100px;" alt="Lucas Guidotti"/><br />
         <sub><b>Lucas Guidotti da Silveira</b></sub>
       </a><br />
-      <sub>Full Stack Developer</sub>
+      <sub>Web Developer</sub>
     </td>
     <td align="center">
       <a href="https://github.com/patriciapqa">
         <img src="https://github.com/patriciapqa.png" width="100px;" alt="Patricia Quiroz"/><br />
         <sub><b>Patricia Quiroz Adolpho</b></sub>
       </a><br />
-      <sub>Full Stack Developer</sub>
+      <sub>Web Developer</sub>
     </td>
   </tr>
   <tr>
@@ -286,21 +324,21 @@ To view and manage the database:
         <img src="https://github.com/Raullize.png" width="100px;" alt="Raul Lize"/><br />
         <sub><b>Raul Lize Teixeira</b></sub>
       </a><br />
-      <sub>Full Stack Developer</sub>
+      <sub>Web Developer</sub>
     </td>
     <td align="center">
       <a href="https://github.com/CaputiDev">
         <img src="https://github.com/CaputiDev.png" width="100px;" alt="Thiago Caputi"/><br />
         <sub><b>Thiago Rodrigues Caputi</b></sub>
       </a><br />
-      <sub>Full Stack Developer</sub>
+      <sub>Web Developer</sub>
     </td>
     <td align="center">
       <a href="https://github.com/Viitorkm">
         <img src="https://github.com/Viitorkm.png" width="100px;" alt="Vitor Marmitt"/><br />
         <sub><b>Vitor Hugo Kroth Marmitt</b></sub>
       </a><br />
-      <sub>Full Stack Developer</sub>
+      <sub>Web Developer</sub>
     </td>
   </tr>
 </table>
