@@ -9,7 +9,7 @@ const crypto = require('crypto');
 
 class OpenFinanceController {
   // Função auxiliar para criar ou atualizar conta
-  static async createOrUpdateAccount(cpf, accountData, institutionName) {
+  static async createOrUpdateAccount(cpf, accountData, institutionName, apiSource = 'vitor') {
     let account = await Account.findOne({
       where: { 
         user_cpf: cpf,
@@ -22,6 +22,7 @@ class OpenFinanceController {
       account.balance = accountData.balance || accountData.saldo || 0;
       account.consent = true;
       account.institution_name = institutionName;
+      account.api_source = apiSource;
       account.updated_at = new Date();
       await account.save();
     } else {
@@ -31,7 +32,8 @@ class OpenFinanceController {
         id_bank: accountData.id,
         balance: accountData.balance || accountData.saldo || 0,
         consent: true,
-        institution_name: institutionName
+        institution_name: institutionName,
+        api_source: apiSource
       });
     }
 
@@ -173,7 +175,7 @@ class OpenFinanceController {
           : 'Banco Lucas';
         
         // Usar função auxiliar para criar/atualizar conta
-        const account = await OpenFinanceController.createOrUpdateAccount(cpf, lucasAccount, institutionName);
+        const account = await OpenFinanceController.createOrUpdateAccount(cpf, lucasAccount, institutionName, 'lucas');
         
         // Usar função auxiliar para sincronizar transações
         await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
@@ -250,7 +252,8 @@ class OpenFinanceController {
         }
         
         // Usar função auxiliar para criar/atualizar conta
-        const account = await OpenFinanceController.createOrUpdateAccount(cpf, accountData, institutionName);
+        const apiSource = apiName.toLowerCase();
+        const account = await OpenFinanceController.createOrUpdateAccount(cpf, accountData, institutionName, apiSource);
         
         // Usar função auxiliar para sincronizar transações
         await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
@@ -407,6 +410,7 @@ class OpenFinanceController {
             account.balance = externalData.balance;
             account.consent = true;
             account.institution_name = institutionName;
+            account.api_source = 'vitor';
             await account.save();
           } else {
             // Cria nova conta
@@ -415,7 +419,8 @@ class OpenFinanceController {
               id_bank: bankId,
               balance: externalData.balance,
               consent: true,
-              institution_name: institutionName
+              institution_name: institutionName,
+              api_source: 'vitor'
             });
           }
 
@@ -704,12 +709,12 @@ class OpenFinanceController {
         return res.status(404).json({ error: 'Account not found or not linked' });
       }
 
-      // Determinar qual API usar baseado na instituição
-      const institutionName = account.institution_name;
+      // Determinar qual API usar baseado no api_source
+      const apiSource = account.api_source || 'vitor';
       let externalData;
       
       try {
-        if (institutionName === 'Banco Lucas' || institutionName.includes('Lucas')) {
+        if (apiSource === 'lucas') {
           // Sincronizar com a API do Lucas
           const lucasApiUrl = process.env.LUCAS_API_URL || 'http://localhost:4003';
           
@@ -734,7 +739,7 @@ class OpenFinanceController {
             transactions: transactions
           };
           
-        } else if (institutionName === 'Banco Patricia') {
+        } else if (apiSource === 'patricia') {
           // Sincronizar com a API da Patricia
           const patriciaApiUrl = process.env.PATRICIA_API_URL || 'http://localhost:4004';
           
@@ -746,7 +751,7 @@ class OpenFinanceController {
             transactions: response.data.transacoes || []
           };
           
-        } else if (institutionName === 'Banco Dante') {
+        } else if (apiSource === 'dante') {
           // Sincronizar com a API do Dante
           const danteApiUrl = process.env.DANTE_API_URL || 'http://localhost:4006';
           
@@ -758,7 +763,7 @@ class OpenFinanceController {
             transactions: response.data.transacoes || []
           };
           
-        } else if (institutionName === 'Banco Raul') {
+        } else if (apiSource === 'raul') {
           // Sincronizar com a API do Raul
           const raulApiUrl = process.env.RAUL_API_URL || 'http://localhost:4007';
           

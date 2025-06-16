@@ -20,6 +20,12 @@ module.exports = (sequelize, DataTypes) => {
       balance: DataTypes.DECIMAL,
       consent: DataTypes.BOOLEAN,
       institution_name: DataTypes.STRING,
+      api_source: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        defaultValue: 'vitor',
+        field: 'api_source'
+      },
     },
     {
       sequelize,
