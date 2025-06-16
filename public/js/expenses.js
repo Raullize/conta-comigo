@@ -349,7 +349,7 @@ class ExpensesManager {
 
         // Criar modal dinamicamente
         const modalHTML = `
-            <div id="categoryModal" class="modal-overlay">
+            <div id="categoryModal" class="expenses-modal-overlay">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h3>Classificar Transação</h3>

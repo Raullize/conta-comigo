@@ -298,7 +298,6 @@ function renderEmptyState() {
             </div>
             <h3 class="empty-title">${emptyMessage}</h3>
             <p class="empty-description">${emptyDescription}</p>
-            <button class="btn btn-primary" onclick="handleConnectInstitution()">Vincular Primeira Conta</button>
         </div>
     `;
 }
@@ -442,8 +441,6 @@ async function handleSyncInstitution(id, institutionName) {
             syncButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sincronizando...';
         }
         
-        showNotification(`Sincronizando ${institutionName}...`, 'info');
-        
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('Token de autenticação não encontrado');
@@ -523,7 +520,7 @@ async function handleDisconnectInstitution(id, institutionName) {
             disconnectButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Desconectando...';
         }
         
-        showNotification(`Desconectando ${institutionName}...`, 'info');
+        // Removido notificação de início para evitar duplicação
         
         const response = await fetch(`/open-finance/disconnect/${institutionId}`, {
             method: 'DELETE',

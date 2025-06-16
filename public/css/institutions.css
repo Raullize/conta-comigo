@@ -371,6 +371,12 @@
 .empty-state {
   text-align: center;
   padding: var(--spacing-4xl) var(--spacing-2xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  width: 100%;
 }
 
 .empty-icon {
@@ -469,43 +475,39 @@
 }
 
 /* Modal Styles */
-.modal {
-  display: none;
+.institutions-modal {
   position: fixed;
-  z-index: var(--z-modal-backdrop);
-  left: 0;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-}
-
-.modal.show {
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 1;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-.modal-content {
-  background: var(--white);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-xl);
+.institutions-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.institutions-modal .modal-content {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
   max-width: 500px;
   width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-  transform: scale(0.9);
-  transition: transform var(--transition-normal);
-  z-index: var(--z-modal);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
 }
 
-.modal.show .modal-content {
-  transform: scale(1);
+.institutions-modal.show .modal-content {
+  animation: modalSlideIn 0.3s ease-out;
 }
 
 .modal-header {
