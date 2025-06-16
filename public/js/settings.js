@@ -72,15 +72,19 @@ async function loadConnectedAccounts() {
             const data = await response.json();
             connectedBanks = data.accounts || [];
             renderConnectedAccounts();
+            // Update multi-connect UI after loading accounts
+            updateConnectionStatus();
         } else {
             console.error('Failed to load connected accounts:', response.status);
             connectedBanks = [];
             renderConnectedAccounts();
+            updateConnectionStatus();
         }
     } catch (error) {
         console.error('Error loading connected accounts:', error);
         connectedBanks = [];
         renderConnectedAccounts();
+        updateConnectionStatus();
     }
 }
 
@@ -113,10 +117,8 @@ function setupEventListeners() {
     }
 
 
-    const connectNewAccountBtn = document.getElementById('connectNewAccountBtn');
-    if (connectNewAccountBtn) {
-        connectNewAccountBtn.addEventListener('click', handleConnectNewAccount);
-    }
+    // Multi-connect event listeners
+    setupMultiConnectEventListeners();
 
 
     const deleteBtn = document.getElementById('deleteAccountBtn');
@@ -682,8 +684,14 @@ function addConnectedBank(bankData) {
 }
 
 
+// Multi-connect functionality
+let selectedBanks = new Set();
+let connectingBanks = new Set();
+let connectionProgress = 0;
+
 function handleConnectNewAccount() {
-    showToast('Em desenvolvimento', 'info');
+    // This function is now replaced by the multi-connect functionality
+    console.log('Multi-connect functionality is now active');
 }
 
 
@@ -1055,7 +1063,7 @@ function removeProfilePhoto() {
 }
 
 function updateHeaderProfilePhoto() {
-
+    // Get user avatar element
     const userAvatar = document.querySelector('.user-avatar');
     if (userAvatar) {
         const userData = JSON.parse(localStorage.getItem('userData')) || {};
@@ -1067,4 +1075,332 @@ function updateHeaderProfilePhoto() {
             userAvatar.innerHTML = '<i class="fas fa-user"></i>';
         }
     }
+}
+
+// ===== MULTI-CONNECT FUNCTIONALITY =====
+
+function setupMultiConnectEventListeners() {
+    // Checkbox change events
+    const bankCheckboxes = document.querySelectorAll('.bank-checkbox');
+    bankCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', handleBankSelection);
+    });
+    
+    // Institution card click events
+    const institutionCards = document.querySelectorAll('.institution-card-settings');
+    institutionCards.forEach(card => {
+        card.addEventListener('click', handleCardClick);
+    });
+    
+    // Connect buttons
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    const connectSelectedBtn = document.getElementById('connectSelectedBtn');
+    
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', handleSelectAll);
+    }
+    
+    if (connectSelectedBtn) {
+        connectSelectedBtn.addEventListener('click', handleConnectSelected);
+    }
+    
+    // Initialize connection status after a short delay to ensure connectedBanks is loaded
+    setTimeout(() => {
+        updateConnectionStatus();
+    }, 100);
+}
+
+function handleBankSelection(event) {
+    const bankId = event.target.id.replace('bank-', '');
+    const card = event.target.closest('.institution-card-settings');
+    
+    if (event.target.checked) {
+        selectedBanks.add(bankId);
+        card.classList.add('selected');
+    } else {
+        selectedBanks.delete(bankId);
+        card.classList.remove('selected');
+    }
+    
+    updateSelectionUI();
+}
+
+function handleCardClick(event) {
+    // Don't trigger if clicking on checkbox or if card is connected/connecting
+    if (event.target.type === 'checkbox' || 
+        event.currentTarget.classList.contains('connected') ||
+        event.currentTarget.classList.contains('connecting')) {
+        return;
+    }
+    
+    const checkbox = event.currentTarget.querySelector('.bank-checkbox');
+    if (checkbox && !checkbox.disabled) {
+        checkbox.checked = !checkbox.checked;
+        checkbox.dispatchEvent(new Event('change'));
+    }
+}
+
+function handleSelectAll() {
+    const availableCheckboxes = document.querySelectorAll('.bank-checkbox:not(:disabled)');
+    const allSelected = Array.from(availableCheckboxes).every(cb => cb.checked);
+    
+    availableCheckboxes.forEach(checkbox => {
+        const shouldCheck = !allSelected;
+        if (checkbox.checked !== shouldCheck) {
+            checkbox.checked = shouldCheck;
+            checkbox.dispatchEvent(new Event('change'));
+        }
+    });
+    
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    if (selectAllBtn) {
+        const text = allSelected ? 'Selecionar Todas' : 'Desmarcar Todas';
+        selectAllBtn.innerHTML = `<i class="fas fa-check-double"></i> ${text}`;
+    }
+}
+
+function updateSelectionUI() {
+    const selectedCount = selectedBanks.size;
+    const selectedCountElement = document.getElementById('selectedCount');
+    const connectSelectedBtn = document.getElementById('connectSelectedBtn');
+    
+    if (selectedCountElement) {
+        selectedCountElement.textContent = selectedCount;
+    }
+    
+    if (connectSelectedBtn) {
+        connectSelectedBtn.disabled = selectedCount === 0;
+        connectSelectedBtn.innerHTML = selectedCount === 0 
+            ? '<i class="fas fa-link"></i> Conectar Selecionadas'
+            : `<i class="fas fa-link"></i> Conectar ${selectedCount} Conta${selectedCount > 1 ? 's' : ''}`;
+    }
+}
+
+async function handleConnectSelected() {
+    if (selectedBanks.size === 0) {
+        showToast('Selecione pelo menos uma instituição para conectar', 'error');
+        return;
+    }
+    
+    const selectedArray = Array.from(selectedBanks);
+    const totalBanks = selectedArray.length;
+    
+    showConnectionProgress();
+    
+    let successCount = 0;
+    let errorCount = 0;
+    const results = [];
+    
+    // Connect banks sequentially to avoid overwhelming the backend
+    for (let i = 0; i < selectedArray.length; i++) {
+        const bankId = selectedArray[i];
+        updateProgressBar(((i + 1) / totalBanks) * 100);
+        
+        try {
+            setCardConnecting(bankId, true);
+            const result = await connectBank(bankId);
+            
+            if (result.success) {
+                successCount++;
+                setCardConnected(bankId, true);
+                results.push({ bankId, success: true, message: result.message });
+                
+                // Remove from selected banks
+                selectedBanks.delete(bankId);
+                const checkbox = document.getElementById(`bank-${bankId}`);
+                if (checkbox) {
+                    checkbox.checked = false;
+                    checkbox.disabled = true;
+                }
+            } else {
+                errorCount++;
+                results.push({ bankId, success: false, message: result.message });
+            }
+        } catch (error) {
+            errorCount++;
+            results.push({ bankId, success: false, message: error.message });
+        } finally {
+            setCardConnecting(bankId, false);
+        }
+    }
+    
+    updateProgressBar(100);
+    
+    // Hide progress after a short delay
+    setTimeout(() => {
+        hideConnectionProgress();
+    }, 1000);
+    
+    // Show results
+    showConnectionResults(successCount, errorCount, results);
+    
+    // Update UI
+    updateSelectionUI();
+    
+    // Reload connected accounts to reflect changes
+    setTimeout(() => {
+        loadConnectedAccounts();
+    }, 1500);
+}
+
+async function connectBank(bankId) {
+    const endpoints = {
+        vitor: '/open-finance/link-vitor',
+        lucas: '/open-finance/link-lucas',
+        caputi: '/open-finance/link-caputi',
+        dante: '/open-finance/link-dante',
+        raul: '/open-finance/link-raul',
+        patricia: '/open-finance/link-patricia'
+    };
+    
+    const endpoint = endpoints[bankId];
+    if (!endpoint) {
+        throw new Error(`Endpoint não encontrado para ${bankId}`);
+    }
+    
+    const token = localStorage.getItem('token');
+    if (!token) {
+        throw new Error('Token de autenticação não encontrado');
+    }
+    
+    const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ consent: true })
+    });
+    
+    const data = await response.json();
+    
+    if (response.ok) {
+        return { 
+            success: true, 
+            message: data.message || `Banco ${bankId} conectado com sucesso!` 
+        };
+    } else {
+        return { 
+            success: false, 
+            message: data.error || `Erro ao conectar ${bankId}` 
+        };
+    }
+}
+
+function setCardConnecting(bankId, connecting) {
+    const card = document.querySelector(`[data-bank-id="${bankId}"]`);
+    const statusElement = document.getElementById(`status-${bankId}`);
+    
+    if (card && statusElement) {
+        if (connecting) {
+            card.classList.add('connecting');
+            statusElement.innerHTML = '<span class="status-text">Conectando...</span>';
+            connectingBanks.add(bankId);
+        } else {
+            card.classList.remove('connecting');
+            connectingBanks.delete(bankId);
+        }
+    }
+}
+
+function setCardConnected(bankId, connected) {
+    const card = document.querySelector(`[data-bank-id="${bankId}"]`);
+    const statusElement = document.getElementById(`status-${bankId}`);
+    const checkbox = document.getElementById(`bank-${bankId}`);
+    
+    if (card && statusElement) {
+        if (connected) {
+            card.classList.add('connected');
+            card.classList.remove('selected');
+            statusElement.classList.add('connected');
+            statusElement.innerHTML = '<span class="status-text">Conectado</span>';
+            
+            if (checkbox) {
+                checkbox.disabled = true;
+                checkbox.checked = false;
+            }
+        } else {
+            card.classList.remove('connected');
+            statusElement.classList.remove('connected');
+            statusElement.innerHTML = '<span class="status-text">Não conectado</span>';
+            
+            if (checkbox) {
+                checkbox.disabled = false;
+            }
+        }
+    }
+}
+
+function showConnectionProgress() {
+    let progressElement = document.querySelector('.connection-progress');
+    if (!progressElement) {
+        progressElement = document.createElement('div');
+        progressElement.className = 'connection-progress';
+        progressElement.innerHTML = '<div class="connection-progress-bar"></div>';
+        document.body.appendChild(progressElement);
+    }
+    progressElement.style.display = 'block';
+}
+
+function updateProgressBar(percentage) {
+    const progressBar = document.querySelector('.connection-progress-bar');
+    if (progressBar) {
+        progressBar.style.width = `${percentage}%`;
+    }
+}
+
+function hideConnectionProgress() {
+    const progressElement = document.querySelector('.connection-progress');
+    if (progressElement) {
+        progressElement.style.display = 'none';
+    }
+}
+
+function showConnectionResults(successCount, errorCount, results) {
+    const totalCount = successCount + errorCount;
+    
+    if (successCount === totalCount) {
+        showToast(`${successCount} conta${successCount > 1 ? 's' : ''} conectada${successCount > 1 ? 's' : ''} com sucesso!`, 'success');
+    } else if (errorCount === totalCount) {
+        showToast(`Erro ao conectar todas as contas selecionadas`, 'error');
+    } else {
+        showToast(`${successCount} conta${successCount > 1 ? 's' : ''} conectada${successCount > 1 ? 's' : ''}, ${errorCount} com erro`, 'info');
+    }
+    
+    // Log detailed results for debugging
+    console.log('Connection results:', results);
+}
+
+function updateConnectionStatus() {
+    // This will be called after loading connected accounts to update UI
+    if (connectedBanks && connectedBanks.length > 0) {
+        connectedBanks.forEach(account => {
+            // Extract bank ID from account data
+            const bankId = getBankIdFromAccount(account);
+            if (bankId) {
+                setCardConnected(bankId, true);
+            }
+        });
+        
+        // Update connected count display
+        const connectedCountDisplay = document.getElementById('connectedCountDisplay');
+        if (connectedCountDisplay) {
+            const count = connectedBanks.length;
+            connectedCountDisplay.textContent = `${count} conta${count > 1 ? 's' : ''}`;
+        }
+    }
+}
+
+function getBankIdFromAccount(account) {
+    // Map account sources to bank IDs
+    const sourceMap = {
+        'vitor': 'vitor',
+        'lucas': 'lucas',
+        'patricia': 'patricia',
+        'dante': 'dante',
+        'raul': 'raul',
+        'caputi': 'caputi'
+    };
+    
+    return sourceMap[account.api_source] || null;
 }
