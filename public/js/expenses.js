@@ -788,8 +788,10 @@ class ExpensesManager {
             const data = await response.json();
             
             // Converter os dados do backend para o formato esperado pelo frontend
+            console.log('[Expenses] Dados recebidos do backend:', data.transactions);
+            
             this.transactions = data.transactions.map(transaction => {
-                return {
+                const convertedTransaction = {
                     id: transaction.id,
                     title: transaction.title,
                     category: transaction.category,
@@ -800,7 +802,12 @@ class ExpensesManager {
                     destination_cpf: transaction.destination_cpf,
                     id_bank: transaction.id_bank
                 };
+                
+                console.log(`[Expenses] Transação convertida:`, convertedTransaction);
+                return convertedTransaction;
             });
+            
+            console.log(`[Expenses] Total de transações carregadas: ${this.transactions.length}`);
 
             // Atualizar filteredTransactions
             this.filteredTransactions = [...this.transactions];

@@ -43,9 +43,12 @@ class OpenFinanceController {
   // Função auxiliar para sincronizar transações
   static async syncTransactions(cpf, accountId, transactions) {
     console.log(`[OpenFinance] Sincronizando transações para CPF: ${cpf}, Conta ID: ${accountId}`);
-    console.log(`[OpenFinance] Transações recebidas:`, transactions.length);
+    console.log(`[OpenFinance] Transações recebidas:`, transactions);
+    console.log(`[OpenFinance] Tipo de transações:`, typeof transactions);
+    console.log(`[OpenFinance] É array?:`, Array.isArray(transactions));
+    console.log(`[OpenFinance] Quantidade:`, transactions ? (Array.isArray(transactions) ? transactions.length : 'não é array') : 'undefined');
     
-    if (!transactions || transactions.length === 0) {
+    if (!transactions || !Array.isArray(transactions) || transactions.length === 0) {
       console.log(`[OpenFinance] Nenhuma transação para sincronizar`);
       return;
     }
@@ -64,18 +67,43 @@ class OpenFinanceController {
 
     // Adiciona novas transações
     const transactionsToCreate = transactions.map((transaction, index) => {
-      // Determinar se é crédito ou débito - agora corrigido para API Dante
-      const isCredit = transaction.type === 'credit' || transaction.tipo === 'credito';
+      // Determinar se é crédito ou débito - compatível com múltiplas APIs
+      const isCredit = transaction.type === 'credit' || 
+                      transaction.tipo === 'credito' || 
+                      transaction.type === 'entrada' ||
+                      transaction.tipo === 'entrada';
       
-      console.log(`[OpenFinance] Transação ${index + 1}: tipo="${transaction.type}", tipo_original="${transaction.tipo}", isCredit=${isCredit}`);
+      // Para API Raul: "saida" = débito, "entrada" = crédito
+      const isDebit = transaction.type === 'saida' || 
+                     transaction.tipo === 'saida' ||
+                     transaction.type === 'debit' ||
+                     transaction.tipo === 'debito';
+      
+      console.log(`[OpenFinance] Transação ${index + 1}: 
+        tipo="${transaction.type}", 
+        tipo_original="${transaction.tipo}", 
+        isCredit=${isCredit},
+        isDebit=${isDebit},
+        valor="${transaction.valor || transaction.value}",
+        descricao="${transaction.descricao || transaction.description}"`);
+      
+      // Determinar o tipo final da transação
+      let finalType = 'D'; // default para débito
+      if (isCredit) {
+        finalType = 'C';
+      } else if (isDebit) {
+        finalType = 'D';
+      }
+      
+      console.log(`[OpenFinance] Tipo final determinado: ${finalType} (isCredit: ${isCredit}, isDebit: ${isDebit})`);
       
       const processedTransaction = {
-        origin_cpf: isCredit ? null : cpf,
-        destination_cpf: isCredit ? cpf : null,
-        value: Math.abs(parseFloat(transaction.valor || transaction.value)),
-        type: isCredit ? 'C' : 'D',
+        origin_cpf: finalType === 'C' ? null : cpf,
+        destination_cpf: finalType === 'C' ? cpf : null,
+        value: Math.abs(parseFloat(transaction.valor || transaction.value || 0)),
+        type: finalType,
         description: transaction.descricao || transaction.description || 'Transação',
-        created_at: transaction.data || transaction.date || new Date(),
+        created_at: transaction.data || transaction.date || transaction.createdAt || new Date(),
         id_bank: accountId,
         category: 'Não classificado' // Categoria padrão
       };
@@ -180,10 +208,25 @@ class OpenFinanceController {
           // Ignorar erro de transações
         }
         
-        // Obter o nome real da instituição do banco de dados
-        const institutionName = saldoResponse.data.instituicao && saldoResponse.data.instituicao.length > 0 
-          ? saldoResponse.data.instituicao[0].nomeInstituicao 
-          : 'Banco Lucas';
+        // Obter o nome real da instituição do banco de dados da API Lucas
+        console.log(`[OpenFinance] Estrutura da resposta da API Lucas:`, JSON.stringify(saldoResponse.data, null, 2));
+        
+        let institutionName = null;
+        
+        if (saldoResponse.data.instituicao && Array.isArray(saldoResponse.data.instituicao) && saldoResponse.data.instituicao.length > 0) {
+          // Verifica se o primeiro item tem nomeInstituicao
+          institutionName = saldoResponse.data.instituicao[0].nomeInstituicao;
+          console.log(`[OpenFinance] Nome extraído do array instituicao: ${institutionName}`);
+        } else {
+          console.log(`[OpenFinance] Array instituicao não encontrado ou vazio. Dados disponíveis:`, Object.keys(saldoResponse.data));
+        }
+        
+        if (!institutionName) {
+          console.error(`[OpenFinance] ERRO: Não foi possível obter o nome da instituição da API Lucas`);
+          return res.status(400).json({ error: 'Nome da instituição não encontrado na API Lucas' });
+        }
+        
+        console.log(`[OpenFinance] Nome final da instituição da API Lucas: ${institutionName}`);
         
         // Usar função auxiliar para criar/atualizar conta
         const account = await OpenFinanceController.createOrUpdateAccount(cpf, lucasAccount, institutionName, 'lucas');
@@ -382,8 +425,104 @@ class OpenFinanceController {
 
   // Vincula uma conta da API do Raul
   static async linkRaulAccount(req, res) {
-    const raulApiUrl = process.env.RAUL_API_URL || 'http://localhost:4006';
-    return OpenFinanceController.linkGenericAccount(req, res, 'Raul', raulApiUrl, 'Banco Raul');
+    try {
+      if (!req.user || !req.user.cpf) {
+        return res.status(401).json({ error: 'User authentication failed' });
+      }
+      
+      const { cpf } = req.user;
+      const { consent } = req.body;
+      
+      if (!consent) {
+        return res.status(400).json({ error: 'Consent is required' });
+      }
+      
+      const raulApiUrl = process.env.RAUL_API_URL || 'http://localhost:4006';
+      
+      try {
+        // Usar o endpoint correto da API Raul: /users/ em vez de /usuarios/
+        console.log(`[OpenFinance] Chamando API Raul: ${raulApiUrl}/users/${cpf}`);
+        const userResponse = await axios.get(`${raulApiUrl}/users/${cpf}`);
+        
+        console.log(`[OpenFinance] Resposta da API Raul:`, JSON.stringify(userResponse.data, null, 2));
+        
+        if (!userResponse.data) {
+          return res.status(404).json({ 
+            error: 'Usuário não encontrado na API Raul. Cadastre o usuário primeiro.' 
+          });
+        }
+        
+        // Gerar um ID numérico único baseado no CPF para Raul
+        const cpfNumbers = cpf.replace(/\D/g, '');
+        const apiHash = 'Raul'.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        let numericId = 0;
+        for (let i = 0; i < cpfNumbers.length; i++) {
+          numericId = (numericId * 10 + parseInt(cpfNumbers[i])) % 2000000000;
+        }
+        numericId = (numericId + apiHash * 1000) % 2000000000 + 1000000;
+        
+        // Criar objeto de conta baseado nos dados retornados
+        const accountData = {
+          id: numericId,
+          saldo: userResponse.data.total_balance || userResponse.data.balance || 0
+        };
+        
+        // Extrair transações dos dados já recebidos
+        let transactionsData = [];
+        if (userResponse.data.accounts && userResponse.data.accounts.length > 0) {
+          // Pegar todas as transações de todas as contas do usuário
+          transactionsData = userResponse.data.accounts.reduce((allTransactions, account) => {
+            if (account.transactions && Array.isArray(account.transactions)) {
+              return [...allTransactions, ...account.transactions];
+            }
+            return allTransactions;
+          }, []);
+        }
+        
+        console.log(`[OpenFinance] Transações extraídas da API Raul: ${transactionsData.length} transações`);
+        console.log(`[OpenFinance] Dados das transações:`, JSON.stringify(transactionsData, null, 2));
+        
+        // Extrair o nome da instituição dos dados retornados
+        let institutionName = null;
+        
+        if (userResponse.data.accounts && userResponse.data.accounts.length > 0 && userResponse.data.accounts[0].institution) {
+          institutionName = userResponse.data.accounts[0].institution.name;
+        }
+        
+        if (!institutionName) {
+          console.error(`[OpenFinance] ERRO: Não foi possível obter o nome da instituição da API Raul`);
+          return res.status(400).json({ error: 'Nome da instituição não encontrado na API Raul' });
+        }
+        
+        console.log(`[OpenFinance] Nome da instituição da API Raul: ${institutionName}`);
+        
+        // Usar função auxiliar para criar/atualizar conta
+        const account = await OpenFinanceController.createOrUpdateAccount(cpf, accountData, institutionName, 'raul');
+        
+        // Usar função auxiliar para sincronizar transações
+        await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
+        
+        return res.json({ 
+          message: 'Conta vinculada com sucesso',
+          account: {
+            id_bank: account.id_bank,
+            balance: account.balance,
+            institution_name: account.institution_name
+          }
+        });
+        
+      } catch (apiError) {
+        console.error('Error connecting to Raul API:', apiError.message);
+        return res.status(400).json({ 
+          error: 'Erro ao conectar com a API Raul',
+          details: apiError.message
+        });
+      }
+      
+    } catch (error) {
+      console.error('Error linking Raul account:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
   }
 
   // Vincula uma conta da API do Caputi
@@ -868,11 +1007,11 @@ class OpenFinanceController {
           const raulApiUrl = process.env.RAUL_API_URL || 'http://localhost:4006';
           
           // Buscar dados da API do Raul (adaptar conforme endpoints disponíveis)
-          const response = await axios.get(`${raulApiUrl}/usuarios/${cpf}`);
+          const response = await axios.get(`${raulApiUrl}/users/${cpf}`);
           
           externalData = {
-            balance: response.data.saldo || 0,
-            transactions: response.data.transacoes || []
+            balance: response.data.total_balance || 0,
+            transactions: response.data.transactions || []
           };
           
         } else {
@@ -1039,20 +1178,20 @@ class OpenFinanceController {
     try {
       const institutions = [];
       
-      // Definir todas as APIs disponíveis
+      // Definir todas as APIs disponíveis (nomes serão obtidos dinamicamente das APIs)
       const apis = [
         {
-          name: 'Banco Lucas',
+          name: 'API Lucas',
           url: process.env.LUCAS_API_URL || 'http://localhost:4003',
           linkEndpoint: '/open-finance/link-lucas'
         },
         {
-          name: 'Banco Vitor',
+          name: 'API Vitor',
           url: process.env.VITOR_API_URL || `http://localhost:${process.env.VITOR_API_EXT_PORT || '4005'}`,
           linkEndpoint: '/open-finance/link-vitor'
         },
         {
-          name: 'Banco Patricia',
+          name: 'API Patricia',
           url: process.env.PATRICIA_API_URL || 'http://localhost:4004',
           linkEndpoint: '/open-finance/link-patricia'
         },
@@ -1062,8 +1201,8 @@ class OpenFinanceController {
           linkEndpoint: '/open-finance/link-dante'
         },
         {
-          name: 'Banco Raul',
-          url: process.env.RAUL_API_URL || 'http://localhost:4007',
+          name: 'API Raul',
+          url: process.env.RAUL_API_URL || 'http://localhost:4006',
           linkEndpoint: '/open-finance/link-raul'
         }
       ];
@@ -1106,6 +1245,8 @@ class OpenFinanceController {
       
       const { cpf } = req.user;
       
+      console.log(`[OpenFinance] Buscando transações para CPF: ${cpf}`);
+      
       // Busca todas as transações onde o usuário é origem ou destino
       const transactions = await Transaction.findAll({
         where: {
@@ -1117,6 +1258,8 @@ class OpenFinanceController {
         order: [['created_at', 'DESC']],
         limit: 100 // Limitar a 100 transações mais recentes
       });
+      
+      console.log(`[OpenFinance] Encontradas ${transactions.length} transações para CPF: ${cpf}`);
 
       // Formatar as transações para o frontend
       const formattedTransactions = transactions.map(transaction => {

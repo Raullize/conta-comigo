@@ -208,29 +208,9 @@ function renderInstitutions() {
 
 // Create institution card HTML
 function createInstitutionCard(institution) {
-    // Determinar ícone baseado no nome da instituição
-    let iconClass = 'fas fa-university';
-    let cardClass = 'institution-card';
-    
-    if (institution.name.includes('Lucas')) {
-        iconClass = 'fas fa-piggy-bank';
-        cardClass += ' lucas-bank';
-    } else if (institution.name.includes('Vitor')) {
-        iconClass = 'fas fa-landmark';
-        cardClass += ' vitor-bank';
-    } else if (institution.name.includes('Patricia')) {
-        iconClass = 'fas fa-coins';
-        cardClass += ' patricia-bank';
-    } else if (institution.name.includes('Dante')) {
-        iconClass = 'fas fa-chart-line';
-        cardClass += ' dante-bank';
-    } else if (institution.name.includes('Raul')) {
-        iconClass = 'fas fa-wallet';
-        cardClass += ' raul-bank';
-    } else if (institution.name.includes('Caputi')) {
-        iconClass = 'fas fa-key';
-        cardClass += ' caputi-bank';
-    }
+    // Usar sempre o mesmo ícone padrão e classe para todas as instituições
+    const iconClass = 'fas fa-university';
+    const cardClass = 'institution-card';
     
     return `
         <div class="${cardClass}" data-id="${institution.id}" data-institution-name="${institution.name}">

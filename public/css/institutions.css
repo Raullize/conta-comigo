@@ -169,53 +169,7 @@
 }
 
 /* Institution-specific styles */
-.institution-card.lucas-bank {
-  border-left: 4px solid #10b981;
-}
 
-.institution-card.vitor-bank {
-  border-left: 4px solid #3b82f6;
-}
-
-.institution-card.patricia-bank {
-  border-left: 4px solid #ec4899;
-}
-
-.institution-card.dante-bank {
-  border-left: 4px solid #ef4444;
-}
-
-.institution-card.raul-bank {
-  border-left: 4px solid #8b5cf6;
-}
-
-.institution-card.caputi-bank {
-  border-left: 4px solid #f59e0b;
-}
-
-.institution-card.lucas-bank .institution-icon i {
-  color: #10b981;
-}
-
-.institution-card.vitor-bank .institution-icon i {
-  color: #3b82f6;
-}
-
-.institution-card.patricia-bank .institution-icon i {
-  color: #ec4899;
-}
-
-.institution-card.dante-bank .institution-icon i {
-  color: #ef4444;
-}
-
-.institution-card.raul-bank .institution-icon i {
-  color: #8b5cf6;
-}
-
-.institution-card.caputi-bank .institution-icon i {
-  color: #f59e0b;
-}
 
 .institution-card:hover {
   box-shadow: var(--shadow-md);
