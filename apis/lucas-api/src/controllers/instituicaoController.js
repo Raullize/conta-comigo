@@ -9,7 +9,6 @@ module.exports = {
     };
         try {
             const { nome } = req.body;
-            const id = 2;
             const jaExiste = await Instituicao.findOne({ where: {nome}});
 
             if(!nome) {
@@ -20,7 +19,7 @@ module.exports = {
                 return res.status(409).json({erro: 'Intituição já cadastrada.'});
             }
 
-            const novaInstituicao = await Instituicao.create({ id, nome });
+            const novaInstituicao = await Instituicao.create({ nome });
 
             return res.status(201).json(novaInstituicao);
 
