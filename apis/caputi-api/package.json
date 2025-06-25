@@ -2,8 +2,6 @@
   "name": "caputi-api",
   "type": "module",
   "dependencies": {
-    "@faker-js/faker": "^9.7.0",
-    "dayjs": "^1.11.13",
     "esm": "^3.2.25",
     "express": "^5.1.0",
     "pg": "^8.14.1",
@@ -12,7 +10,6 @@
   },
   "scripts": {
     "start": "node src/server/server.js",
-    "dev": "docker compose up --build",
-    "seed": "node src/seeders/seed.js"
+    "dev": "docker compose up --build"
   }
 }
