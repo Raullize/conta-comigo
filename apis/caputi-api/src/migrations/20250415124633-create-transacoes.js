@@ -19,7 +19,7 @@ export async function up(queryInterface, Sequelize) {
       onDelete: 'CASCADE',
     },
     tipo: {
-      type: Sequelize.ENUM('deposito', 'saque', 'transferencia'),
+      type: Sequelize.ENUM('entrada', 'saida'),
       allowNull: false,
     },
     valor: {
@@ -28,6 +28,10 @@ export async function up(queryInterface, Sequelize) {
     },
     descricao: {
       type: Sequelize.STRING,
+      allowNull: true,
+    },
+    conta_destino_id: {
+      type: Sequelize.INTEGER,
       allowNull: true,
     },
     createdAt: {

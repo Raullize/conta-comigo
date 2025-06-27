@@ -42,7 +42,10 @@ class OpenFinanceController {
 
   // Função auxiliar para sincronizar transações
   static async syncTransactions(cpf, accountId, transactions) {
+    console.log(`[DEBUG syncTransactions] CPF: ${cpf}, AccountID: ${accountId}, Transações recebidas: ${transactions ? transactions.length : 0}`);
+    
     if (!transactions || !Array.isArray(transactions) || transactions.length === 0) {
+      console.log(`[DEBUG syncTransactions] Nenhuma transação para sincronizar`);
       return;
     }
 
@@ -62,16 +65,18 @@ class OpenFinanceController {
       const isCredit = transaction.type === 'credit' || 
                       transaction.tipo === 'credito' || 
                       transaction.type === 'entrada' ||
-                      transaction.tipo === 'entrada';
+                      transaction.tipo === 'entrada'; // API Caputi e Lucas - ENTRADA = CRÉDITO
       
-      // Para API Raul: "saida" = débito, "entrada" = crédito
+      // Para todas as APIs: "saida" = débito, "entrada" = crédito
       const isDebit = transaction.type === 'saida' || 
                      transaction.tipo === 'saida' ||
                      transaction.type === 'debit' ||
                      transaction.tipo === 'debito';
       
+      // Lógica unificada: se é crédito, então 'C', senão 'D'
       const finalType = isCredit ? 'C' : 'D';
       
+
       return {
         origin_cpf: finalType === 'C' ? null : cpf,
         destination_cpf: finalType === 'C' ? cpf : null,
@@ -83,6 +88,12 @@ class OpenFinanceController {
         category: 'Não classificado'
       };
     });
+
+    console.log(`[DEBUG syncTransactions] Criando ${transactionsToCreate.length} transações:`, transactionsToCreate.map(t => ({
+      tipo: t.type,
+      valor: t.value,
+      descricao: t.description
+    })));
 
     await Transaction.bulkCreate(transactionsToCreate);
   }
@@ -582,8 +593,83 @@ class OpenFinanceController {
 
   // Vincula uma conta da API do Caputi
   static async linkCaputiAccount(req, res) {
-    const caputiApiUrl = process.env.CAPUTI_API_URL || 'http://localhost:4001';
-    return OpenFinanceController.linkGenericAccount(req, res, 'Caputi', caputiApiUrl, 'Banco Caputi');
+    try {
+      if (!req.user || !req.user.cpf) {
+        return res.status(401).json({ error: 'User authentication failed' });
+      }
+      
+      const { cpf } = req.user;
+      const { consent } = req.body;
+      
+      if (!consent) {
+        return res.status(400).json({ error: 'Consent is required' });
+      }
+      
+      const caputiApiUrl = process.env.CAPUTI_API_URL || 'http://localhost:4001';
+      
+      try {
+        // Primeiro, atualizar o consentimento na API Caputi
+        await axios.patch(`${caputiApiUrl}/open-finance/${cpf}/consent`, { consent: true });
+        
+        // Buscar dados da conta usando o endpoint específico de Open Finance
+        const accountResponse = await axios.get(`${caputiApiUrl}/open-finance/${cpf}`);
+        
+        if (!accountResponse.data) {
+          return res.status(404).json({ 
+            error: 'Usuário não encontrado na API Caputi. Cadastre o usuário primeiro.' 
+          });
+        }
+        
+        const accountData = accountResponse.data;
+        
+        // Gerar um ID numérico único baseado no CPF para Caputi
+        const cpfNumbers = cpf.replace(/\D/g, '');
+        const apiHash = 'Caputi'.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+        let numericId = 0;
+        for (let i = 0; i < cpfNumbers.length; i++) {
+          numericId = (numericId * 10 + parseInt(cpfNumbers[i])) % 2000000000;
+        }
+        numericId = (numericId + apiHash * 1000) % 2000000000 + 1000000;
+        
+        // Criar objeto de conta baseado nos dados retornados da API Caputi
+        const caputiAccount = {
+          id: numericId, // ID único baseado no CPF e API
+          saldo: accountData.balance || 0
+        };
+        
+        // Usar o nome da instituição retornado pela API Caputi
+        const institutionName = accountData.institution || 'Banco Caputi';
+        
+        // Usar função auxiliar para criar/atualizar conta
+        const account = await OpenFinanceController.createOrUpdateAccount(cpf, caputiAccount, institutionName, 'caputi');
+        
+        // Buscar transações se disponível
+        let transactionsData = accountData.transactions || [];
+        
+        // Usar função auxiliar para sincronizar transações
+        await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
+        
+        return res.json({ 
+          message: 'Conta vinculada com sucesso',
+          account: {
+            id_bank: account.id_bank,
+            balance: account.balance,
+            institution_name: account.institution_name
+          }
+        });
+        
+      } catch (apiError) {
+        console.error('Error connecting to Caputi API:', apiError.message);
+        return res.status(400).json({ 
+          error: 'Erro ao conectar com a API Caputi',
+          details: apiError.message
+        });
+      }
+      
+    } catch (error) {
+      console.error('Error linking Caputi account:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
   }
 
   // Vincula uma conta da API do Vitor (id_bank dinâmico)
@@ -1064,6 +1150,22 @@ class OpenFinanceController {
             transactions: response.data.transactions || []
           };
           
+        } else if (apiSource === 'caputi') {
+          // Sincronizar com a API do Caputi
+          const caputiApiUrl = process.env.CAPUTI_API_URL || 'http://localhost:4001';
+          
+          // Buscar dados da API do Caputi usando endpoint de open-finance
+          const response = await axios.get(`${caputiApiUrl}/open-finance/${cpf}`);
+          
+          console.log(`[DEBUG Caputi] Dados recebidos:`, JSON.stringify(response.data, null, 2));
+          
+          externalData = {
+            balance: response.data.balance || 0,
+            transactions: response.data.transactions || []
+          };
+          
+          console.log(`[DEBUG Caputi] ${externalData.transactions.length} transações encontradas`);
+          
         } else {
           // Sincronizar com a API do Vitor (padrão)
           const vitorApiUrl = process.env.VITOR_API_URL || `http://localhost:${process.env.VITOR_API_EXT_PORT || '4005'}`;
@@ -1190,15 +1292,30 @@ class OpenFinanceController {
              
 
 
+            // Usar a mesma lógica de mapeamento da função syncTransactions
+            const isCredit = transaction.type === 'credit' || 
+                            transaction.tipo === 'credito' || 
+                            transaction.type === 'entrada' ||
+                            transaction.tipo === 'entrada'; // API Caputi e Lucas - ENTRADA = CRÉDITO
+            
+            const isDebit = transaction.type === 'saida' || 
+                           transaction.tipo === 'saida' ||
+                           transaction.type === 'debit' ||
+                           transaction.tipo === 'debito';
+            
+            // Lógica unificada: se é crédito, então 'C', senão 'D'
+            const finalType = isCredit ? 'C' : 'D';
+            
+
             return {
-              origin_cpf: transaction.type === 'debit' ? cpf : null,
-              destination_cpf: transaction.type === 'credit' ? cpf : null,
-              value: Math.abs(parseFloat(transaction.value.toString().replace(/[^\d.-]/g, ''))),
-              type: transaction.type === 'debit' ? 'D' : 'C',
-              description: transaction.description,
+              origin_cpf: finalType === 'D' ? cpf : null,
+              destination_cpf: finalType === 'C' ? cpf : null,
+              value: Math.abs(parseFloat(transaction.valor || transaction.value || 0)),
+              type: finalType,
+              description: transaction.descricao || transaction.description || 'Transação',
               id_bank: id_bank,
               category: existingCategory || 'Não classificado',
-              created_at: new Date(transaction.date)
+              created_at: new Date(transaction.data || transaction.date || transaction.createdAt)
             };
           });
           

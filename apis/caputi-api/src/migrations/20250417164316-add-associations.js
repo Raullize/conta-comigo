@@ -42,22 +42,17 @@ module.exports = {
       onDelete: 'CASCADE',
     });
 
-    
-    await queryInterface.addConstraint('transacoes', {
-      fields: ['conta_destino_id'],
-      type: 'foreign key',
-      name: 'fk_transacoes_conta_destino',
-      references: {
-        table: 'contas',
-        field: 'id_conta',
-      },
-      onUpdate: 'CASCADE',
-      onDelete: 'SET NULL',
-    });
+    // Remover coluna conta_destino_id (não usada mais após simplificação para entrada/saida)
+    await queryInterface.removeColumn('transacoes', 'conta_destino_id');
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeConstraint('transacoes', 'fk_transacoes_conta_destino');
+    // Adicionar de volta a coluna conta_destino_id
+    await queryInterface.addColumn('transacoes', 'conta_destino_id', {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+    });
+    
     await queryInterface.removeConstraint('transacoes', 'fk_transacoes_conta');
     await queryInterface.removeConstraint('contas', 'fk_contas_instituicao');
     await queryInterface.removeConstraint('contas', 'fk_contas_usuario');

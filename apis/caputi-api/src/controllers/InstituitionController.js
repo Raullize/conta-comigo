@@ -6,20 +6,13 @@ class InstitutionController {
     try {
       const existingInstitution = await Institution.findOne();
 
-    if (existingInstitution) {
-      return res.status(400).json({ error: 'Permitido apenas o cadastro de uma instituição.' });
-    };
-
-    const { nome, cnpj } = req.body;
-    
-    let verificador = false;
-    
-    if(!verificador){
-        const instituicao = await Institution.create({ nome, cnpj });
-        verificador = true;
-      }else{
-        return res.status(400).json({ error: 'permitido apenas uma instituicao', details: error.message });
+      if (existingInstitution) {
+        return res.status(400).json({ error: 'Permitido apenas o cadastro de uma instituição.' });
       }
+
+      const { nome, cnpj } = req.body;
+      
+      const instituicao = await Institution.create({ nome, cnpj });
 
       return res.status(201).json(instituicao);
     } catch (error) {

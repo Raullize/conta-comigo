@@ -48,10 +48,7 @@ class OpenFinanceController {
 
       const transactions = await Transaction.findAll({
         where: {
-          [Op.or]: [
-            { conta_id: account.id_conta },
-            { conta_destino_id: account.id_conta },
-          ],
+          conta_id: account.id_conta
         },
         limit: 20,
         order: [['createdAt', 'DESC']],

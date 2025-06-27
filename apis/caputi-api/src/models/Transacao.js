@@ -12,7 +12,7 @@ const Transacao = database.define('transacoes', {
     allowNull: false,
   },
   tipo: {
-    type: DataTypes.ENUM('deposito', 'saque','transferencia'),
+    type: DataTypes.ENUM('entrada', 'saida'),
     allowNull: false,
   },
   valor: {
@@ -22,10 +22,6 @@ const Transacao = database.define('transacoes', {
   descricao: {
     type: DataTypes.STRING,
     allowNull: true,
-  },
-  conta_destino_id: {
-    type: DataTypes.INTEGER,
-    allowNull: true 
   },
   createdAt: {
     type: DataTypes.DATE,

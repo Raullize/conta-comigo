@@ -167,4 +167,4 @@ class TransacaoController {
   }
 }
 
-export default new TransacaoController();
+  export default new TransacaoController();
