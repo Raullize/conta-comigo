@@ -65,7 +65,7 @@ class OpenFinanceController {
       const isCredit = transaction.type === 'credit' || 
                       transaction.tipo === 'credito' || 
                       transaction.type === 'entrada' ||
-                      transaction.tipo === 'entrada'; // API Caputi e Lucas - ENTRADA = CRÉDITO
+                      transaction.tipo === 'entrada'; // API Caputi, Lucas e Raul - ENTRADA = CRÉDITO
       
       // Para todas as APIs: "saida" = débito, "entrada" = crédito
       const isDebit = transaction.type === 'saida' || 
@@ -518,14 +518,19 @@ class OpenFinanceController {
       const raulApiUrl = process.env.RAUL_API_URL || 'http://localhost:4006';
       
       try {
-        // Usar o endpoint correto da API Raul: /users/ em vez de /usuarios/
-        const userResponse = await axios.get(`${raulApiUrl}/users/${cpf}`);
+        // Primeiro, atualizar o consentimento na API Raul
+        await axios.patch(`${raulApiUrl}/open-finance/${cpf}/consent`, { consent: true });
         
-        if (!userResponse.data) {
+        // Buscar dados da conta usando o endpoint específico de Open Finance
+        const accountResponse = await axios.get(`${raulApiUrl}/open-finance/${cpf}`);
+        
+        if (!accountResponse.data) {
           return res.status(404).json({ 
             error: 'Usuário não encontrado na API Raul. Cadastre o usuário primeiro.' 
           });
         }
+        
+        const accountData = accountResponse.data;
         
         // Gerar um ID numérico único baseado no CPF para Raul
         const cpfNumbers = cpf.replace(/\D/g, '');
@@ -536,34 +541,20 @@ class OpenFinanceController {
         }
         numericId = (numericId + apiHash * 1000) % 2000000000 + 1000000;
         
-        // Criar objeto de conta baseado nos dados retornados
-        const accountData = {
-          id: numericId,
-          saldo: userResponse.data.total_balance || userResponse.data.balance || 0
+        // Criar objeto de conta baseado nos dados retornados da API Raul
+        const raulAccount = {
+          id: numericId, // ID único baseado no CPF e API
+          saldo: accountData.balance || 0
         };
         
-        let transactionsData = [];
-        if (userResponse.data.accounts && userResponse.data.accounts.length > 0) {
-          transactionsData = userResponse.data.accounts.reduce((allTransactions, account) => {
-            if (account.transactions && Array.isArray(account.transactions)) {
-              return [...allTransactions, ...account.transactions];
-            }
-            return allTransactions;
-          }, []);
-        }
+        // Usar o nome da instituição retornado pela API Raul
+        const institutionName = accountData.institution || 'Banco Raul';
         
-        let institutionName = null;
-        
-        if (userResponse.data.accounts && userResponse.data.accounts.length > 0 && userResponse.data.accounts[0].institution) {
-          institutionName = userResponse.data.accounts[0].institution.name;
-        }
-        
-        if (!institutionName) {
-          return res.status(400).json({ error: 'Nome da instituição não encontrado na API Raul' });
-        }
+        // Buscar transações se disponível
+        let transactionsData = accountData.transactions || [];
         
         // Usar função auxiliar para criar/atualizar conta
-        const account = await OpenFinanceController.createOrUpdateAccount(cpf, accountData, institutionName, 'raul');
+        const account = await OpenFinanceController.createOrUpdateAccount(cpf, raulAccount, institutionName, 'raul');
         
         // Usar função auxiliar para sincronizar transações
         await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
@@ -1142,11 +1133,11 @@ class OpenFinanceController {
           // Sincronizar com a API do Raul
           const raulApiUrl = process.env.RAUL_API_URL || 'http://localhost:4006';
           
-          // Buscar dados da API do Raul (adaptar conforme endpoints disponíveis)
-          const response = await axios.get(`${raulApiUrl}/users/${cpf}`);
+          // Usar o endpoint Open Finance da API Raul
+          const response = await axios.get(`${raulApiUrl}/open-finance/${cpf}`);
           
           externalData = {
-            balance: response.data.total_balance || 0,
+            balance: response.data.balance || 0,
             transactions: response.data.transactions || []
           };
           
@@ -1157,14 +1148,10 @@ class OpenFinanceController {
           // Buscar dados da API do Caputi usando endpoint de open-finance
           const response = await axios.get(`${caputiApiUrl}/open-finance/${cpf}`);
           
-          console.log(`[DEBUG Caputi] Dados recebidos:`, JSON.stringify(response.data, null, 2));
-          
           externalData = {
             balance: response.data.balance || 0,
             transactions: response.data.transactions || []
           };
-          
-          console.log(`[DEBUG Caputi] ${externalData.transactions.length} transações encontradas`);
           
         } else {
           // Sincronizar com a API do Vitor (padrão)
@@ -1296,7 +1283,7 @@ class OpenFinanceController {
             const isCredit = transaction.type === 'credit' || 
                             transaction.tipo === 'credito' || 
                             transaction.type === 'entrada' ||
-                            transaction.tipo === 'entrada'; // API Caputi e Lucas - ENTRADA = CRÉDITO
+                            transaction.tipo === 'entrada'; // API Caputi, Lucas e Raul - ENTRADA = CRÉDITO
             
             const isDebit = transaction.type === 'saida' || 
                            transaction.tipo === 'saida' ||
