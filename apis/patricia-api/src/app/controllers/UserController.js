@@ -1,78 +1,81 @@
-/* eslint-disable */
-import *as Yup from 'yup';
-import {cpfSchema} from '../controllers/cpf.js';
-
-import User from './models/User.js'
+import User from './models/User.js';
 
 class UserController {
-  async store(req, res){
-    const schema = Yup.object().shape({
-      name: Yup.string().required(),
-      cpf: cpfSchema,
-      password: Yup.string().required().min(6),
-    });
+  async store(req, res) {
+    try {
+      const { cpf, name, email } = req.body;
 
-    if(!(await schema.isValid(req.body))){
-      return res.status(400).json({error: 'Falha na validação.'})
+      // Verifica se usuário já existe
+      const userExists = await User.findByPk(cpf);
+      if (userExists) {
+        return res.status(409).json({ error: 'Esse CPF já está cadastrado' });
+      }
+
+      const newUser = await User.create({ cpf, name, email });
+      return res.status(201).json(newUser);
+
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao criar usuário' });
     }
-    const userExists = await User.findOne({
-      where: { cpf: req.body.cpf}
-    });
+  }
 
-    if(userExists){
-      return res.status(400).json({error: 'Usuário já existe.'});
+  async index(req, res) {
+    try {
+      const users = await User.findAll();
+      return res.status(200).json(users);
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao buscar usuários' });
     }
-
-    const {name, cpf} = await User.create(req.body);
-
-    return res.json({
-      name,
-      cpf,
-    });
   }
-  async update(req,res){
 
-    const schema = Yup.object().shape({
-      name: Yup.string(),
-      oldPassword: Yup.string(),
-      password: Yup.string().min(6).when('oldPassword', {
-        is: (val) => !!val,
-        then: (schema) => schema.required(),
-        otherwise: (schema) => schema.notRequired(),
-      }),
-      confirmPassword: Yup.string().when('password', {
-        is: (val) => !!val,
-        then: (schema) => schema.required().oneOf([Yup.ref('password')], 'As senhas não são as mesmas.'),
-        otherwise: (schema) => schema.notRequired(),
-      }),
-    });
+  async show(req, res) {
+    try {
+      const { cpf } = req.params;
+      const user = await User.findByPk(cpf);
 
-    if(!(await schema.isValid(req.body))){
-      return res.status(400).json({error: 'Falha na validação.'})
+      if (!user) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
+      }
+
+      return res.status(200).json(user);
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao buscar usuário' });
     }
-
-    const { oldPassword } = req.body;
-    const user = await User.findByPk(req.userId);
-
-  if (!user){
-    return res.status(404).json({error: 'Usuário não foi encontrado'});
   }
 
-  if(req.body.oldPassword && !(await user.checkPassword(req.body.oldPassword))){
-    return res.status(401).json({error: 'Senha antiga incorreta.'});
+  async update(req, res) {
+    try {
+      const { cpf } = req.params;
+      const { name, email } = req.body;
+      const user = await User.findByPk(cpf);
+
+      if (!user) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
+      }
+
+      await user.update({ name, email });
+      return res.status(200).json(user);
+
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao atualizar usuário' });
+    }
   }
 
-  if(req.body.password && await user.checkPassword(req.body.password)){
-    return res.status(400).json({error: 'A sua nova senha, não pode ser igual a senha antiga.'})
-  }
+  async delete(req, res) {
+    try {
+      const { cpf } = req.params;
+      const user = await User.findByPk(cpf);
 
-  const { id, name  } = await user.update(req.body);
-    return res.json({
-      message: 'Dados alterados com sucesso.',
-      id,
-      name,
-      cpf: user.cpf,
-    });
+      if (!user) {
+        return res.status(404).json({ error: 'Usuário não encontrado' });
+      }
+
+      await user.destroy();
+      return res.status(204).send();
+
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao deletar usuário' });
+    }
   }
 }
 

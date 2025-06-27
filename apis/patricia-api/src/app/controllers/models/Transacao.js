@@ -5,6 +5,11 @@ class Transacao extends Model{
   static init(sequelize){
     super.init (
       {
+        id: {
+          type: Sequelize.INTEGER,
+          primaryKey: true,
+          autoIncrement: true,
+        },
         tipo: Sequelize.STRING,
         data: Sequelize.DATE,
         conta_id: Sequelize.INTEGER,
@@ -15,9 +20,11 @@ class Transacao extends Model{
       {
         sequelize,
         tableName: 'transacao',
+        modelName: 'Transacao',
         timestamps: true,       
         underscored: true,
-
+        createdAt: 'created_at',
+        updatedAt: 'updated_at',
       }
     );
     return this;

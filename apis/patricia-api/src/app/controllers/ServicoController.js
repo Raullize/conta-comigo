@@ -61,7 +61,6 @@ class ServicoController {
     }
     const contas = await Conta.findAll({ where: { usuario_id: usuarioId, instituicao_id: inst.id } });
     const contaIds = contas.map((conta) => conta.id);
-    console.log('Contas encontradas:', contaIds);
 
    if (contas.length ===0){
       throw new Error('O usuário não possui conta nessa instituição.')
@@ -77,7 +76,6 @@ class ServicoController {
       order: [['data','DESC']],
     });
 
-    console.log('Extrato das transações:', (await transacoes).length);
     return transacoes;
   }
 }

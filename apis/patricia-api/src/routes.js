@@ -1,9 +1,6 @@
 import { Router } from 'express';
 
-import authMiddleware from './app/middleware/auth.js';
-
-import UserController from './app/controllers/UserController.js'
-import SessionController from './app/controllers/SessionController.js';
+import UserController from './app/controllers/UserController.js';
 import InstituicaoController from './app/controllers/InstituicaoController.js';
 import ContaController from './app/controllers/ContaController.js';
 import TransacaoController from './app/controllers/TransacaoController.js';
@@ -11,45 +8,40 @@ import { getDataAccount, updateConsent } from './app/controllers/openFinanceCont
 
 const routes = new Router();
 
-//rotas da instituição
-routes.post('/instituicao', InstituicaoController.store);
+// Health check
+routes.get('/', (req, res) => {
+  res.json({ message: 'Patricia API is running!' });
+});
 
-routes.delete('/instituicao', InstituicaoController.delete);
+// Rotas de usuários
+routes.post('/users', UserController.store);
+routes.get('/users', UserController.index);
+routes.get('/users/:cpf', UserController.show);
+routes.put('/users/:cpf', UserController.update);
+routes.delete('/users/:cpf', UserController.delete);
 
-//rotas do usuário
-routes.post('/users',UserController.store);
+// Rotas de instituições
+routes.post('/institutions', InstituicaoController.store);
+routes.get('/institutions', InstituicaoController.index);
+routes.get('/institutions/:id', InstituicaoController.show);
+routes.delete('/institutions/:id', InstituicaoController.delete);
 
-routes.post('/sessions',SessionController.store);
+// Rotas de contas (padrão Raul)
+routes.post('/users/:cpf/accounts', ContaController.store);
+routes.get('/users/:cpf/accounts', ContaController.index);
+routes.get('/accounts', ContaController.index);
 
-//rota open finance
-routes.get ('/open-finance/:cpf', getDataAccount);
+// Rotas de transações (padrão Raul)
+routes.post('/users/:cpf/transactions', TransacaoController.store);
+routes.get('/users/:cpf/transactions', TransacaoController.index);
+
+// Rotas de serviços
+routes.get('/users/:cpf/balance', ContaController.saldoTotal);
+routes.get('/users/:cpf/statement', ContaController.extratoTotal);
+
+// Rotas open finance
+routes.get('/open-finance/:cpf', getDataAccount);
 routes.patch('/open-finance/:cpf/consent', updateConsent);
-
-//precisa autenticar.
-
-routes.use(authMiddleware);
-
-routes.put('/users',UserController.update);
-
-//rotas da conta
-
-routes.post('/conta', ContaController.store);
-
-routes.post('/contas', ContaController.index);
-
-//rotas da transacao.
-
-routes.post('/transacao', TransacaoController.store);
-
-//rotas de serviço.
-
-routes.get('/saldo/instituicao/:nome', ContaController.saldoInstituicao);
-
-routes.get('/saldo/total', ContaController.saldoTotal);
-
-routes.get('/extrato/total', ContaController.extratoTotal);
-
-routes.get('/extrato/instituicao/:nome', ContaController.extratoInstituicao);
 
 export default routes;
 

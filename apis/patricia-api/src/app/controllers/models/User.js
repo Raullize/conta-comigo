@@ -1,32 +1,32 @@
-import Sequelize,{Model} from 'sequelize';
-import bcrypt from 'bcryptjs';
+import Sequelize, { Model } from 'sequelize';
 
 class User extends Model {
-  static init(sequelize){
+  static init(sequelize) {
     super.init(
       {
+        cpf: {
+          type: Sequelize.STRING,
+          primaryKey: true,
+          allowNull: false,
+          unique: true
+        },
         name: Sequelize.STRING,
-        cpf: Sequelize.STRING,
-        password: Sequelize.VIRTUAL,
-        password_hash: Sequelize.STRING,
+        email: Sequelize.STRING,
       },
       {
         sequelize,
         modelName: 'User',
         tableName: 'users',
-        timestamps: true,       
+        timestamps: true,
         underscored: true,
       }
     );
-    this.addHook('beforeSave', async(user)=> {
-      if(user.password){
-        user.password_hash = await bcrypt.hash(user.password,8)
-      }
-    });
+
     return this;
   }
-  checkPassword(password){
-    return bcrypt.compare(password, this.password_hash);
+
+  static associate(models) {
+    this.hasMany(models.Conta, { foreignKey: 'user_cpf', as: 'contas' });
   }
 }
 

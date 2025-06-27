@@ -233,13 +233,46 @@ class OpenFinanceController {
       }
       
       try {
-        // Buscar dados do usuário na API específica
-        const userResponse = await axios.get(`${apiUrl}/usuarios/${cpf}`);
+        // Tentar buscar dados do usuário - APIs novas usam /users, antigas usam /usuarios
+        let userResponse;
+        try {
+          // Primeiro tenta endpoint moderno /users (Patricia, Raul)
+          userResponse = await axios.get(`${apiUrl}/users/${cpf}`);
+        } catch (error) {
+          // Se falhar, tenta endpoint legado /usuarios (outras APIs)
+          userResponse = await axios.get(`${apiUrl}/usuarios/${cpf}`);
+        }
         
         if (!userResponse.data) {
           return res.status(404).json({ 
             error: `Usuário não encontrado na API ${apiName}. Cadastre o usuário primeiro.` 
           });
+        }
+        
+        // Buscar contas do usuário - APIs modernas têm endpoint específico
+        let accountsResponse;
+        try {
+          // Tentar endpoint de contas moderno
+          accountsResponse = await axios.get(`${apiUrl}/users/${cpf}/accounts`);
+        } catch (error) {
+          // Se não tiver, usar dados do usuário diretamente
+          accountsResponse = { data: [] };
+        }
+        
+        // Buscar saldo total se API suportar
+        let balanceData = 0;
+        try {
+          const balanceResponse = await axios.get(`${apiUrl}/users/${cpf}/balance`);
+          balanceData = balanceResponse.data.totalBalance || balanceResponse.data.saldo || 0;
+        } catch (error) {
+          // Se não tiver endpoint de saldo, usar dados das contas ou usuário
+          if (accountsResponse.data && accountsResponse.data.length > 0) {
+            balanceData = accountsResponse.data.reduce((total, account) => {
+              return total + parseFloat(account.balance || account.saldo || 0);
+            }, 0);
+          } else {
+            balanceData = userResponse.data.saldo || userResponse.data.balance || 0;
+          }
         }
         
         // Gerar um ID numérico único baseado no CPF e no nome da API
@@ -254,17 +287,27 @@ class OpenFinanceController {
         // Criar objeto de conta baseado nos dados retornados
         const accountData = {
           id: numericId,
-          saldo: userResponse.data.saldo || userResponse.data.balance || 0
+          saldo: balanceData
         };
         
         // Buscar transações se disponível
         let transactionsData = [];
         try {
-          const transactionsResponse = await axios.get(`${apiUrl}/usuarios/${cpf}/transacoes`);
-          transactionsData = transactionsResponse.data.transacoes || transactionsResponse.data.transactions || [];
-        } catch (transError) {
-          // Endpoint de transações não disponível
+          // Tentar endpoint moderno de transações
+          const transactionsResponse = await axios.get(`${apiUrl}/users/${cpf}/transactions`);
+          transactionsData = transactionsResponse.data.transactions || transactionsResponse.data || [];
+        } catch (error) {
+          try {
+            // Tentar endpoint legado de transações
+            const transactionsResponse = await axios.get(`${apiUrl}/usuarios/${cpf}/transacoes`);
+            transactionsData = transactionsResponse.data.transacoes || transactionsResponse.data.transactions || [];
+          } catch (transError) {
+            // Endpoint de transações não disponível
+            console.log(`[${apiName}] Endpoint de transações não disponível`);
+          }
         }
+        
+        console.log(`[${apiName}] Encontradas ${transactionsData.length} transações para CPF ${cpf}`);
         
         // Usar função auxiliar para criar/atualizar conta
         const apiSource = apiName.toLowerCase();
@@ -298,8 +341,74 @@ class OpenFinanceController {
 
   // Vincula uma conta da API da Patricia
   static async linkPatriciaAccount(req, res) {
-    const patriciaApiUrl = process.env.PATRICIA_API_URL || 'http://localhost:4004';
-    return OpenFinanceController.linkGenericAccount(req, res, 'Patricia', patriciaApiUrl, 'Banco Patricia');
+    try {
+      if (!req.user || !req.user.cpf) {
+        return res.status(401).json({ error: 'User authentication failed' });
+      }
+      
+      const { cpf } = req.user;
+      const { consent } = req.body;
+      
+      if (!consent) {
+        return res.status(400).json({ error: 'Consent is required' });
+      }
+      
+      const patriciaApiUrl = process.env.PATRICIA_API_URL || 'http://localhost:4004';
+      
+      try {
+        // Primeiro, atualizar o consentimento na API Patricia
+        await axios.patch(`${patriciaApiUrl}/open-finance/${cpf}/consent`, { consent: true });
+        
+        // Buscar dados da conta usando o endpoint específico de Open Finance
+        const accountResponse = await axios.get(`${patriciaApiUrl}/open-finance/${cpf}`);
+        
+        if (!accountResponse.data) {
+          return res.status(404).json({ 
+            error: 'Usuário não encontrado na API Patricia. Cadastre o usuário primeiro.' 
+          });
+        }
+        
+        const accountData = accountResponse.data;
+        
+        // Criar objeto de conta baseado nos dados retornados da API Patricia
+        const patriciaAccount = {
+          id: accountData.id_bank || 4, // Patricia API é banco 4
+          saldo: accountData.balance || 0
+        };
+        
+        // Usar o nome da instituição retornado pela API Patricia
+        const institutionName = accountData.institution || 'Banco Patricia';
+        
+        // Usar função auxiliar para criar/atualizar conta
+        const account = await OpenFinanceController.createOrUpdateAccount(cpf, patriciaAccount, institutionName, 'patricia');
+        
+        // Buscar transações se disponível
+        let transactionsData = accountData.transactions || [];
+        
+        // Usar função auxiliar para sincronizar transações
+        await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
+        
+        return res.json({ 
+          message: 'Conta vinculada com sucesso',
+          account: {
+            id_bank: account.id_bank,
+            balance: account.balance,
+            institution_name: account.institution_name
+          }
+        });
+        
+      } catch (apiError) {
+        console.error('Error connecting to Patricia API:', apiError.message);
+        return res.status(400).json({ 
+          error: 'Erro ao conectar com a API Patricia',
+          details: apiError.message
+        });
+      }
+      
+    } catch (error) {
+      console.error('Error linking Patricia account:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
   }
 
   // Vincula uma conta da API do Dante

@@ -1,24 +1,19 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.createTable('users', {
-      id: {
-        type: Sequelize.INTEGER,
+      cpf: {
+        type: Sequelize.STRING,
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
+        unique: true,
       },
       name: {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      cpf: {
+      email: {
         type: Sequelize.STRING,
-        allowNull: false,
-        unique: true,
-      },
-      password_hash: {
-        type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       created_at: {
         type: Sequelize.DATE,

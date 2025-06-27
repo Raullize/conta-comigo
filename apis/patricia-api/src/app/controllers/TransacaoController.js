@@ -1,145 +1,170 @@
-/* eslint-disable */
-import *as Yup from 'yup';
 import Transacao from '../controllers/models/Transacao.js';
 import Conta from '../controllers/models/Conta.js';
-import User from '../controllers/models/User.js';
-
+import Instituicao from './models/Instituicao.js';
+import User from './models/User.js';
 
 class TransacaoController {
-  async store(req,res){
-    const schema = Yup.object().shape({
-      descricao: Yup.string(),
-      tipo: Yup.string().oneOf(['credito','debito','transferencia']).required(),
-      valor: Yup.number().positive().required(),
-      data: Yup.date(),
-      conta_id: Yup.number().integer().required(),
-      destinatario_id: Yup.number().integer(),
-    });
-
-    if(!(await schema.isValid(req.body))){
-      return res.status(400).json({error: 'Falha na validação.'})
-    }
-
-    const {descricao, tipo, valor, data, conta_id, destinatario_id} = req.body;
-
-    const conta = await Conta.findByPk(conta_id);
-    if(!conta)
-      {return res.status(400).json ({error: 'Essa conta não existe.'});
-    }
-
-    // if (conta.usuario_id !== req.userId) {
-      //return res.status(403).json({ error: 'Você não tem permissão para operar nesta conta.' });
-    //}
-
-
-   let cpfDoUser = "CPF não encontrado";
-    if (conta.usuario_id){
-      const usuarioDaConta = await User.findByPk(conta.usuario_id);
-      if (usuarioDaConta && usuarioDaConta.cpf){
-        cpfDoUser = usuarioDaConta.cpf;
-      }else {
-        console.warn ('Cpf não encontrado para o user id');
-      }
-  }
-    const id_banco = conta.id_banco_placeholder || "Id de banco não configurada"
-
-    if(tipo === 'transferencia'){
-      if (!destinatario_id){
-        return res.status(400).json({error: 'O ID do destinatário é obrigatório em transferências'});
-      }
-
-    if(conta_id === destinatario_id){
-      return res.status(400).json({ error: 'Sua conta de origem e seu destinatário não podem ser iguais.' });
-    }
-
-    const destinatario = await Conta.findByPk(destinatario_id);
-
-    if(!destinatario){return res.status(400).json({error: 'A conta destinatária não existe ou não foi encontrada.'})};
-
-    if (conta.saldo < valor){
-      return res.status(400).json({error: 'Saldo insuficiente.'})
-    }
-
-    //operações que o cliente pode realizar.
-    //1º transferência
-    conta.saldo = Number(conta.saldo) - Number(valor);
-    destinatario.saldo = Number(destinatario.saldo) + Number(valor);
-
-    await conta.save();
-    await destinatario.save();
-
-    }
-    //2º débito
-    if (tipo === 'debito'){
-      if (Number(conta.saldo) < Number(valor)) {
-        return res.status(400).json({error :'Saldo insuficiente.'})
-      }
-
-      conta.saldo = Number(conta.saldo) - Number(valor);
-      await conta.save();
-
-    }
-    //3º crédito
-      if (tipo === 'credito'){
-        conta.saldo = Number(conta.saldo) + Number(valor);
-        await conta.save();
-      }
-
-
+  async store(req, res) {
     try {
-      const transacao = await Transacao.create({
-      descricao,
-      tipo,
-      valor,
-      data: data || new Date(),
-      conta_id,
-      destinatario_id: tipo === 'transferencia' ? destinatario_id: null,
-     });
+      const { cpf } = req.params;
+      const { institution_id, description, type, value, account_id } = req.body;
 
-     let tipoResposta;
-     if (transacao.tipo === 'credito'){
-      tipoResposta = 'deposito';
-     } else if (transacao.tipo === 'debito' || transacao.tipo === 'transferencia'){
-      tipoResposta = 'saque';
-     }else {
-      tipoResposta= transacao.tipo; 
-     }
-
-     const formDate = (dateValue) => {
-      if (!dateValue) return null;
-      try{
-        return new Date(dateValue).toISOString().split('T')[0];
-      } catch (e){
-        console.error("Erro ao formatar data", dataValue, e);
-        return String(dateValue); 
+      // Verificar se o usuário existe
+      const user = await User.findOne({ where: { cpf } });
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
       }
-     };
 
-     const dataFormatada = formDate(transacao.createdAt);
-               
-    const responseBody = {
-      message: 'Operação realizada com sucesso.',
-      transacao: {
-       id_banco: 3,
-       cpf: cpfDoUser,
-       tipo: tipoResposta,
-       valor: Number(transacao.valor),
-       data: dataFormatada,
-       descricao: transacao.descricao,
-      },
-    };
+      let account;
 
-    return res.status(201).json(responseBody);
-
-    }catch (err) {
-      console.error('Erro ao realizar transação', err);
-      if (err.name === 'SequelizeValidationError'|| err.name === 'SequelizeUniqueConstraintError'){ 
-        return res.status(400).json({ error: 'Erro de validação nos dados da transação'});
+      if (account_id) {
+        // Se account_id foi fornecido, usar ele
+        account = await Conta.findByPk(account_id);
+        if (!account || account.user_cpf !== cpf) {
+          return res.status(404).json({ error: 'Account not found or not owned by user' });
+        }
+      } else if (institution_id) {
+        // Se não foi fornecido account_id, buscar pela instituição
+        account = await Conta.findOne({
+          where: { 
+            user_cpf: cpf,
+            instituicao_id: institution_id
+          }
+        });
+        
+        if (!account) {
+          return res.status(404).json({ error: 'Account not found for this institution' });
+        }
+      } else {
+        return res.status(400).json({ error: 'Either account_id or institution_id is required' });
       }
-        return res.status(500).json({ error: 'Erro interno ao realizar a transação'});
+
+      // Validar campos obrigatórios
+      if (!description || !type || !value) {
+        return res.status(400).json({ error: 'Description, type and value are required' });
+      }
+
+      // Validar tipo de transação
+      if (!['entrada', 'saida'].includes(type)) {
+        return res.status(400).json({ error: 'Type must be "entrada" or "saida"' });
+      }
+
+      // Criar a transação
+      const transaction = await Transacao.create({
+        conta_id: account.id,
+        descricao: description,
+        tipo: type,
+        valor: parseFloat(value),
+        data: new Date()
+          });
+
+    // Atualizar saldo da conta
+      const newBalance = type === 'entrada' 
+        ? parseFloat(account.balance) + parseFloat(value)
+        : parseFloat(account.balance) - parseFloat(value);
+
+      await account.update({ balance: newBalance });
+
+      return res.status(201).json({
+        id: transaction.id,
+        descricao: transaction.descricao,
+        tipo: transaction.tipo,
+        valor: transaction.valor,
+        data: transaction.data,
+        conta_id: transaction.conta_id,
+        new_balance: newBalance
+      });
+
+    } catch (error) {
+      console.error('Error creating transaction:', error);
+      return res.status(500).json({ 
+        error: 'Internal server error', 
+        details: error.message 
+      });
     }
   }
+
+  async index(req, res) {
+    try {
+      const { cpf } = req.params;
+
+      // Verificar se o usuário existe
+      const user = await User.findOne({ where: { cpf } });
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      // Buscar todas as contas do usuário
+      const accounts = await Conta.findAll({
+        where: { user_cpf: cpf }
+      });
+
+      const accountIds = accounts.map(account => account.id);
+
+      // Buscar todas as transações das contas do usuário
+      const transactions = await Transacao.findAll({
+        where: { conta_id: accountIds },
+        order: [['created_at', 'DESC']]
+      });
+
+      return res.json({ transactions });
+    } catch (error) {
+      console.error('Error listing transactions:', error);
+      return res.status(500).json({ error: 'Internal server error' });
     }
+  }
 
+  async show(req, res) {
+    try {
+      const { id } = req.params;
+      const transacao = await Transacao.findByPk(id, {
+        include: [{ model: Conta, as: 'conta' }]
+      });
 
-  export default new TransacaoController();
+      if (!transacao) {
+        return res.status(404).json({ error: 'Transação não encontrada' });
+      }
+
+      return res.status(200).json(transacao);
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao buscar transação' });
+    }
+  }
+
+  async update(req, res) {
+    try {
+      const { id } = req.params;
+      const { descricao, tipo, valor, data } = req.body;
+
+      const transacao = await Transacao.findByPk(id);
+      if (!transacao) {
+        return res.status(404).json({ error: 'Transação não encontrada' });
+      }
+
+      await transacao.update({ descricao, tipo, valor, data });
+      return res.status(200).json(transacao);
+
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao atualizar transação' });
+    }
+  }
+
+  async delete(req, res) {
+    try {
+      const { id } = req.params;
+      const transacao = await Transacao.findByPk(id);
+
+      if (!transacao) {
+        return res.status(404).json({ error: 'Transação não encontrada' });
+      }
+
+      await transacao.destroy();
+      return res.status(204).send();
+
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao deletar transação' });
+    }
+  }
+}
+
+export default new TransacaoController();

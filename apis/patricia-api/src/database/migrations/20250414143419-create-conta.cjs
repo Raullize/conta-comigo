@@ -8,13 +8,6 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
-      usuario_id: {
-        type: Sequelize.INTEGER,
-        references: {model: 'users', key: 'id'},
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
-        allowNull: false,     
-      },
       user_cpf: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -22,11 +15,7 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE', 
       },
-      numero: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      saldo: {
+      balance: {
         type: Sequelize.DECIMAL,
         defaultValue: 0,
       },
@@ -34,7 +23,7 @@ module.exports = {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
       },
-        instituicao_id: {
+      instituicao_id: {
         type: Sequelize.INTEGER,
         references: {model: 'instituicao', key: 'id'},
         onUpdate: 'CASCADE',
