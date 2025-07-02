@@ -8,6 +8,19 @@
 
 O **ContaComigo** é uma plataforma web inovadora de gerenciamento financeiro pessoal que conecta o usuário ao ecossistema do Open Finance brasileiro. Nossa missão é simplificar a vida financeira dos usuários, oferecendo uma visão consolidada e inteligente de suas finanças em um só lugar.
 
+## 🎬 Demonstração
+
+Veja o ContaComigo em ação! Confira nossa demonstração completa das principais funcionalidades:
+
+<div align="center">
+  <video width="800" controls>
+    <source src="public/assets/videos/demo.mp4" type="video/mp4">
+    Seu navegador não suporta o elemento de vídeo.
+  </video>
+</div>
+
+> 📱 **Não consegue ver o vídeo?** [Clique aqui para assistir diretamente](public/assets/videos/demo.mp4)
+
 ### 🚀 Características Principais
 
 - **🔗 Integração Completa**: Conecte todas suas contas bancárias, cartões e investimentos através do Open Finance

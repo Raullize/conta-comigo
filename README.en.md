@@ -8,6 +8,19 @@
 
 **ContaComigo** is an innovative web platform for personal financial management that connects users to the Brazilian Open Finance ecosystem. Our mission is to simplify users' financial lives by offering a consolidated and intelligent view of their finances in one place.
 
+## 🎬 Demo
+
+See ContaComigo in action! Check out our complete demonstration of the main features:
+
+<div align="center">
+  <video width="800" controls>
+    <source src="public/assets/videos/demo.mp4" type="video/mp4">
+    Your browser does not support the video element.
+  </video>
+</div>
+
+> 📱 **Can't see the video?** [Click here to watch directly](public/assets/videos/demo.mp4)
+
 ### 🚀 Key Features
 
 - **🔗 Complete Integration**: Connect all your bank accounts, cards, and investments through Open Finance
