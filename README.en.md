@@ -13,13 +13,10 @@
 See ContaComigo in action! Check out our complete demonstration of the main features:
 
 <div align="center">
-  <video width="800" controls>
-    <source src="public/assets/videos/demo.mp4" type="video/mp4">
-    Your browser does not support the video element.
-  </video>
+  <img src="public/assets/images/demo.gif" alt="ContaComigo Demo" width="800">
 </div>
 
-> 📱 **Can't see the video?** [Click here to watch directly](public/assets/videos/demo.mp4)
+> 📱 **Want to see more details?** [Click here to view in full size](public/assets/images/demo.gif)
 
 ### 🚀 Key Features
 

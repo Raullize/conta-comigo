@@ -13,13 +13,10 @@ O **ContaComigo** é uma plataforma web inovadora de gerenciamento financeiro pe
 Veja o ContaComigo em ação! Confira nossa demonstração completa das principais funcionalidades:
 
 <div align="center">
-  <video width="800" controls>
-    <source src="public/assets/videos/demo.mp4" type="video/mp4">
-    Seu navegador não suporta o elemento de vídeo.
-  </video>
+  <img src="public/assets/images/demo.gif" alt="Demonstração do ContaComigo" width="800">
 </div>
 
-> 📱 **Não consegue ver o vídeo?** [Clique aqui para assistir diretamente](public/assets/videos/demo.mp4)
+> 📱 **Quer ver mais detalhes?** [Clique aqui para visualizar em tamanho completo](public/assets/images/demo.gif)
 
 ### 🚀 Características Principais
 
