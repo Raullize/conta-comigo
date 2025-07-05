@@ -18,6 +18,8 @@ See ContaComigo in action! Check out our complete demonstration of the main feat
 
 > 📱 **Want to see more details?** [Click here to view in full size](public/assets/images/demo.gif)
 
+> ⏳ **Note**: The demo may take a few seconds to load due to file size. Please wait!
+
 ### 🚀 Key Features
 
 - **🔗 Complete Integration**: Connect all your bank accounts, cards, and investments through Open Finance

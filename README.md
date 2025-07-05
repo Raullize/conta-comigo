@@ -18,6 +18,8 @@ Veja o ContaComigo em ação! Confira nossa demonstração completa das principa
 
 > 📱 **Quer ver mais detalhes?** [Clique aqui para visualizar em tamanho completo](public/assets/images/demo.gif)
 
+> ⏳ **Nota**: A demonstração pode demorar alguns segundos para carregar devido ao tamanho do arquivo. Por favor, aguarde!
+
 ### 🚀 Características Principais
 
 - **🔗 Integração Completa**: Conecte todas suas contas bancárias, cartões e investimentos através do Open Finance
