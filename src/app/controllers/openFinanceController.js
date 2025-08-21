@@ -8,7 +8,6 @@ const Budget = require('../models/Budget');
 const crypto = require('crypto');
 
 class OpenFinanceController {
-  // Função auxiliar para criar ou atualizar conta
   static async createOrUpdateAccount(cpf, accountData, institutionName, apiSource = 'vitor') {
     let account = await Account.findOne({
       where: { 
@@ -18,7 +17,6 @@ class OpenFinanceController {
     });
 
     if (account) {
-      // Atualiza conta existente
       account.balance = accountData.balance || accountData.saldo || 0;
       account.consent = true;
       account.institution_name = institutionName;
@@ -26,7 +24,6 @@ class OpenFinanceController {
       account.updated_at = new Date();
       await account.save();
     } else {
-      // Cria nova conta
       account = await Account.create({
         user_cpf: cpf,
         id_bank: accountData.id,
@@ -40,7 +37,6 @@ class OpenFinanceController {
     return account;
   }
 
-  // Função auxiliar para sincronizar transações
   static async syncTransactions(cpf, accountId, transactions) {
     console.log(`[DEBUG syncTransactions] CPF: ${cpf}, AccountID: ${accountId}, Transações recebidas: ${transactions ? transactions.length : 0}`);
     
@@ -49,7 +45,6 @@ class OpenFinanceController {
       return;
     }
 
-    // Remove transações antigas desta conta
     const deletedCount = await Transaction.destroy({
       where: {
         id_bank: accountId,
@@ -61,19 +56,16 @@ class OpenFinanceController {
     });
 
     const transactionsToCreate = transactions.map((transaction, index) => {
-      // Determinar se é crédito ou débito - compatível com múltiplas APIs
       const isCredit = transaction.type === 'credit' || 
                       transaction.tipo === 'credito' || 
                       transaction.type === 'entrada' ||
-                      transaction.tipo === 'entrada'; // API Caputi, Lucas e Raul - ENTRADA = CRÉDITO
+                      transaction.tipo === 'entrada';
       
-      // Para todas as APIs: "saida" = débito, "entrada" = crédito
       const isDebit = transaction.type === 'saida' || 
                      transaction.tipo === 'saida' ||
                      transaction.type === 'debit' ||
                      transaction.tipo === 'debito';
       
-      // Lógica unificada: se é crédito, então 'C', senão 'D'
       const finalType = isCredit ? 'C' : 'D';
       
 
@@ -97,7 +89,6 @@ class OpenFinanceController {
 
     await Transaction.bulkCreate(transactionsToCreate);
   }
-  // Verifica se o usuário tem pelo menos uma conta vinculada
   static async checkLinkedAccounts(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -127,7 +118,6 @@ class OpenFinanceController {
     }
   }
 
-  // Vincula uma conta da API do Lucas
   static async linkLucasAccount(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -141,13 +131,11 @@ class OpenFinanceController {
         return res.status(400).json({ error: 'Consent is required' });
       }
       
-      // URL da API do Lucas
       const lucasApiUrl = process.env.LUCAS_API_URL || 'http://localhost:4003';
       
       try {
         const axios = require('axios');
         
-        // Buscar dados do usuário na API do Lucas
         const userResponse = await axios.get(`${lucasApiUrl}/usuarios/${cpf}`);
         
         if (!userResponse.data) {
@@ -156,8 +144,6 @@ class OpenFinanceController {
           });
         }
         
-        // Buscar contas do usuário (a API do Lucas não tem endpoint específico para contas por usuário)
-        // Vamos usar o endpoint de saldo que retorna informações da conta
         const saldoResponse = await axios.get(`${lucasApiUrl}/usuarios/${cpf}/saldo`);
         
         if (!saldoResponse.data) {
@@ -166,28 +152,24 @@ class OpenFinanceController {
           });
         }
         
-        // Gerar um ID numérico único baseado no CPF para a conta do Lucas
-        // Usando uma abordagem que garante que o número caiba no INTEGER (máximo 2,147,483,647)
-        const cpfNumbers = cpf.replace(/\D/g, ''); // Remove caracteres não numéricos
+        const cpfNumbers = cpf.replace(/\D/g, '');
         let numericId = 0;
         for (let i = 0; i < cpfNumbers.length; i++) {
-          numericId = (numericId * 10 + parseInt(cpfNumbers[i])) % 2000000000; // Mantém abaixo do limite
+          numericId = (numericId * 10 + parseInt(cpfNumbers[i])) % 2000000000; 
         }
-        numericId = numericId + 1000000; // Adiciona offset para evitar IDs muito pequenos
+        numericId = numericId + 1000000;
         
-        // Criar objeto de conta baseado no saldo retornado
         const lucasAccount = {
-          id: numericId, // ID numérico único baseado no CPF
+          id: numericId,
           saldo: saldoResponse.data.saldoTotal || 0
         };
         
-        // Buscar transações da API do Lucas
         let transactionsData = [];
         try {
           const transacoesResponse = await axios.get(`${lucasApiUrl}/usuarios/${cpf}/transacoes`);
           transactionsData = transacoesResponse.data.transacoes || [];
         } catch (transError) {
-          // Ignorar erro de transações
+  
         }
         
         let institutionName = null;
@@ -200,10 +182,8 @@ class OpenFinanceController {
           return res.status(400).json({ error: 'Nome da instituição não encontrado na API Lucas' });
         }
         
-        // Usar função auxiliar para criar/atualizar conta
         const account = await OpenFinanceController.createOrUpdateAccount(cpf, lucasAccount, institutionName, 'lucas');
         
-        // Usar função auxiliar para sincronizar transações
         await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
         
         return res.json({ 
@@ -229,7 +209,6 @@ class OpenFinanceController {
     }
   }
 
-  // Função genérica para vincular contas de diferentes APIs
   static async linkGenericAccount(req, res, apiName, apiUrl, institutionName) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -244,13 +223,10 @@ class OpenFinanceController {
       }
       
       try {
-        // Tentar buscar dados do usuário - APIs novas usam /users, antigas usam /usuarios
         let userResponse;
         try {
-          // Primeiro tenta endpoint moderno /users (Patricia, Raul)
           userResponse = await axios.get(`${apiUrl}/users/${cpf}`);
         } catch (error) {
-          // Se falhar, tenta endpoint legado /usuarios (outras APIs)
           userResponse = await axios.get(`${apiUrl}/usuarios/${cpf}`);
         }
         
@@ -259,24 +235,19 @@ class OpenFinanceController {
             error: `Usuário não encontrado na API ${apiName}. Cadastre o usuário primeiro.` 
           });
         }
-        
-        // Buscar contas do usuário - APIs modernas têm endpoint específico
+
         let accountsResponse;
         try {
-          // Tentar endpoint de contas moderno
           accountsResponse = await axios.get(`${apiUrl}/users/${cpf}/accounts`);
         } catch (error) {
-          // Se não tiver, usar dados do usuário diretamente
           accountsResponse = { data: [] };
         }
         
-        // Buscar saldo total se API suportar
         let balanceData = 0;
         try {
           const balanceResponse = await axios.get(`${apiUrl}/users/${cpf}/balance`);
           balanceData = balanceResponse.data.totalBalance || balanceResponse.data.saldo || 0;
         } catch (error) {
-          // Se não tiver endpoint de saldo, usar dados das contas ou usuário
           if (accountsResponse.data && accountsResponse.data.length > 0) {
             balanceData = accountsResponse.data.reduce((total, account) => {
               return total + parseFloat(account.balance || account.saldo || 0);
@@ -286,7 +257,6 @@ class OpenFinanceController {
           }
         }
         
-        // Gerar um ID numérico único baseado no CPF e no nome da API
         const cpfNumbers = cpf.replace(/\D/g, '');
         const apiHash = apiName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
         let numericId = 0;
@@ -295,36 +265,29 @@ class OpenFinanceController {
         }
         numericId = (numericId + apiHash * 1000) % 2000000000 + 1000000;
         
-        // Criar objeto de conta baseado nos dados retornados
         const accountData = {
           id: numericId,
           saldo: balanceData
         };
         
-        // Buscar transações se disponível
         let transactionsData = [];
         try {
-          // Tentar endpoint moderno de transações
           const transactionsResponse = await axios.get(`${apiUrl}/users/${cpf}/transactions`);
           transactionsData = transactionsResponse.data.transactions || transactionsResponse.data || [];
         } catch (error) {
           try {
-            // Tentar endpoint legado de transações
             const transactionsResponse = await axios.get(`${apiUrl}/usuarios/${cpf}/transacoes`);
             transactionsData = transactionsResponse.data.transacoes || transactionsResponse.data.transactions || [];
           } catch (transError) {
-            // Endpoint de transações não disponível
             console.log(`[${apiName}] Endpoint de transações não disponível`);
           }
         }
         
         console.log(`[${apiName}] Encontradas ${transactionsData.length} transações para CPF ${cpf}`);
         
-        // Usar função auxiliar para criar/atualizar conta
         const apiSource = apiName.toLowerCase();
         const account = await OpenFinanceController.createOrUpdateAccount(cpf, accountData, institutionName, apiSource);
         
-        // Usar função auxiliar para sincronizar transações
         await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
         
         return res.json({ 
@@ -350,7 +313,6 @@ class OpenFinanceController {
     }
   }
 
-  // Vincula uma conta da API da Patricia
   static async linkPatriciaAccount(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -367,10 +329,8 @@ class OpenFinanceController {
       const patriciaApiUrl = process.env.PATRICIA_API_URL || 'http://localhost:4004';
       
       try {
-        // Primeiro, atualizar o consentimento na API Patricia
         await axios.patch(`${patriciaApiUrl}/open-finance/${cpf}/consent`, { consent: true });
         
-        // Buscar dados da conta usando o endpoint específico de Open Finance
         const accountResponse = await axios.get(`${patriciaApiUrl}/open-finance/${cpf}`);
         
         if (!accountResponse.data) {
@@ -381,22 +341,17 @@ class OpenFinanceController {
         
         const accountData = accountResponse.data;
         
-        // Criar objeto de conta baseado nos dados retornados da API Patricia
         const patriciaAccount = {
-          id: accountData.id_bank || 4, // Patricia API é banco 4
+          id: accountData.id_bank || 4,
           saldo: accountData.balance || 0
         };
         
-        // Usar o nome da instituição retornado pela API Patricia
         const institutionName = accountData.institution || 'Banco Patricia';
         
-        // Usar função auxiliar para criar/atualizar conta
         const account = await OpenFinanceController.createOrUpdateAccount(cpf, patriciaAccount, institutionName, 'patricia');
         
-        // Buscar transações se disponível
         let transactionsData = accountData.transactions || [];
         
-        // Usar função auxiliar para sincronizar transações
         await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
         
         return res.json({ 
@@ -422,7 +377,7 @@ class OpenFinanceController {
     }
   }
 
-  // Vincula uma conta da API do Dante
+
   static async linkDanteAccount(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -439,7 +394,6 @@ class OpenFinanceController {
       const danteApiUrl = process.env.DANTE_API_URL || 'http://localhost:4002';
       
       try {
-        // Usar o endpoint específico do Open Finance da API Dante
         const userResponse = await axios.get(`${danteApiUrl}/open-finance/${cpf}`);
         
         if (!userResponse.data) {
@@ -448,7 +402,6 @@ class OpenFinanceController {
           });
         }
         
-        // Gerar um ID numérico único baseado no CPF para Dante
         const cpfNumbers = cpf.replace(/\D/g, '');
         const apiHash = 'Dante'.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
         let numericId = 0;
@@ -457,25 +410,20 @@ class OpenFinanceController {
         }
         numericId = (numericId + apiHash * 1000) % 2000000000 + 1000000;
         
-        // Criar objeto de conta baseado nos dados retornados
         const accountData = {
           id: numericId,
           saldo: userResponse.data.saldoTotal || userResponse.data.balance || 0
         };
         
-        // Buscar transações se disponível
         let transactionsData = [];
         if (userResponse.data.transactions) {
           transactionsData = userResponse.data.transactions;
         }
         
-        // Usar o nome da instituição retornado pela API ou fallback para "Banco Dante"
         const institutionName = userResponse.data.institution || 'Banco Dante';
         
-        // Usar função auxiliar para criar/atualizar conta
         const account = await OpenFinanceController.createOrUpdateAccount(cpf, accountData, institutionName, 'dante');
         
-        // Usar função auxiliar para sincronizar transações
         await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
         
         return res.json({ 
@@ -501,7 +449,6 @@ class OpenFinanceController {
     }
   }
 
-  // Vincula uma conta da API do Raul
   static async linkRaulAccount(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -518,10 +465,8 @@ class OpenFinanceController {
       const raulApiUrl = process.env.RAUL_API_URL || 'http://localhost:4006';
       
       try {
-        // Primeiro, atualizar o consentimento na API Raul
         await axios.patch(`${raulApiUrl}/open-finance/${cpf}/consent`, { consent: true });
         
-        // Buscar dados da conta usando o endpoint específico de Open Finance
         const accountResponse = await axios.get(`${raulApiUrl}/open-finance/${cpf}`);
         
         if (!accountResponse.data) {
@@ -532,7 +477,6 @@ class OpenFinanceController {
         
         const accountData = accountResponse.data;
         
-        // Gerar um ID numérico único baseado no CPF para Raul
         const cpfNumbers = cpf.replace(/\D/g, '');
         const apiHash = 'Raul'.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
         let numericId = 0;
@@ -541,22 +485,17 @@ class OpenFinanceController {
         }
         numericId = (numericId + apiHash * 1000) % 2000000000 + 1000000;
         
-        // Criar objeto de conta baseado nos dados retornados da API Raul
         const raulAccount = {
-          id: numericId, // ID único baseado no CPF e API
+          id: numericId,
           saldo: accountData.balance || 0
         };
         
-        // Usar o nome da instituição retornado pela API Raul
         const institutionName = accountData.institution || 'Banco Raul';
         
-        // Buscar transações se disponível
         let transactionsData = accountData.transactions || [];
         
-        // Usar função auxiliar para criar/atualizar conta
         const account = await OpenFinanceController.createOrUpdateAccount(cpf, raulAccount, institutionName, 'raul');
         
-        // Usar função auxiliar para sincronizar transações
         await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
         
         return res.json({ 
@@ -582,7 +521,6 @@ class OpenFinanceController {
     }
   }
 
-  // Vincula uma conta da API do Caputi
   static async linkCaputiAccount(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -599,10 +537,8 @@ class OpenFinanceController {
       const caputiApiUrl = process.env.CAPUTI_API_URL || 'http://localhost:4001';
       
       try {
-        // Primeiro, atualizar o consentimento na API Caputi
         await axios.patch(`${caputiApiUrl}/open-finance/${cpf}/consent`, { consent: true });
         
-        // Buscar dados da conta usando o endpoint específico de Open Finance
         const accountResponse = await axios.get(`${caputiApiUrl}/open-finance/${cpf}`);
         
         if (!accountResponse.data) {
@@ -613,7 +549,6 @@ class OpenFinanceController {
         
         const accountData = accountResponse.data;
         
-        // Gerar um ID numérico único baseado no CPF para Caputi
         const cpfNumbers = cpf.replace(/\D/g, '');
         const apiHash = 'Caputi'.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
         let numericId = 0;
@@ -622,22 +557,17 @@ class OpenFinanceController {
         }
         numericId = (numericId + apiHash * 1000) % 2000000000 + 1000000;
         
-        // Criar objeto de conta baseado nos dados retornados da API Caputi
         const caputiAccount = {
-          id: numericId, // ID único baseado no CPF e API
+          id: numericId,
           saldo: accountData.balance || 0
         };
         
-        // Usar o nome da instituição retornado pela API Caputi
         const institutionName = accountData.institution || 'Banco Caputi';
         
-        // Usar função auxiliar para criar/atualizar conta
         const account = await OpenFinanceController.createOrUpdateAccount(cpf, caputiAccount, institutionName, 'caputi');
         
-        // Buscar transações se disponível
         let transactionsData = accountData.transactions || [];
         
-        // Usar função auxiliar para sincronizar transações
         await OpenFinanceController.syncTransactions(cpf, account.id_bank, transactionsData);
         
         return res.json({ 
@@ -663,7 +593,6 @@ class OpenFinanceController {
     }
   }
 
-  // Vincula uma conta da API do Vitor (id_bank dinâmico)
   static async linkVitorAccount(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -672,22 +601,18 @@ class OpenFinanceController {
       
       const { cpf } = req.user;
       const { consent } = req.body;
-      
-      // Não usar ID fixo - buscar instituições dinamicamente
 
       if (typeof consent !== 'boolean') {
         return res.status(400).json({ error: 'Consent must be a boolean value' });
       }
 
-      // URL da API do Vitor - tentar múltiplas opções
       const vitorApiUrl = process.env.VITOR_API_URL || `http://localhost:${process.env.VITOR_API_EXT_PORT || '4005'}`;
       
-      // Primeiro, atualiza o consentimento na API do Vitor
       try {
         const consentResponse = await axios.patch(`${vitorApiUrl}/open-finance/${cpf}/consent`, {
           consent: consent
         }, {
-          timeout: 5000, // 5 segundos de timeout
+          timeout: 5000,
           headers: {
             'Content-Type': 'application/json'
           }
@@ -701,7 +626,6 @@ class OpenFinanceController {
           data: error.response?.data
         });
         
-        // Se a API do Vitor não estiver disponível, simular sucesso para desenvolvimento
         if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
         } else {
           return res.status(400).json({ 
@@ -712,7 +636,6 @@ class OpenFinanceController {
       }
 
       if (consent) {
-        // Se o consentimento foi dado, busca os dados da API do Vitor
         let externalData = null;
         try {
           const response = await axios.get(`${vitorApiUrl}/open-finance/${cpf}`, {
@@ -736,7 +659,6 @@ class OpenFinanceController {
         }
         
         if (externalData) {
-          // Buscar a instituição da API do Vitor
           let institution = null;
           let institutionName = 'Instituição Desconhecida';
           let bankId = null;
@@ -744,7 +666,6 @@ class OpenFinanceController {
           try {
             const institutionResponse = await axios.get(`${vitorApiUrl}/listInstitutions`);
             if (institutionResponse.data && Array.isArray(institutionResponse.data) && institutionResponse.data.length > 0) {
-              // Pegar a primeira instituição disponível (já que a API do Vitor permite apenas uma)
               institution = institutionResponse.data[0];
               institutionName = institution.name;
               bankId = institution.id;
@@ -761,7 +682,6 @@ class OpenFinanceController {
             });
           }
 
-          // Verifica se a conta já existe
           let account = await Account.findOne({
             where: { 
               user_cpf: cpf,
@@ -770,14 +690,12 @@ class OpenFinanceController {
           });
 
           if (account) {
-            // Atualiza conta existente
             account.balance = externalData.balance;
             account.consent = true;
             account.institution_name = institutionName;
             account.api_source = 'vitor';
             await account.save();
           } else {
-            // Cria nova conta
             account = await Account.create({
               user_cpf: cpf,
               id_bank: bankId,
@@ -788,9 +706,7 @@ class OpenFinanceController {
             });
           }
 
-          // Sincroniza transações
           if (externalData.transactions && externalData.transactions.length > 0) {
-            // PRIMEIRO: Buscar transações existentes para preservar categorias (ANTES de remover)
             const existingTransactions = await Transaction.findAll({
               where: {
                 id_bank: bankId,
@@ -802,7 +718,6 @@ class OpenFinanceController {
               attributes: ['description', 'category', 'created_at', 'value']
             });
 
-            // SEGUNDO: Remove transações antigas desta conta
             await Transaction.destroy({
               where: {
                 id_bank: bankId,
@@ -813,30 +728,25 @@ class OpenFinanceController {
               }
             });
 
-            // Criar mapa de transações existentes para preservar categorias
             const existingTransactionsMap = new Map();
 
             
             existingTransactions.forEach(t => {
-              // Normalizar valores para comparação consistente
               const normalizedValue = Math.abs(parseFloat(t.value.toString().replace(/[^\d.-]/g, '')));
               
-              // Normalizar data de forma consistente - sempre usar YYYY-MM-DD se possível
               let normalizedDate;
               try {
                 const date = new Date(t.created_at);
                 if (isNaN(date.getTime())) {
-                  // Se a data é inválida, tentar extrair da string
                   const dateStr = t.created_at.toString();
                   const dateMatch = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
                   if (dateMatch) {
                     normalizedDate = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
                   } else {
-                    // Se não conseguir extrair, usar data atual como fallback
                     normalizedDate = new Date().toISOString().split('T')[0];
                   }
                 } else {
-                  normalizedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+                  normalizedDate = date.toISOString().split('T')[0];
                 }
               } catch (e) {
                 normalizedDate = new Date().toISOString().split('T')[0];
@@ -850,27 +760,22 @@ class OpenFinanceController {
               }
             });
 
-             // Insere novas transações preservando categorias existentes
             const transactionsToInsert = externalData.transactions.map(transaction => {
-              // Normalizar valores da mesma forma
               const normalizedValue = Math.abs(parseFloat(transaction.value.toString().replace(/[^\d.-]/g, '')));
               
-              // Normalizar data de forma consistente - sempre usar YYYY-MM-DD se possível
               let normalizedDate;
               try {
                 const date = new Date(transaction.date);
                 if (isNaN(date.getTime())) {
-                  // Se a data é inválida, tentar extrair da string
                   const dateStr = transaction.date.toString();
                   const dateMatch = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
                   if (dateMatch) {
                     normalizedDate = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
                   } else {
-                    // Se não conseguir extrair, usar data atual como fallback
                     normalizedDate = new Date().toISOString().split('T')[0];
                   }
                 } else {
-                  normalizedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+                  normalizedDate = date.toISOString().split('T')[0];
                 }
               } catch (e) {
                 normalizedDate = new Date().toISOString().split('T')[0];
@@ -879,8 +784,6 @@ class OpenFinanceController {
               const transactionKey = `${transaction.description}_${normalizedDate}_${normalizedValue}`;
               
               const existingCategory = existingTransactionsMap.get(transactionKey);
-              
-
               
               return {
                 origin_cpf: transaction.type === 'debit' ? cpf : transaction.origin_cpf || null,
@@ -909,7 +812,6 @@ class OpenFinanceController {
           return res.status(400).json({ error: 'No data available from external API' });
         }
       } else {
-        // Se o consentimento foi revogado, atualiza apenas o status
         await Account.update(
           { consent: false },
           { 
@@ -929,7 +831,6 @@ class OpenFinanceController {
     }
   }
 
-  // Lista as contas conectadas do usuário
   static async getConnectedAccounts(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -966,7 +867,6 @@ class OpenFinanceController {
     }
   }
 
-  // Desvincula uma conta específica
   static async disconnectAccount(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -976,7 +876,6 @@ class OpenFinanceController {
       const { cpf } = req.user;
       const { id_bank } = req.params;
 
-      // Atualiza o consentimento para false
       const [updatedRows] = await Account.update(
         { consent: false },
         { 
@@ -991,7 +890,6 @@ class OpenFinanceController {
         return res.status(404).json({ error: 'Account not found' });
       }
 
-      // Remove as transações relacionadas a esta conta
       await Transaction.destroy({
         where: {
           id_bank: parseInt(id_bank),
@@ -1009,7 +907,6 @@ class OpenFinanceController {
     }
   }
 
-  // Desvincula todas as contas do usuário
   static async disconnectAllAccounts(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -1018,7 +915,6 @@ class OpenFinanceController {
       
       const { cpf } = req.user;
 
-      // Atualiza o consentimento de todas as contas para false
       await Account.update(
         { consent: false },
         { 
@@ -1028,7 +924,6 @@ class OpenFinanceController {
         }
       );
 
-      // Remove todas as transações do usuário
       await Transaction.destroy({
         where: {
           [Sequelize.Op.or]: [
@@ -1045,7 +940,6 @@ class OpenFinanceController {
     }
   }
 
-  // Sincroniza dados de uma conta específica
   static async syncAccount(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -1055,13 +949,11 @@ class OpenFinanceController {
       const { id_bank: rawid_bank } = req.params;
       const { cpf } = req.user;
 
-      // Validação de entrada
       const id_bank = parseInt(rawid_bank);
       if (isNaN(id_bank)) {
         return res.status(400).json({ error: 'Invalid bank ID' });
       }
 
-      // Verifica se a conta existe e está vinculada
       const account = await Account.findOne({
         where: { 
           id_bank, 
@@ -1074,30 +966,25 @@ class OpenFinanceController {
         return res.status(404).json({ error: 'Account not found or not linked' });
       }
 
-      // Determinar qual API usar baseado no api_source
       const apiSource = account.api_source || 'vitor';
       let externalData;
       let institutionName = account.institution_name || 'Instituição';
       
       try {
         if (apiSource === 'lucas') {
-          // Sincronizar com a API do Lucas
           const lucasApiUrl = process.env.LUCAS_API_URL || 'http://localhost:4003';
           
-          // Buscar saldo atualizado da API do Lucas
           const saldoResponse = await axios.get(`${lucasApiUrl}/usuarios/${cpf}/saldo`);
           
           if (!saldoResponse.data) {
             return res.status(404).json({ error: 'No data found for this user in Lucas API' });
           }
           
-          // Buscar transações da API do Lucas
           let transactions = [];
           try {
             const transacoesResponse = await axios.get(`${lucasApiUrl}/usuarios/${cpf}/transacoes`);
             transactions = transacoesResponse.data.transacoes || [];
           } catch (transError) {
-            // Ignorar erro de transações
           }
           
           externalData = {
@@ -1106,10 +993,8 @@ class OpenFinanceController {
           };
           
         } else if (apiSource === 'patricia') {
-          // Sincronizar com a API da Patricia
           const patriciaApiUrl = process.env.PATRICIA_API_URL || 'http://localhost:4004';
           
-          // Buscar dados da API da Patricia (adaptar conforme endpoints disponíveis)
           const response = await axios.get(`${patriciaApiUrl}/open-finance/${cpf}`);
           
           externalData = {
@@ -1118,10 +1003,8 @@ class OpenFinanceController {
           };
           
         } else if (apiSource === 'dante') {
-          // Sincronizar com a API do Dante - usar endpoint correto
           const danteApiUrl = process.env.DANTE_API_URL || 'http://localhost:4002';
           
-          // Buscar dados da API do Dante usando endpoint de open-finance
           const response = await axios.get(`${danteApiUrl}/open-finance/${cpf}`);
           
           externalData = {
@@ -1130,10 +1013,8 @@ class OpenFinanceController {
           };
           
         } else if (apiSource === 'raul') {
-          // Sincronizar com a API do Raul
           const raulApiUrl = process.env.RAUL_API_URL || 'http://localhost:4006';
           
-          // Usar o endpoint Open Finance da API Raul
           const response = await axios.get(`${raulApiUrl}/open-finance/${cpf}`);
           
           externalData = {
@@ -1142,10 +1023,8 @@ class OpenFinanceController {
           };
           
         } else if (apiSource === 'caputi') {
-          // Sincronizar com a API do Caputi
           const caputiApiUrl = process.env.CAPUTI_API_URL || 'http://localhost:4001';
           
-          // Buscar dados da API do Caputi usando endpoint de open-finance
           const response = await axios.get(`${caputiApiUrl}/open-finance/${cpf}`);
           
           externalData = {
@@ -1154,10 +1033,8 @@ class OpenFinanceController {
           };
           
         } else {
-          // Sincronizar com a API do Vitor (padrão)
           const vitorApiUrl = process.env.VITOR_API_URL || `http://localhost:${process.env.VITOR_API_EXT_PORT || '4005'}`;
           
-          // Buscar dados atualizados da API do Vitor
           const response = await axios.get(`${vitorApiUrl}/open-finance/${cpf}`);
           externalData = response.data;
         }
@@ -1174,20 +1051,15 @@ class OpenFinanceController {
           return res.status(404).json({ error: 'No data found for this user' });
         }
         
-        // Atualizar saldo da conta
         const oldBalance = account.balance;
         const newBalance = parseFloat(externalData.balance) || 0;
         await account.update({
           balance: newBalance,
           updated_at: new Date()
         });
-        
-
-        
-        // Importar novas transações
+      
         let newTransactionsCount = 0;
         if (externalData.transactions && externalData.transactions.length > 0) {
-          // PRIMEIRO: Buscar transações existentes para preservar categorias (ANTES de remover)
           const existingTransactions = await Transaction.findAll({
             where: {
               id_bank: id_bank,
@@ -1199,30 +1071,25 @@ class OpenFinanceController {
             attributes: ['description', 'category', 'created_at', 'value']
           });
 
-          // Criar mapa de transações existentes para preservar categorias
           const existingTransactionsMap = new Map();
 
           
           existingTransactions.forEach(t => {
-             // Normalizar valores para comparação consistente (consistente com syncAccount)
              const normalizedValue = Math.abs(parseFloat(t.value.toString().replace(/[^\d.-]/g, '')));
              
-             // Normalizar data de forma consistente - sempre usar YYYY-MM-DD se possível
              let normalizedDate;
              try {
                const date = new Date(t.created_at);
                if (isNaN(date.getTime())) {
-                 // Se a data é inválida, tentar extrair da string
                  const dateStr = t.created_at.toString();
                  const dateMatch = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
                  if (dateMatch) {
                    normalizedDate = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
                  } else {
-                   // Se não conseguir extrair, usar data atual como fallback
                    normalizedDate = new Date().toISOString().split('T')[0];
                  }
                } else {
-                 normalizedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+                 normalizedDate = date.toISOString().split('T')[0];
                }
              } catch (e) {
                normalizedDate = new Date().toISOString().split('T')[0];
@@ -1232,11 +1099,9 @@ class OpenFinanceController {
              
              if (t.category && t.category !== 'Não classificado') {
                existingTransactionsMap.set(key, t.category);
-
              }
            });
 
-            // SEGUNDO: Remover transações antigas desta conta
           await Transaction.destroy({
             where: {
               id_bank: id_bank,
@@ -1247,27 +1112,22 @@ class OpenFinanceController {
             }
           });
           
-          // TERCEIRO: Inserir novas transações preservando categorias
            const transactionsToCreate = externalData.transactions.map(transaction => {
-             // Normalizar valores da mesma forma (consistente com syncAccount)
              const normalizedValue = Math.abs(parseFloat(transaction.value.toString().replace(/[^\d.-]/g, '')));
              
-             // Normalizar data de forma consistente - sempre usar YYYY-MM-DD se possível
              let normalizedDate;
              try {
                const date = new Date(transaction.date);
                if (isNaN(date.getTime())) {
-                 // Se a data é inválida, tentar extrair da string
                  const dateStr = transaction.date.toString();
                  const dateMatch = dateStr.match(/(\d{4})-(\d{2})-(\d{2})/);
                  if (dateMatch) {
                    normalizedDate = `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`;
                  } else {
-                   // Se não conseguir extrair, usar data atual como fallback
                    normalizedDate = new Date().toISOString().split('T')[0];
                  }
                } else {
-                 normalizedDate = date.toISOString().split('T')[0]; // YYYY-MM-DD
+                 normalizedDate = date.toISOString().split('T')[0];
                }
              } catch (e) {
                normalizedDate = new Date().toISOString().split('T')[0];
@@ -1276,21 +1136,17 @@ class OpenFinanceController {
              const transactionKey = `${transaction.description}_${normalizedDate}_${normalizedValue}`;
              
              const existingCategory = existingTransactionsMap.get(transactionKey);
-             
 
-
-            // Usar a mesma lógica de mapeamento da função syncTransactions
             const isCredit = transaction.type === 'credit' || 
                             transaction.tipo === 'credito' || 
                             transaction.type === 'entrada' ||
-                            transaction.tipo === 'entrada'; // API Caputi, Lucas e Raul - ENTRADA = CRÉDITO
+                            transaction.tipo === 'entrada'; 
             
             const isDebit = transaction.type === 'saida' || 
                            transaction.tipo === 'saida' ||
                            transaction.type === 'debit' ||
                            transaction.tipo === 'debito';
             
-            // Lógica unificada: se é crédito, então 'C', senão 'D'
             const finalType = isCredit ? 'C' : 'D';
             
 
@@ -1310,7 +1166,6 @@ class OpenFinanceController {
           newTransactionsCount = transactionsToCreate.length;
         }
         
-        // Retornar sucesso com saldo atualizado
         return res.json({
           message: 'Account synchronized successfully',
           newBalance: newBalance,
@@ -1325,12 +1180,10 @@ class OpenFinanceController {
     }
   }
 
-  // Lista todas as instituições disponíveis
   static async listAvailableInstitutions(req, res) {
     try {
       const institutions = [];
       
-      // Definir todas as APIs disponíveis (nomes serão obtidos dinamicamente das APIs)
       const apis = [
         {
           name: 'API Lucas',
@@ -1359,10 +1212,8 @@ class OpenFinanceController {
         }
       ];
       
-      // Verificar quais APIs estão disponíveis
       for (const api of apis) {
         try {
-          // Tentar fazer uma requisição simples para verificar se a API está online
           await axios.get(`${api.url}/health`, { timeout: 2000 });
           institutions.push({
             id: api.name.toLowerCase().replace(/\s+/g, '-'),
@@ -1371,7 +1222,6 @@ class OpenFinanceController {
             linkEndpoint: api.linkEndpoint
           });
         } catch (apiError) {
-          // Se a API não responder, ainda incluir na lista mas marcar como indisponível
           institutions.push({
             id: api.name.toLowerCase().replace(/\s+/g, '-'),
             name: api.name,
@@ -1388,7 +1238,6 @@ class OpenFinanceController {
     }
   }
 
-  // Busca todas as transações do usuário logado
   static async getUserTransactions(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -1446,7 +1295,6 @@ class OpenFinanceController {
 
       const { cpf } = req.user;
 
-      // Verificar se a transação existe e pertence ao usuário
       const transaction = await Transaction.findOne({
         where: {
           id: id,
@@ -1461,7 +1309,6 @@ class OpenFinanceController {
         return res.status(404).json({ error: 'Transaction not found' });
       }
 
-      // Atualizar a categoria
       await transaction.update({ category });
 
       return res.json({
@@ -1478,7 +1325,6 @@ class OpenFinanceController {
     }
   }
 
-  // Métodos para gerenciamento de orçamento mensal
   static async getBudgets(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -1533,7 +1379,6 @@ class OpenFinanceController {
       const month = currentDate.getMonth() + 1;
       const year = currentDate.getFullYear();
 
-      // Verificar se já existe um orçamento para esta categoria no mês/ano atual
       const existingBudget = await Budget.findOne({
         where: {
           user_cpf: cpf,
@@ -1545,11 +1390,9 @@ class OpenFinanceController {
 
       let budget;
       if (existingBudget) {
-        // Atualizar orçamento existente
         await existingBudget.update({ limit_amount: limit });
         budget = existingBudget;
       } else {
-        // Criar novo orçamento
         budget = await Budget.create({
           user_cpf: cpf,
           category: category,

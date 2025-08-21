@@ -1,9 +1,8 @@
-// Variáveis globais
 let simulationData = null
 let currentPage = 1
 const itemsPerPage = 10
 
-// Inicialização
+
 document.addEventListener("DOMContentLoaded", () => {
   initializeApp()
 })
@@ -21,46 +20,46 @@ function initializeApp() {
   setupPeriodicCalculations()
 }
 
-// Event Listeners
+
 function setupEventListeners() {
-  // Form submission
+
   document.getElementById("simulationForm").addEventListener("submit", handleSimulation)
 
-  // Clear button
+
   document.getElementById("clearBtn").addEventListener("click", clearForm)
 
-  // Radio buttons for aporte type
+
   document.querySelectorAll('input[name="aporteType"]').forEach((radio) => {
     radio.addEventListener("change", toggleAporteType)
   })
 
-  // Export buttons
+
   document.getElementById("exportPdfBtn")?.addEventListener("click", exportToPDF)
   document.getElementById("exportCsvBtn")?.addEventListener("click", exportToCSV)
 
-  // Template buttons tirado
 
-  // Summary toggle
+
+
   document.getElementById("toggleSummary")?.addEventListener("click", toggleSummary)
 
-  // Table search
+
   document.getElementById("tableSearch")?.addEventListener("input", filterTable)
 
-  // Pagination
+
   document.getElementById("prevPage")?.addEventListener("click", () => changePage(-1))
   document.getElementById("nextPage")?.addEventListener("click", () => changePage(1))
 
-  // Real-time validation
+  
   setupRealTimeValidation()
 }
 
-// Setup Periodic Calculations
+
 function setupPeriodicCalculations() {
   const valorAporteInput = document.getElementById("valorAporte")
   const frequenciaSelect = document.getElementById("frequencia")
   const prazoSlider = document.getElementById("prazoInvestimento")
 
-  // Update calculations when values change
+  
   valorAporteInput?.addEventListener("input", updatePeriodicPreview)
   frequenciaSelect?.addEventListener("change", updatePeriodicPreview)
   prazoSlider?.addEventListener("input", updatePeriodicPreview)
@@ -71,7 +70,7 @@ function updatePeriodicPreview() {
   const frequencia = document.getElementById("frequencia").value
   const prazoAnos = Number.parseInt(document.getElementById("prazoInvestimento").value) || 5
 
-  // Update preview values
+  
   document.getElementById("previewValorAporte").textContent = formatCurrency(valorAporte)
 
   const frequenciaTexts = {
@@ -84,7 +83,7 @@ function updatePeriodicPreview() {
 
   document.getElementById("previewFrequencia").textContent = frequenciaTexts[frequencia] || "-"
 
-  // Calculate totals
+
   const frequenciaMultipliers = {
     mensal: 12,
     bimestral: 6,
@@ -101,7 +100,6 @@ function updatePeriodicPreview() {
   document.getElementById("previewTotalPeriodo").textContent = formatCurrency(totalNoPeriodo)
 }
 
-// Mobile Menu
 function setupMobileMenu() {
   const mobileMenuBtn = document.getElementById("mobileMenuBtn")
   const sidebar = document.getElementById("sidebar")
@@ -123,7 +121,7 @@ function setupMobileMenu() {
   }
 }
 
-// User Menu
+
 function setupUserMenu() {
   const userMenu = document.getElementById("userMenu")
   const userMenuBtn = document.getElementById("userMenuBtn")
@@ -139,18 +137,18 @@ function setupUserMenu() {
     }
   })
 
-  // Logout functionality
+  
   document.getElementById("logoutBtn")?.addEventListener("click", handleLogout)
 }
 
 function handleLogout() {
   if (confirm("Tem certeza que deseja sair?")) {
     showToast("Logout realizado com sucesso!", "success")
-    // Aqui você implementaria a lógica de logout
+
   }
 }
 
-// Tooltips
+
 function setupTooltips() {
   const tooltip = document.getElementById("tooltip")
   const tooltipBtns = document.querySelectorAll(".tooltip-btn")
@@ -182,7 +180,7 @@ function setupTooltips() {
   }
 }
 
-// Sliders
+
 function setupSliders() {
   const taxaRetornoSlider = document.getElementById("taxaRetorno")
   const prazoInvestimentoSlider = document.getElementById("prazoInvestimento")
@@ -197,7 +195,7 @@ function setupSliders() {
   prazoInvestimentoSlider?.addEventListener("input", function () {
     prazoInvestimentoValue.textContent = this.value
     updateSliderFill(this)
-    updatePeriodicPreview() // Update periodic preview when period changes
+    updatePeriodicPreview()
   })
 }
 
@@ -213,7 +211,6 @@ function updateSliderFill(slider) {
   }
 }
 
-// Form Toggle
 function setupFormToggle() {
   toggleAporteType()
 }
@@ -229,11 +226,11 @@ function toggleAporteType() {
   } else {
     aporteUnico.style.display = "none"
     aportePeriodico.style.display = "block"
-    updatePeriodicPreview() // Update preview when switching to periodic
+    updatePeriodicPreview()
   }
 }
 
-// Tabs
+
 function setupTabs() {
   document.querySelectorAll(".tab-btn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
@@ -246,16 +243,16 @@ function setupTabs() {
 }
 
 function switchTab(tabName) {
-  // Remove active class from all tabs and contents
+  
   document.querySelectorAll(".analysis-tabs .tab-btn").forEach((btn) => btn.classList.remove("active"))
   document.querySelectorAll(".tab-content").forEach((content) => content.classList.remove("active"))
 
-  // Add active class to selected tab and content
+  
   document.querySelector(`[data-tab="${tabName}"]`)?.classList.add("active")
   document.getElementById(`${tabName}Tab`)?.classList.add("active")
 }
 
-// Validation
+
 function setupValidation() {
   const form = document.getElementById("simulationForm")
   const inputs = form.querySelectorAll("input, select")
@@ -290,13 +287,13 @@ function validateField(field) {
   let isValid = true
   let errorMessage = ""
 
-  // Required field validation
+  
   if (field.hasAttribute("required") && !value) {
     isValid = false
     errorMessage = "Este campo é obrigatório"
   }
 
-  // Specific field validations
+  
   switch (fieldName) {
     case "valorInicial":
     case "valorAporte":
@@ -336,7 +333,7 @@ function clearFieldError(field) {
   showFieldError(field, "")
 }
 
-// Simulation Handler
+
 async function handleSimulation(e) {
   e.preventDefault()
 
@@ -347,7 +344,7 @@ async function handleSimulation(e) {
 
   showLoading()
 
-  // Simular delay de processamento
+  
   setTimeout(() => {
     const results = calculateInvestment(formData)
     displayResults(results)
@@ -408,7 +405,7 @@ function validateForm(data) {
   return isValid
 }
 
-// Investment Calculation
+
 function calculateInvestment(params) {
   const monthlyData = []
   const initialValue = params.aporteType === "unico" ? params.valorInicial : params.valorAporte
@@ -416,7 +413,7 @@ function calculateInvestment(params) {
   const months = params.prazoInvestimento * 12
   const monthlyInflation = params.inflacao / 100 / 12
 
-  // Frequency multipliers for periodic contributions
+  
   const frequencyMultipliers = {
     mensal: 1,
     bimestral: 2,
@@ -432,26 +429,26 @@ function calculateInvestment(params) {
   let totalTaxes = 0
 
   for (let i = 0; i <= months; i++) {
-    // Add periodic contributions
+
     if (params.aporteType === "periodico" && i > 0 && i % contributionFrequency === 0) {
       currentValue += params.valorAporte
       totalInvested += params.valorAporte
     }
 
     if (i > 0) {
-      // Apply return
+  
       const monthlyGain = currentValue * monthlyReturn
       currentValue += monthlyGain
 
-      // Calculate taxes
+  
       const monthlyTax = monthlyGain * (params.impostoRenda / 100)
       totalTaxes += monthlyTax
     }
 
-    // Calculate real value (adjusted for inflation)
+
     const realValue = currentValue / Math.pow(1 + monthlyInflation, i)
 
-    // Simulate drawdown
+
     const drawdown = (Math.random() - 0.5) * 10
 
     const aporteValue =
@@ -478,15 +475,15 @@ function calculateInvestment(params) {
   const drawdownMaximo = Math.max(...monthlyData.map((d) => Math.abs(d.drawdown)))
   const valorReal = monthlyData[monthlyData.length - 1].saldoReal
 
-  // Calculate additional metrics
+  
  
 
-  // Calculate scenarios
+  
   const optimisticValue = valorFuturo * 1.2
   const realisticValue = valorFuturo
   const pessimisticValue = valorFuturo * 0.8
 
-  // Calculate multiplier and time to double
+  
   const multiplicadorCapital = valorFuturo / totalInvested
   const tempoDobrar = Math.log(2) / Math.log(1 + params.taxaRetorno / 100)
 
@@ -522,11 +519,11 @@ function calculateVolatility(data) {
   const avgReturn = returns.reduce((sum, r) => sum + r, 0) / returns.length
   const variance = returns.reduce((sum, r) => sum + Math.pow(r - avgReturn, 2), 0) / returns.length
 
-  return Math.sqrt(variance * 12) * 100 // Annualized volatility
+  return Math.sqrt(variance * 12) * 100
 }
 
 function calculateSharpeRatio(expectedReturn, volatility) {
-  const riskFreeRate = 10.75 // CDI approximation
+  const riskFreeRate = 10.75
   return volatility > 0 ? (expectedReturn - riskFreeRate) / volatility : 0
 }
 
@@ -536,25 +533,25 @@ function calculateVaR(data, confidence = 0.95) {
   return values[index] || 0
 }
 
-// Display Results
+
 function displayResults(data) {
   simulationData = data
 
-  // Update indicators
+
   updateIndicators(data)
 
-  // Update summary
+
   updateSummary(data)
 
-  // Update table
+
   updateTable(data.monthlyData)
 
-  // Update metrics
 
-  // Update scenarios
+
+
   updateScenarios(data)
 
-  // Show results
+
   document.getElementById("emptyState").style.display = "none"
   document.getElementById("resultsContent").style.display = "block"
   document.getElementById("exportButtons").style.display = "flex"
@@ -568,18 +565,18 @@ function updateIndicators(data) {
   document.getElementById("totalInvestido").textContent = formatCurrency(data.totalInvestido)
   document.getElementById("ganhoTotal").textContent = formatCurrency(data.totalGanho)
 
-  // Update indicator changes
+
   const gainPercent = ((data.valorFuturo - data.totalInvestido) / data.totalInvestido) * 100
   document.getElementById("valorFuturoChange").textContent = `+${formatPercent(gainPercent)}`
   document.getElementById("ganhoChange").textContent = `+${formatPercent(gainPercent)}`
 
-  // Update progress bars
+
   updateProgressBar("valorFuturoProgress", gainPercent, 100)
   updateProgressBar("cagrProgress", data.cagr, 30)
   updateProgressBar("drawdownProgress", data.drawdownMaximo, 30)
   updateProgressBar("rentabilidadeProgress", data.rentabilidadeLiquida, 50)
 
-  // Update drawdown warning
+
   const drawdownIcon = document.getElementById("drawdownIcon")
   const drawdownBadge = document.getElementById("drawdownBadge")
 
@@ -613,7 +610,7 @@ function updateSummary(data) {
   document.getElementById("multiplicadorCapital").textContent = data.multiplicadorCapital.toFixed(2) + "x"
   document.getElementById("tempoDobrar").textContent = data.tempoDobrar.toFixed(1) + " anos"
 
-  // Update risk assessment
+
   const riskLevel = document.getElementById("riskLevel")
   const riskIndicator = riskLevel.querySelector(".risk-indicator")
   const riskText = riskLevel.querySelector(".risk-text")
@@ -638,7 +635,7 @@ function updateScenarios(data) {
   document.getElementById("pessimisticValue").textContent = formatCurrency(data.pessimisticValue)
 }
 
-// Table Management
+
 function updateTable(data) {
   const tbody = document.getElementById("resultsTableBody")
   tbody.innerHTML = ""
@@ -705,7 +702,7 @@ function filterTable() {
   })
 }
 
-// Loading States
+
 function showLoading() {
   const simulateBtn = document.getElementById("simulateBtn")
   const btnText = simulateBtn.querySelector(".btn-text")
@@ -732,21 +729,21 @@ function hideLoading() {
   document.getElementById("loadingState").style.display = "none"
 }
 
-// Clear Form
+
 function clearForm() {
   document.getElementById("simulationForm").reset()
 
-  // Reset sliders
+
   document.getElementById("taxaRetorno").value = 8
   document.getElementById("prazoInvestimento").value = 5
   document.getElementById("taxaRetornoValue").textContent = "8.0"
   document.getElementById("prazoInvestimentoValue").textContent = "5"
 
-  // Reset aporte type
+
   document.querySelector('input[name="aporteType"][value="unico"]').checked = true
   toggleAporteType()
 
-  // Clear errors
+
   document.querySelectorAll(".field-error").forEach((error) => {
     error.classList.remove("show")
   })
@@ -754,10 +751,10 @@ function clearForm() {
     input.classList.remove("error")
   })
 
-  // Update slider fills
+
   updateSliderFills()
 
-  // Clear results
+
   simulationData = null
   currentPage = 1
 
@@ -768,11 +765,11 @@ function clearForm() {
   showToast("Formulário limpo com sucesso!", "info")
 }
 
-// Template Management tirado 
+ 
 
 
 function loadFormData(data) {
-  // Load form data from template
+  
   Object.keys(data).forEach((key) => {
     const element = document.getElementById(key)
     if (element) {
@@ -786,7 +783,7 @@ function loadFormData(data) {
     }
   })
 
-  // Update UI elements
+
   toggleAporteType()
   updateSliderFills()
   updatePeriodicPreview()
@@ -794,7 +791,7 @@ function loadFormData(data) {
   document.getElementById("prazoInvestimentoValue").textContent = data.prazoInvestimento || "5"
 }
 
-// Summary Toggle
+
 function toggleSummary() {
   const content = document.getElementById("summaryContent")
   const btn = document.getElementById("toggleSummary")
@@ -805,7 +802,7 @@ function toggleSummary() {
   icon.className = isVisible ? "fas fa-chevron-down" : "fas fa-chevron-up"
 }
 
-// Export Functions
+
 function exportToPDF() {
   if (!simulationData) {
     showToast("Nenhuma simulação para exportar.", "warning")
@@ -816,22 +813,22 @@ function exportToPDF() {
     const { jsPDF } = window.jspdf
     const doc = new jsPDF()
 
-    // Header
+  
     doc.setFontSize(20)
-    doc.setTextColor(0, 27, 66) // cc-dark-blue
+    doc.setTextColor(0, 27, 66)
     doc.text("Relatório de Simulação de Investimentos", 20, 30)
 
-    // Company info
+  
     doc.setFontSize(12)
-    doc.setTextColor(54, 179, 126) // cc-green
+    doc.setTextColor(54, 179, 126)
     doc.text("ContaComigo - Simulador de Investimentos", 20, 45)
 
-    // Date
+  
     doc.setFontSize(10)
     doc.setTextColor(100, 100, 100)
     doc.text(`Gerado em: ${new Date().toLocaleDateString("pt-BR")}`, 20, 55)
 
-    // Results summary
+  
     doc.setFontSize(14)
     doc.setTextColor(0, 27, 66)
     doc.text("Resumo dos Resultados", 20, 75)
@@ -851,7 +848,7 @@ function exportToPDF() {
       doc.text(result, 20, 90 + index * 10)
     })
 
-    // Parameters
+  
     doc.setFontSize(14)
     doc.setTextColor(0, 27, 66)
     doc.text("Parâmetros Utilizados", 20, 170)
@@ -870,7 +867,7 @@ function exportToPDF() {
       doc.text(param, 20, 185 + index * 10)
     })
 
-    // Save the PDF
+  
     doc.save(`simulacao-investimentos-${new Date().toISOString().split("T")[0]}.pdf`)
     showToast("PDF exportado com sucesso!", "success")
   } catch (error) {
@@ -911,17 +908,17 @@ function exportToCSV() {
   }
 }
 
-// Toast Notifications
+
 function showToast(message, type = "info") {
   const toast = document.getElementById("toast")
   const icon = toast.querySelector(".toast-icon")
   const messageEl = toast.querySelector(".toast-message")
   const closeBtn = toast.querySelector(".toast-close")
 
-  // Set message
+
   messageEl.textContent = message
 
-  // Set type and icon
+
   toast.className = `toast ${type}`
 
   switch (type) {
@@ -938,15 +935,15 @@ function showToast(message, type = "info") {
       icon.className = "toast-icon fas fa-info-circle"
   }
 
-  // Show toast
+
   toast.classList.add("show")
 
-  // Auto hide after 5 seconds
+
   const autoHide = setTimeout(() => {
     hideToast()
   }, 5000)
 
-  // Close button
+
   closeBtn.onclick = () => {
     clearTimeout(autoHide)
     hideToast()
@@ -957,7 +954,7 @@ function showToast(message, type = "info") {
   }
 }
 
-// Utility Functions
+
 function formatCurrency(value) {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -976,30 +973,30 @@ function formatNumber(value, decimals = 2) {
   }).format(value)
 }
 
-// Keyboard Shortcuts
+
 document.addEventListener("keydown", (e) => {
-  // Ctrl/Cmd + Enter to simulate
+
   if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
     e.preventDefault()
     document.getElementById("simulateBtn").click()
   }
 
-  // Escape to clear form
+
   if (e.key === "Escape") {
-    // Close modals first
+
     const modals = document.querySelectorAll(".modal.show")
     if (modals.length > 0) {
       modals.forEach((modal) => modal.classList.remove("show"))
       document.body.style.overflow = ""
     } else {
-      // Clear form if no modals open
+  
       clearForm()
     }
   }
 
 })
 
-// Initialize date input with today's date
+
 document.addEventListener("DOMContentLoaded", () => {
   const dateInput = document.getElementById("dataInicial")
   if (dateInput) {
@@ -1007,7 +1004,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 })
 
-// Performance monitoring
+
 const performanceStart = performance.now()
 
 window.addEventListener("load", () => {
@@ -1015,7 +1012,7 @@ window.addEventListener("load", () => {
   
 })
 
-// Error handling
+
 window.addEventListener("error", (e) => {
   console.error("Erro na aplicação:", e.error)
   showToast("Ocorreu um erro inesperado. Recarregue a página se o problema persistir.", "error")

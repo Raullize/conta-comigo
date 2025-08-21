@@ -2,16 +2,16 @@
  * Institutions - Financial Institution Management
  */
 
-// Application state
+
 let currentFilter = 'recent';
 let institutions = [];
 let isLoading = false;
 
-// DOM elements
+
 let institutionsGrid;
 let filterButtons;
 
-// Initialize the institutions page
+
 function initializeInstitutions() {
     institutionsGrid = document.getElementById('institutionsGrid');
     filterButtons = document.querySelectorAll('.filter-btn');
@@ -22,7 +22,7 @@ function initializeInstitutions() {
     setupModalListeners();
 }
 
-// Setup event listeners
+
 function setupEventListeners() {
     filterButtons.forEach(button => {
         button.addEventListener('click', (e) => {
@@ -37,7 +37,7 @@ function setupEventListeners() {
     }
 }
 
-// Load connected institutions from backend
+
 async function loadConnectedInstitutions() {
     if (isLoading) return;
     
@@ -45,7 +45,7 @@ async function loadConnectedInstitutions() {
     showLoadingState();
     
     try {
-        // Carregar datas de sincronização salvas permanentemente
+
         const savedSyncDates = localStorage.getItem('institutionsSyncDates');
         let syncDatesMap = new Map();
         if (savedSyncDates) {
@@ -53,7 +53,6 @@ async function loadConnectedInstitutions() {
                 const syncDatesObj = JSON.parse(savedSyncDates);
                 syncDatesMap = new Map(Object.entries(syncDatesObj));
             } catch (e) {
-                // Ignorar erro de parsing
             }
         }
         
@@ -104,7 +103,7 @@ async function loadConnectedInstitutions() {
     }
 }
 
-// Update statistics
+
 function updateStats() {
     const activeInstitutions = institutions.filter(inst => inst.status === 'active').length;
     const totalAccounts = activeInstitutions;
@@ -119,13 +118,13 @@ function updateStats() {
     if (lastSyncElement) lastSyncElement.textContent = lastSync;
 }
 
-// Get last sync time formatted
+
 function getLastSyncTime() {
     const activeSyncs = institutions
         .filter(inst => inst.status === 'active' && inst.lastSync)
         .map(inst => {
             const date = new Date(inst.lastSync);
-            // Verificar se a data é válida
+        
             return isNaN(date.getTime()) ? null : date;
         })
         .filter(date => date !== null)
@@ -140,7 +139,7 @@ function getLastSyncTime() {
     const diffMs = now - lastSync;
     const diffMinutes = Math.floor(diffMs / (1000 * 60));
     
-    // Garantir que diffMinutes não seja negativo
+
     const safeDiffMinutes = Math.max(0, diffMinutes);
     
     if (safeDiffMinutes === 0) {
@@ -156,11 +155,11 @@ function getLastSyncTime() {
     }
 }
 
-// Set active filter
+
 function setActiveFilter(filter) {
     currentFilter = filter;
     
-    // Update filter buttons
+
     filterButtons.forEach(button => {
         button.classList.remove('active');
         if (button.dataset.filter === filter) {
@@ -168,11 +167,11 @@ function setActiveFilter(filter) {
         }
     });
     
-    // Render filtered institutions
+
     renderInstitutions();
 }
 
-// Filter institutions based on current filter
+
 function getFilteredInstitutions() {
     const sortedInstitutions = [...institutions];
     
@@ -185,7 +184,7 @@ function getFilteredInstitutions() {
     return sortedInstitutions;
 }
 
-// Render institutions grid
+
 function renderInstitutions() {
     if (!institutionsGrid) {
         return;
@@ -206,9 +205,9 @@ function renderInstitutions() {
     setupCardEventListeners();
 }
 
-// Create institution card HTML
+
 function createInstitutionCard(institution) {
-    // Usar sempre o mesmo ícone padrão e classe para todas as instituições
+
     const iconClass = 'fas fa-university';
     const cardClass = 'institution-card';
     
@@ -241,7 +240,6 @@ function createInstitutionCard(institution) {
 
 
 
-// Format date
 function formatDate(dateString) {
     if (!dateString) {
         return 'Nunca';
@@ -249,7 +247,7 @@ function formatDate(dateString) {
     
     const date = new Date(dateString);
     
-    // Verificar se a data é válida
+
     if (isNaN(date.getTime())) {
         return 'Nunca';
     }
@@ -268,7 +266,7 @@ function formatDate(dateString) {
     }
 }
 
-// Render empty state
+
 function renderEmptyState() {
     
     const emptyMessage = 'Nenhuma instituição conectada ainda';
@@ -287,12 +285,12 @@ function renderEmptyState() {
 
 
 
-// Setup card event listeners
+
 function setupCardEventListeners() {
-    // Card-specific event listeners can be added here if needed
+
 }
 
-// Show/hide loading state
+
 function showLoadingState() {
     institutionsGrid.innerHTML = `
         <div class="loading-state">
@@ -303,20 +301,20 @@ function showLoadingState() {
 }
 
 function hideLoadingState() {
-    // Loading state will be replaced by renderInstitutions or renderEmptyState
+
 }
 
-// Modal elements
+
 let syncModal, disconnectModal;
 let currentInstitutionId = null;
 let currentInstitutionName = null;
 
 function setupModalListeners() {
-    // Get modal elements
+    
     syncModal = document.getElementById('syncModal');
     disconnectModal = document.getElementById('disconnectModal');
     
-    // Sync modal listeners
+    
     document.getElementById('closeSyncModal').addEventListener('click', hideSyncModal);
     document.getElementById('cancelSyncBtn').addEventListener('click', hideSyncModal);
     document.getElementById('confirmSyncBtn').addEventListener('click', () => {
@@ -326,7 +324,7 @@ function setupModalListeners() {
         }
     });
     
-    // Disconnect modal listeners
+    
     document.getElementById('closeDisconnectModal').addEventListener('click', hideDisconnectModal);
     document.getElementById('cancelDisconnectBtn').addEventListener('click', hideDisconnectModal);
     document.getElementById('confirmDisconnectBtn').addEventListener('click', () => {
@@ -336,7 +334,7 @@ function setupModalListeners() {
         }
     });
     
-    // Close modals when clicking outside
+    
     window.addEventListener('click', (event) => {
         if (event.target === syncModal) {
             hideSyncModal();
@@ -346,10 +344,10 @@ function setupModalListeners() {
         }
     });
     
-    // Close modals with ESC key
+    
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-            // Only close if modals are actually open
+    
             if (syncModal && syncModal.classList.contains('show')) {
                 hideSyncModal();
             }
@@ -360,43 +358,43 @@ function setupModalListeners() {
     });
 }
 
-// Show sync modal
+
 function showSyncModal(institution) {
     currentInstitutionId = institution.id;
     document.getElementById('syncInstitutionName').textContent = institution.name;
     syncModal.classList.add('show');
-    // Apply blur to specific elements
+
     document.querySelector('.dashboard-container').classList.add('modal-open');
 }
 
-// Hide sync modal
+
 function hideSyncModal() {
     syncModal.classList.remove('show');
     currentInstitutionId = null;
     currentInstitutionName = null;
-    // Remove blur from specific elements
+
     document.querySelector('.dashboard-container').classList.remove('modal-open');
 }
 
-// Show disconnect modal
+
 function showDisconnectModal(institution) {
     currentInstitutionId = institution.id;
     document.getElementById('disconnectInstitutionName').textContent = institution.name;
     disconnectModal.classList.add('show');
-    // Apply blur to specific elements
+
     document.querySelector('.dashboard-container').classList.add('modal-open');
 }
 
-// Hide disconnect modal
+
 function hideDisconnectModal() {
     disconnectModal.classList.remove('show');
     currentInstitutionId = null;
     currentInstitutionName = null;
-    // Remove blur from specific elements
+
     document.querySelector('.dashboard-container').classList.remove('modal-open');
 }
 
-// Action handlers
+
 function syncInstitution(id, institutionName) {
     const numericId = parseInt(id);
     const institution = institutions.find(inst => inst.id === numericId || inst.id === id);
@@ -417,18 +415,18 @@ function disconnectInstitution(id, institutionName) {
     }
 }
 
-// Make functions globally available for onclick handlers
+
 window.syncInstitution = syncInstitution;
 window.disconnectInstitution = disconnectInstitution;
 window.handleSyncInstitution = handleSyncInstitution;
 window.handleDisconnectInstitution = handleDisconnectInstitution;
 
-// Sync institution
+
 async function handleSyncInstitution(id, institutionName) {
     const institutionId = parseInt(id) || id;
     
     try {
-        // Mostrar loading no botão específico
+    
         const card = document.querySelector(`[data-id="${institutionId}"]`);
         const syncButton = card?.querySelector('.action-btn.primary');
         
@@ -457,7 +455,7 @@ async function handleSyncInstitution(id, institutionName) {
         
         const data = await response.json();
         
-        // Update last sync time and balance
+
         const institution = institutions.find(inst => inst.id === institutionId);
         if (institution) {
             const newSyncDate = data.lastSync || new Date().toISOString();
@@ -466,20 +464,20 @@ async function handleSyncInstitution(id, institutionName) {
                 institution.balance = parseFloat(data.newBalance) || 0;
             }
             
-            // Salvar data de sincronização permanentemente
+    
             const savedSyncDates = localStorage.getItem('institutionsSyncDates');
             let syncDatesObj = {};
             if (savedSyncDates) {
                 try {
                     syncDatesObj = JSON.parse(savedSyncDates);
                 } catch (e) {
-                    // Ignorar erro de parsing
+        
                 }
             }
             syncDatesObj[institutionId.toString()] = newSyncDate;
             localStorage.setItem('institutionsSyncDates', JSON.stringify(syncDatesObj));
             
-            // Atualizar cache
+    
             localStorage.setItem('institutionsCache', JSON.stringify(institutions));
             localStorage.setItem('institutionsCacheTimestamp', Date.now().toString());
         }
@@ -492,7 +490,7 @@ async function handleSyncInstitution(id, institutionName) {
     } catch (error) {
         showNotification(`Erro ao sincronizar ${institutionName || 'conta'}: ${error.message}`, 'error');
     } finally {
-        // Restaurar botão
+
         const card = document.querySelector(`[data-id="${institutionId}"]`);
         const syncButton = card?.querySelector('.action-btn.primary');
         if (syncButton) {
@@ -502,12 +500,12 @@ async function handleSyncInstitution(id, institutionName) {
     }
 }
 
-// Disconnect institution
+
 async function handleDisconnectInstitution(id, institutionName) {
     const institutionId = parseInt(id) || id;
     
     try {
-        // Mostrar loading no botão específico
+    
         const card = document.querySelector(`[data-id="${institutionId}"]`);
         const disconnectButton = card?.querySelector('.action-btn.danger');
         
@@ -516,7 +514,7 @@ async function handleDisconnectInstitution(id, institutionName) {
             disconnectButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Desconectando...';
         }
         
-        // Removido notificação de início para evitar duplicação
+
         
         const response = await fetch(`/open-finance/disconnect/${institutionId}`, {
             method: 'DELETE',
@@ -531,7 +529,7 @@ async function handleDisconnectInstitution(id, institutionName) {
             throw new Error(errorData.error || 'Failed to disconnect institution');
         }
         
-        // Remover a data de sincronização salva permanentemente para esta instituição
+
         const savedSyncDates = localStorage.getItem('institutionsSyncDates');
         if (savedSyncDates) {
             try {
@@ -539,14 +537,14 @@ async function handleDisconnectInstitution(id, institutionName) {
                 delete syncDatesObj[institutionId.toString()];
                 localStorage.setItem('institutionsSyncDates', JSON.stringify(syncDatesObj));
             } catch (e) {
-                // Ignorar erro
+    
             }
         }
         
-        // Remove institution from list
+
         institutions = institutions.filter(inst => inst.id !== institutionId);
         
-        // Update cache
+
         localStorage.setItem('institutionsCache', JSON.stringify(institutions));
         localStorage.setItem('institutionsCacheTimestamp', Date.now().toString());
         
@@ -554,14 +552,14 @@ async function handleDisconnectInstitution(id, institutionName) {
         renderInstitutions();
         showNotification(`${institutionName} desconectado com sucesso!`, 'success');
         
-        // Disparar evento personalizado para notificar desconexão
+
         window.dispatchEvent(new CustomEvent('accountDisconnected', {
             detail: { institutionId: institutionId, institutionName: institutionName }
         }));
     } catch (error) {
         showNotification(`Erro ao desconectar ${institutionName || 'instituição'}: ${error.message}`, 'error');
     } finally {
-        // Restaurar botão
+
         const card = document.querySelector(`[data-id="${institutionId}"]`);
         const disconnectButton = card?.querySelector('.action-btn.danger');
         if (disconnectButton) {
@@ -575,32 +573,32 @@ function handleConnectInstitution() {
     showNotification('Funcionalidade em desenvolvimento', 'info');
 }
 
-// Make function globally available for onclick handlers
+
 window.handleConnectInstitution = handleConnectInstitution;
 
-// Função para limpar cache e recarregar dados (útil após conectar nova conta)
+
 function clearCacheAndReload() {
     isLoading = false;
     institutions = [];
     loadConnectedInstitutions();
 }
 
-// Tornar função disponível globalmente
+
 window.clearCacheAndReload = clearCacheAndReload;
 
 function handleRefreshData() {
-    // Recarregar dados do servidor
+
     loadConnectedInstitutions();
 }
 
-// Utility function to show notifications
+
 function showNotification(message, type = 'info') {
-    // Create notification element
+
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.textContent = message;
     
-    // Add styles
+
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -614,7 +612,7 @@ function showNotification(message, type = 'info') {
         transition: transform 0.3s ease;
     `;
     
-    // Set background color based on type
+
     switch (type) {
         case 'success':
             notification.style.backgroundColor = '#36b37e';
@@ -629,15 +627,15 @@ function showNotification(message, type = 'info') {
             notification.style.backgroundColor = '#0066cc';
     }
     
-    // Add to page
+
     document.body.appendChild(notification);
     
-    // Animate in
+
     setTimeout(() => {
         notification.style.transform = 'translateX(0)';
     }, 100);
     
-    // Remove after 3 seconds
+
     setTimeout(() => {
         notification.style.transform = 'translateX(100%)';
         setTimeout(() => {
@@ -648,21 +646,21 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// Listen for account connection events
+
 window.addEventListener('accountConnected', (event) => {
     setTimeout(() => {
         clearCacheAndReload();
     }, 2000);
 });
 
-// Listen for account disconnection events
+
 window.addEventListener('accountDisconnected', (event) => {
     setTimeout(() => {
         clearCacheAndReload();
     }, 2000);
 });
 
-// Initialize when DOM is loaded
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeInstitutions);
 } else {

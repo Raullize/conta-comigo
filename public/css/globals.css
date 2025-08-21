@@ -278,7 +278,7 @@ a:hover {
 }
 
 
-/* Responsiveness */
+
 @media (max-width: 768px) {
   html {
     font-size: 14px;
@@ -321,7 +321,7 @@ a:hover {
   }
 }
 
-/*simulador*/
+
 
 :root {
   --cc-green: #36b37e;

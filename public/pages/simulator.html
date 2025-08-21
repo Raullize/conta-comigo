@@ -20,19 +20,19 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar will be injected here -->
+
         <div id="sidebar-container"></div>
         
         <main class="main-content">
-            <!-- Header will be injected here -->
+    
             <div id="header-container"></div>
             
-            <!-- Page Content -->
+    
             <div class="page-content">
-                <!-- Main Content Area -->
+        
                 <main class="content">
                     <div class="content-grid">
-                        <!-- Parameters Panel -->
+            
                         <div class="parameters-panel">
                             <div class="card">
                                 <div class="card-header">
@@ -41,7 +41,7 @@
                                 </div>
                                 <div class="card-content">
                                     <form id="simulationForm" novalidate>
-                                        <!-- Classe de Ativo -->
+                    
                                         <div class="form-group">
                                             <label class="form-label">
                                                 Classe de Ativo
@@ -64,7 +64,7 @@
                                             <div class="field-error" id="classeAtivoError"></div>
                                         </div>
 
-                                        <!-- Tipo de Aporte -->
+                    
                                         <div class="form-group">
                                             <label class="form-label">
                                                 Tipo de Aporte
@@ -92,7 +92,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Configuração de Aporte -->
+                    
                                         <div id="aporteUnico" class="aporte-config">
                                             <div class="form-group">
                                                 <label for="valorInicial" class="form-label">Valor Inicial (R$)</label>
@@ -150,7 +150,7 @@
                                                 <input type="date" id="dataInicial" class="form-input">
                                             </div>
 
-                                            <!-- Informações Adicionais para Aportes Periódicos -->
+                        
                                             <div class="info-card" id="periodicInfo">
                                                 <div class="info-header">
                                                     <i class="fas fa-info-circle"></i>
@@ -195,7 +195,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Dados do Investimento -->
+                    
                                         <div class="form-section">
                                             <h3>Dados do Investimento</h3>
                                             
@@ -256,7 +256,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Taxas e Custos -->
+                
                                         <div class="form-section">
                                             <h3>Taxas & Custos</h3>
                                             <div class="form-row">
@@ -319,7 +319,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Botões de Ação -->
+                
                                         <div class="form-actions">
                                             <button type="submit" class="btn btn-primary" id="simulateBtn">
                                                 <span class="btn-text">
@@ -341,7 +341,7 @@
                             </div>
                         </div>
 
-                        <!-- Results Panel -->
+            
                         <div class="results-panel">
                             <div class="card">
                                 <div class="card-header">
@@ -362,7 +362,7 @@
                                     </div>
                                 </div>
                                 <div class="card-content">
-                                    <!-- Loading State -->
+                
                                     <div id="loadingState" class="loading-state" style="display: none;">
                                         <div class="loading-header">
                                             <div class="loading-spinner">
@@ -396,7 +396,7 @@
                                         <div class="skeleton skeleton-table"></div>
                                     </div>
 
-                                    <!-- Empty State -->
+                
                                     <div id="emptyState" class="empty-state">
                                         <div class="empty-illustration">
                                             <i class="fas fa-chart-line empty-icon"></i>
@@ -414,9 +414,9 @@
                                         </button>
                                     </div>
 
-                                    <!-- Results Content -->
+                
                                     <div id="resultsContent" style="display: none;">
-                                        <!-- Indicadores-Chave Expandidos -->
+                
                                         <div class="indicators-grid-expanded">
                                             <div class="indicator-card-large success">
                                                 <div class="indicator-header">
@@ -502,7 +502,7 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Indicadores Adicionais -->
+                    
                                             <div class="indicator-card-large secondary">
                                                 <div class="indicator-header">
                                                     <div class="indicator-icon-wrapper">
@@ -536,7 +536,7 @@
                                             </div>
                                         </div>
 
-                                        <!-- Resumo Executivo -->
+                
                                         <div class="summary-card">
                                             <div class="summary-header">
                                                 <h3>Resumo Executivo</h3>
@@ -576,14 +576,14 @@
                                             </div>
                                         </div>
 
-                                        <!-- Análise Detalhada -->
+                
                                         <div class="analysis-tabs">
                                             <div class="tab-header">
                                                 <button class="tab-btn active" data-tab="table">📊 Tabela Detalhada</button>
                                                 <button class="tab-btn" data-tab="scenarios">🎯 Cenários</button>
                                             </div>
                                             
-                                            <!-- Tabela -->
+                
                                             <div class="tab-content active" id="tableTab">
                                                 <div class="table-container">
                                                     <div class="table-header">
@@ -627,9 +627,9 @@
                                                 </div>
                                             </div>
 
-                                            <!-- metricas tirada-->
+                
                                             
-                                            <!-- Cenários -->
+                
                                             <div class="tab-content" id="scenariosTab">
                                                 <div class="scenarios-grid">
                                                     <div class="scenario-card optimistic">
@@ -660,7 +660,7 @@
         </main>
     </div>
 
-    <!-- Notification Toast -->
+
     <div class="toast" id="toast">
         <div class="toast-content">
             <i class="toast-icon"></i>
@@ -678,7 +678,7 @@
         import { checkAuthentication } from '../js/auth-utils.js';
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize components
+    
             const sidebar = new SidebarComponent();
             const header = new HeaderComponent({
                 pageTitle: 'Simular Investimentos',
@@ -686,11 +686,11 @@
                 showBreadcrumb: true
             });
             
-            // Render components
+    
             sidebar.init(document.getElementById('sidebar-container'));
             header.init(document.getElementById('header-container'));
             
-            // Check authentication
+    
             checkAuthentication();
         });
     </script>

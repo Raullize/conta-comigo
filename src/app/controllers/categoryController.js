@@ -2,7 +2,7 @@ const { models } = require('../../database');
 const Category = models.Category;
 
 class CategoryController {
-  // ← Nome da classe em PascalCase
+  
   async createCategory(req, res) {
     const categoryExists = await Category.findOne({
       where: { name: req.body.name },
@@ -22,4 +22,4 @@ class CategoryController {
   }
 }
 
-module.exports = new CategoryController(); // ← Exportação corrigida
+module.exports = new CategoryController();

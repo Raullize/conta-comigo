@@ -6,10 +6,8 @@ class userController {
     try {
       const { name, cpf, email, birth_date, password } = req.body;
 
-      // Remover formatação do CPF (pontos e hífens)
       const cleanCpf = cpf.replace(/[.-]/g, '');
 
-      // Verificar se o usuário já existe por e-mail
       const userExistsByEmail = await User.findOne({
         where: { email },
       });
@@ -18,7 +16,6 @@ class userController {
         return res.status(400).json({ error: 'The user already exists' });
       }
 
-      // Verificar se o usuário já existe por CPF
       const userExistsByCpf = await User.findOne({
         where: { cpf: cleanCpf },
       });
@@ -91,13 +88,11 @@ class userController {
         return res.status(401).json({ error: 'Old Password incorrect.' });
       }
 
-      // Prepare update data
       const updateData = { name, email };
       if (birthDate) {
         updateData.birthDate = birthDate;
       }
       
-      // Add password to update data if provided
       if (password) {
         updateData.password = password;
       }

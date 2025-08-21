@@ -1,15 +1,12 @@
 
-/* Simulator Page Styles */
-
-/* Specific styles for simulator page */
 .page-content {
   padding: var(--spacing-lg);
 }
 
-/* Variáveis CSS - ContaComigo Brand Colors */
 
 
-/* Layout Principal */
+
+
 .app-container {
   display: flex;
   min-height: 100vh;
@@ -17,9 +14,9 @@
 }
 
 
-/* Mobile Menu */
 
-/* Main Content */
+
+
 .main-content {
   flex: 1;
   margin-left: 280px;
@@ -28,10 +25,10 @@
   min-height: 100vh;
 }
 
-/* Header */
 
 
-/* Content */
+
+
 .content {
   flex: 1;
   padding: 32px;
@@ -45,7 +42,7 @@
   align-items: start;
 }
 
-/* Cards */
+
 .card {
   background: var(--white);
   border-radius: var(--radius-lg);
@@ -86,7 +83,7 @@
   padding: 28px;
 }
 
-/* Form Elements */
+
 .form-group {
   margin-bottom: 24px;
 }
@@ -134,7 +131,7 @@
   min-height: 80px;
 }
 
-/* Input Wrappers */
+
 .input-wrapper {
   position: relative;
   display: flex;
@@ -166,7 +163,7 @@
   padding-right: 40px;
 }
 
-/* Select Wrapper */
+
 .select-wrapper {
   position: relative;
 }
@@ -185,7 +182,7 @@
   color: var(--cc-green);
 }
 
-/* Field Errors */
+
 .field-error {
   color: var(--red-500);
   font-size: 12px;
@@ -208,7 +205,7 @@
   font-size: 10px;
 }
 
-/* Radio Group */
+
 .radio-group {
   display: flex;
   flex-direction: column;
@@ -279,7 +276,7 @@
   font-size: 12px;
 }
 
-/* Info Card para Aportes Periódicos */
+
 .info-card {
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
   border: 1px solid #bae6fd;
@@ -352,7 +349,7 @@
   color: var(--cc-green);
 }
 
-/* Sliders */
+
 .slider-container {
   position: relative;
   margin: 20px 0;
@@ -438,7 +435,7 @@
   font-size: 16px;
 }
 
-/* Form Sections */
+
 .form-section {
   margin-top: 32px;
   padding-top: 24px;
@@ -458,7 +455,7 @@
   gap: 20px;
 }
 
-/* Buttons */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -552,13 +549,13 @@
   flex: 1;
 }
 
-/* Export Buttons */
+
 .export-buttons {
   display: flex;
   gap: 8px;
 }
 
-/* Tooltip */
+
 .tooltip-btn {
   background: transparent;
   border: none;
@@ -603,7 +600,7 @@
   border-top-color: var(--gray-800);
 }
 
-/* Loading State */
+
 .loading-state {
   padding: 40px 0;
   text-align: center;
@@ -697,7 +694,7 @@
   }
 }
 
-/* Empty State */
+
 .empty-state {
   text-align: center;
   padding: 80px 24px;
@@ -759,7 +756,7 @@
   font-size: 16px;
 }
 
-/* Indicadores Grid Expandidos */
+
 .indicators-grid-expanded {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -938,7 +935,7 @@
   color: var(--red-600);
 }
 
-/* Summary Card */
+
 .summary-card {
   background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
   border: 1px solid var(--gray-200);
@@ -1033,7 +1030,7 @@
   color: var(--gray-700);
 }
 
-/* Analysis Tabs */
+
 .analysis-tabs {
   background: var(--white);
   border: 1px solid var(--gray-200);
@@ -1080,7 +1077,7 @@
   display: block;
 }
 
-/* Table */
+
 .table-container {
   border-radius: var(--radius);
   overflow: hidden;
@@ -1203,7 +1200,7 @@
   color: var(--gray-600);
 }
 
-/* Metrics Grid */
+
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1246,7 +1243,7 @@
   color: var(--cc-green);
 }
 
-/* Scenarios Grid */
+
 .scenarios-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1300,7 +1297,7 @@
   color: var(--gray-900);
 }
 
-/* Modals */
+
 .modal {
   position: fixed;
   inset: 0;
@@ -1381,7 +1378,7 @@
   flex: 1;
 }
 
-/* Toast Notifications */
+
 .toast {
   position: fixed;
   top: 20px;
@@ -1468,7 +1465,7 @@
   color: var(--gray-600);
 }
 
-/* Scrollbar */
+
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -1488,7 +1485,7 @@
   background: var(--gray-400);
 }
 
-/* Responsive Design */
+
 @media (max-width: 1200px) {
   .content-grid {
     grid-template-columns: 380px 1fr;
@@ -1678,7 +1675,7 @@
   }
 }
 
-/* Focus Styles */
+
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
@@ -1687,7 +1684,7 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
-/* Print Styles */
+
 @media print {
   .sidebar,
   .mobile-menu-btn,
@@ -1710,7 +1707,7 @@ textarea:focus-visible {
   }
 }
 
-/* Animations */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -1754,7 +1751,7 @@ textarea:focus-visible {
   animation: scaleIn 0.2s ease-out;
 }
 
-/* Utility Classes */
+
 .text-center {
   text-align: center;
 }

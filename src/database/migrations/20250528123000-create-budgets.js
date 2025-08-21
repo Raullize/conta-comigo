@@ -38,7 +38,6 @@ module.exports = {
       },
     });
 
-    // Foreign key para usuário
     await queryInterface.addConstraint('budgets', {
       fields: ['user_cpf'],
       type: 'foreign key',
@@ -51,7 +50,6 @@ module.exports = {
       onDelete: 'CASCADE',
     });
 
-    // Índice único para evitar duplicatas de categoria por usuário/mês/ano
     await queryInterface.addIndex('budgets', {
       fields: ['user_cpf', 'category', 'month', 'year'],
       unique: true,

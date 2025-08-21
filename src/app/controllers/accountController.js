@@ -43,21 +43,21 @@ class AccountController {
       const { id_bank: rawid_bank } = req.params;
       const { cpf } = req.body;
 
-      // Validação de entrada
+  
       const { isValid, id_bank, baseURL } =
         await AccountController.validateBank(rawid_bank);
       if (!isValid || !/^\d{11}$/.test(cpf)) {
         return res.status(400).json({ error: 'Invalid parameters' });
       }
 
-      // Operação atômica
+  
       const result = await sequelize.transaction(async t => {
         const externalData = await AccountController.handleExternalAPI(
           baseURL,
           cpf
         );
 
-        // Verifica conta existente
+  
         const existingAccount = await Account.findOne({
           where: { id_bank, user_cpf: externalData.cpf },
           transaction: t,
@@ -67,7 +67,7 @@ class AccountController {
           throw new Error('Account already exists');
         }
 
-        // Cria nova conta
+  
         const newAccount = await Account.create(
           {
             id_bank,
@@ -78,31 +78,31 @@ class AccountController {
           { transaction: t }
         );
 
-        // Importa transações
+  
         if (externalData.transactions?.length > 0) {
           await Transaction.bulkCreate(
             externalData.transactions.map(transaction => {
-              // Mapear corretamente origin_cpf e destination_cpf baseado no tipo
+        
               let origin_cpf = null;
               let destination_cpf = null;
               
-              // Normalizar tipos das diferentes APIs
+        
               const normalizedType = transaction.type?.toLowerCase();
               
               if (normalizedType === 'deposit' || normalizedType === 'deposito' || normalizedType === 'credit') {
-                // Para depósitos/créditos: usuário é o destino
+        
                 destination_cpf = externalData.cpf;
                 origin_cpf = transaction.origin_cpf || null;
               } else if (normalizedType === 'withdrawal' || normalizedType === 'saque' || normalizedType === 'debit') {
-                // Para saques/débitos: usuário é a origem
+        
                 origin_cpf = externalData.cpf;
                 destination_cpf = transaction.destination_cpf || null;
               } else if (normalizedType === 'transfer' || normalizedType === 'transferencia') {
-                // Para transferências: usar os CPFs fornecidos ou o usuário como origem
+        
                 origin_cpf = transaction.origin_cpf || externalData.cpf;
                 destination_cpf = transaction.destination_cpf;
               } else {
-                // Fallback: usar o usuário como origem
+        
                 origin_cpf = externalData.cpf;
                 destination_cpf = transaction.destination_cpf || null;
               }

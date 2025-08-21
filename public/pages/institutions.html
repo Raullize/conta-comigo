@@ -19,18 +19,18 @@
 </head>
 <body>
     <div class="dashboard-container">
-        <!-- Sidebar will be injected here -->
+
         <div id="sidebar-container"></div>
         
         <main class="main-content">
-            <!-- Header will be injected here -->
+    
             <div id="header-container"></div>
             
-            <!-- Page Content -->
+    
             <div class="page-content">
-                <!-- Removido o título e subtítulo conforme solicitado -->
+        
 
-                <!-- Stats Cards -->
+        
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">
@@ -61,7 +61,7 @@
                     </div>
                 </div>
 
-                <!-- Institutions Grid -->
+        
                 <div class="institutions-section">
                     <div class="section-header">
                         <h3 class="section-title">Instituições Conectadas</h3>
@@ -78,12 +78,12 @@
                     </div>
 
                     <div class="institutions-grid" id="institutionsGrid">
-                        <!-- Institutions will be dynamically loaded here -->
+    
                     </div>
                     
 
 
-                    <!-- Empty State -->
+    
                     <div class="empty-state" id="emptyState" style="display: none;">
                         <div class="empty-icon">
                             <i class="fas fa-university"></i>
@@ -92,14 +92,14 @@
                         <p class="empty-description">
                             Conecte suas contas bancárias para começar a gerenciar suas finanças de forma integrada.
                         </p>
-                        <!-- Botão removido conforme solicitado -->
+        
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Logout Modal -->
+
     <div id="logoutModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -116,7 +116,7 @@
         </div>
     </div>
 
-    <!-- Modal de Confirmação de Sincronização -->
+
     <div id="syncModal" class="institutions-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -137,7 +137,7 @@
         </div>
     </div>
 
-    <!-- Modal de Confirmação de Desconexão -->
+
     <div id="disconnectModal" class="institutions-modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -167,7 +167,7 @@
         import { checkAuthentication } from '../js/auth-utils.js';
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize components
+    
             const sidebar = new SidebarComponent();
             const header = new HeaderComponent({
                 pageTitle: 'Minhas Instituições',
@@ -175,11 +175,11 @@
                 showBreadcrumb: true
             });
             
-            // Render components
+    
             sidebar.init(document.getElementById('sidebar-container'));
             header.init(document.getElementById('header-container'));
             
-            // Check authentication
+    
             checkAuthentication();
         });
     </script>

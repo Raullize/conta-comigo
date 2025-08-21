@@ -5,7 +5,7 @@
 import { loginUser } from './auth-utils.js';
 import { validateEmail, validateCPF } from './utils.js';
 
-// Application state
+
 const authState = {
   currentForm: 'login',
   currentStep: 1,
@@ -14,7 +14,7 @@ const authState = {
   registrationData: {},
 };
 
-// API URLs
+
 const LOGIN_URL = '/sessions';
 const REGISTER_URL = '/users';
 
@@ -86,7 +86,7 @@ function switchToRegister() {
 }
 
 function setupFormSwitching() {
-  // Event listeners for form toggle buttons
+  
   const switchToLoginBtns = document.querySelectorAll('[data-switch="login"]');
   const switchToRegisterBtns = document.querySelectorAll('[data-switch="register"]');
   
@@ -182,13 +182,13 @@ function populateStep1Data() {
 }
 
 function populateStep2Data() {
-  // Clear password fields when returning to step 2
+  
   const form = elements.registerFormElement;
   form.querySelector('#registerPassword').value = '';
   form.querySelector('#confirmPassword').value = '';
   form.querySelector('#acceptTerms').checked = false;
 
-  // Reset password strength indicator
+  
   updatePasswordStrength('');
 }
 
@@ -532,7 +532,7 @@ async function handleLogin(form) {
 
   try {
     setFormLoading('login', true);
-    // Add a small delay to ensure user sees loading state
+    
     await new Promise((resolve) => setTimeout(resolve, 2000));
     const response = await fetch(LOGIN_URL, {
       method: 'POST',
@@ -551,7 +551,7 @@ async function handleLogin(form) {
       throw new Error(result.error || 'Erro no login');
     }
 
-    // Check where the token is located in the response
+    
     let token = null;
     if (result.token) {
       token = result.token;
@@ -583,7 +583,7 @@ async function handleLogin(form) {
       6000
     );
     
-    // Show redirect toast separately
+    
     setTimeout((() => {
       showToast(
         'info',
@@ -597,7 +597,7 @@ async function handleLogin(form) {
       window.location.href = './dashboard.html';
     }), 3000);
   } catch (error) {
-    // Login error
+
     showToast(
       'error',
       'Erro no login',
@@ -660,7 +660,7 @@ async function handleRegister(form) {
   setFormLoading('register', true);
 
   try {
-    // Add a small delay to ensure user sees loading state
+    
     await new Promise((resolve) => setTimeout(resolve, 1000));
     
     const response = await fetch(REGISTER_URL, {
@@ -714,7 +714,7 @@ async function handleRegister(form) {
     setFormSuccess('register');
     showToast('success', 'Conta criada!', 'Sua conta foi criada com sucesso!', 6000);
     
-    // Show redirect toast separately
+    
     setTimeout((() => {
       showToast(
         'info',
@@ -724,15 +724,15 @@ async function handleRegister(form) {
       );
     }), 1000);
 
-    // Clear temporary data
+    
     authState.registrationData = {};
 
-    // Redirect to dashboard
+    
     setTimeout((() => {
       window.location.href = './dashboard.html';
     }), 3000);
   } catch (error) {
-    // Registration error
+
     showToast(
       'error',
       'Erro no cadastro',

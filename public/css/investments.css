@@ -1,4 +1,3 @@
-/* Reset e Base - Meus Investimentos ContaComigo */
 * {
   margin: 0;
   padding: 0;
@@ -12,14 +11,14 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
 }
-/* Layout Principal */
+
 .app-container {
   display: flex;
   min-height: 100vh;
   background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
 }
 
-/* Mobile Menu */
+
 .mobile-menu-btn {
   display: none;
   position: fixed;
@@ -50,7 +49,7 @@ body {
   transition: var(--transition);
 }
 
-/* Main Content */
+
 .main-content {
   flex: 1;
   margin-left: 280px;
@@ -59,13 +58,13 @@ body {
   min-height: 100vh;
 }
 
-/* Content */
+
 .content {
   flex: 1;
   padding: 32px;
 }
 
-/* Filtros e Busca */
+
 .filters-section {
   display: flex;
   justify-content: space-between;
@@ -132,7 +131,7 @@ body {
   box-shadow: 0 0 0 4px rgba(54, 179, 126, 0.1);
 }
 
-/* Buttons */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -207,7 +206,7 @@ body {
   font-size: 12px;
 }
 
-/* Cards */
+
 .card {
   background: var(--white);
   border-radius: var(--radius-lg);
@@ -248,7 +247,7 @@ body {
   padding: 28px;
 }
 
-/* Cards de Resumo */
+
 .summary-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -339,7 +338,7 @@ body {
   color: var(--red-600);
 }
 
-/* Container de Investimentos */
+
 .investments-container {
   margin-bottom: 2rem;
 }
@@ -529,7 +528,7 @@ body {
   color: var(--cc-green);
 }
 
-/* Estado vazio */
+
 .empty-state {
   text-align: center;
   padding: 4rem 2rem;
@@ -594,7 +593,7 @@ body {
   font-size: 16px;
 }
 
-/* Formulário */
+
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -642,7 +641,7 @@ body {
   min-height: 80px;
 }
 
-/* Input Wrappers */
+
 .input-wrapper {
   position: relative;
   display: flex;
@@ -662,7 +661,7 @@ body {
   padding-left: 2.5rem;
 }
 
-/* Select Wrapper */
+
 .select-wrapper {
   position: relative;
 }
@@ -681,7 +680,7 @@ body {
   color: var(--cc-green);
 }
 
-/* Toast Notifications */
+
 .toast {
   position: fixed;
   top: 20px;
@@ -768,7 +767,7 @@ body {
   color: var(--gray-600);
 }
 
-/* Scrollbar */
+
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -788,7 +787,7 @@ body {
   background: var(--gray-400);
 }
 
-/* Responsividade */
+
 @media (max-width: 1200px) {
   .investments-grid {
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -969,7 +968,7 @@ body {
   }
 }
 
-/* Animações */
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -993,7 +992,7 @@ body {
   animation-delay: 0.2s;
 }
 
-/* Focus Styles */
+
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
@@ -1002,7 +1001,7 @@ textarea:focus-visible {
   outline-offset: 2px;
 }
 
-/* Print Styles */
+
 @media print {
   .sidebar,
   .mobile-menu-btn,
@@ -1020,7 +1019,7 @@ textarea:focus-visible {
   }
 }
 
-/* Utility Classes */
+
 .text-center {
   text-align: center;
 }

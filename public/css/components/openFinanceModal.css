@@ -1,4 +1,3 @@
-/* Open Finance Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -75,7 +74,7 @@
   min-height: 0;
 }
 
-/* Institution Selection */
+
 .open-finance-modal .institution-selection {
   width: 100%;
   margin-bottom: 24px;
@@ -150,7 +149,7 @@
   text-transform: uppercase;
 }
 
-/* Cores específicas para cada banco */
+
 .open-finance-modal .institution-logo.vitor {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
 }
@@ -246,7 +245,7 @@
   cursor: not-allowed;
 }
 
-/* Consent Section */
+
 .open-finance-modal .consent-section {
   width: 100%;
   margin-bottom: 24px;
@@ -340,7 +339,7 @@
   transform: translateY(-1px);
 }
 
-/* Loading Section */
+
 .open-finance-modal .loading-section {
   text-align: center;
   padding: 40px 20px;
@@ -360,7 +359,7 @@
   margin: 0;
 }
 
-/* Success Section */
+
 .open-finance-modal .success-section {
   text-align: center;
   padding: 40px 20px;
@@ -405,7 +404,7 @@
   background: #2d9a6b;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
   .open-finance-modal .modal-container {
     width: 95%;

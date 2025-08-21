@@ -1,4 +1,3 @@
-// Dados dos investimentos (simulando uma base de dados, futuramente isso deve ser substituído por uma API real)
 let investments = [
   {
     id: 1,
@@ -50,7 +49,7 @@ let investments = [
 let currentEditingId = null
 let filteredInvestments = [...investments]
 
-// Inicialização
+
 document.addEventListener("DOMContentLoaded", () => {
   loadInvestments()
   updateSummary()
@@ -59,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupUserMenu()
 })
 
-// Carregar e exibir investimentos
+
 function loadInvestments() {
   const grid = document.getElementById("investmentsGrid")
   const emptyState = document.getElementById("emptyState")
@@ -130,7 +129,7 @@ function loadInvestments() {
     .join("")
 }
 
-// Atualizar resumo com estilo ContaComigo
+
 function updateSummary() {
   const totalInvestido = investments.reduce((sum, inv) => sum + inv.investedAmount, 0)
   const valorAtual = investments.reduce((sum, inv) => sum + inv.currentValue, 0)
@@ -142,7 +141,7 @@ function updateSummary() {
   document.getElementById("ganhoPerda").textContent = formatCurrency(ganhoPerda)
   document.getElementById("rentabilidadeTotal").textContent = `${rentabilidadeTotal}%`
 
-  // Aplicar classes de cor aos elementos de mudança
+  
   const rentabilidadeChange = document.getElementById("rentabilidadeChange")
   const ganhoChange = document.getElementById("ganhoChange")
 
@@ -159,7 +158,7 @@ function updateSummary() {
   }
 }
 
-// Filtrar investimentos
+
 function filterInvestments() {
   const searchTerm = document.getElementById("searchInput").value.toLowerCase()
   const typeFilter = document.getElementById("typeFilter").value
@@ -176,7 +175,7 @@ function filterInvestments() {
   loadInvestments()
 }
 
-// Ordenar investimentos
+
 function sortInvestments() {
   const sortBy = document.getElementById("sortBy").value
 
@@ -201,7 +200,7 @@ function sortInvestments() {
 }
 
 
-// Salvar investimento
+
 function saveInvestment(event) {
   event.preventDefault()
 
@@ -215,11 +214,11 @@ function saveInvestment(event) {
   }
 
   if (currentEditingId) {
-    // Editar existente
+    
     const index = investments.findIndex((inv) => inv.id === currentEditingId)
     investments[index] = { ...investments[index], ...formData }
   } else {
-    // Adicionar novo
+    
     const newId = Math.max(...investments.map((inv) => inv.id), 0) + 1
     investments.push({ id: newId, ...formData })
   }
@@ -230,7 +229,7 @@ function saveInvestment(event) {
   showNotification(currentEditingId ? "Investimento atualizado!" : "Investimento adicionado!")
 }
 
-// Excluir investimento
+
 function deleteInvestment(id) {
   const investment = investments.find((inv) => inv.id === id)
   if (!investment) return
@@ -243,13 +242,13 @@ function deleteInvestment(id) {
   }
 }
 
-// Fechar modal
+
 function closeModal() {
   document.getElementById("modalOverlay").classList.remove("active")
   currentEditingId = null
 }
 
-// Configurar máscara de moeda
+
 function setupCurrencyMask() {
   const currencyInputs = ["investedAmount", "currentValue"]
 
@@ -265,7 +264,7 @@ function setupCurrencyMask() {
   })
 }
 
-// Funções utilitárias
+
 function formatCurrency(value) {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -292,17 +291,17 @@ function getTypeLabel(type) {
   return labels[type] || type
 }
 
-// Função de notificação estilo ContaComigo
+
 function showNotification(message, type = "success") {
   const toast = document.getElementById("toast")
   const icon = toast.querySelector(".toast-icon")
   const messageEl = toast.querySelector(".toast-message")
   const closeBtn = toast.querySelector(".toast-close")
 
-  // Set message
+  
   messageEl.textContent = message
 
-  // Set type and icon
+  
   toast.className = `toast ${type}`
 
   switch (type) {
@@ -319,15 +318,15 @@ function showNotification(message, type = "success") {
       icon.className = "toast-icon fas fa-info-circle"
   }
 
-  // Show toast
+  
   toast.classList.add("show")
 
-  // Auto hide after 5 seconds
+  
   const autoHide = setTimeout(() => {
     hideToast()
   }, 5000)
 
-  // Close button
+  
   closeBtn.onclick = () => {
     clearTimeout(autoHide)
     hideToast()
@@ -338,7 +337,7 @@ function showNotification(message, type = "success") {
   }
 }
 
-// Setup mobile menu (reutilizado do padrão)
+
 function setupMobileMenu() {
   const mobileMenuBtn = document.getElementById("mobileMenuBtn")
   const sidebar = document.getElementById("sidebar")
@@ -360,7 +359,7 @@ function setupMobileMenu() {
   }
 }
 
-// Setup user menu (reutilizado do padrão)
+
 function setupUserMenu() {
   const userMenu = document.getElementById("userMenu")
   const userMenuBtn = document.getElementById("userMenuBtn")
@@ -377,7 +376,7 @@ function setupUserMenu() {
   })
 }
 
-// Toggle sidebar
+
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebar")
   sidebar.classList.toggle("collapsed")

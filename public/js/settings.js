@@ -2,7 +2,7 @@
  * Settings - User Settings and Preferences
  */
 
-// DOM Elements
+
 const DOM = {
     menuItems: document.querySelectorAll('.settings-nav-item'),
     contentSections: document.querySelectorAll('.content-section'),

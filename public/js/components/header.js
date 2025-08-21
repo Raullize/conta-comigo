@@ -85,9 +85,9 @@ class HeaderComponent {
   init(container) {
     container.innerHTML = this.render();
     this.bindEvents();
-    // Uses getUserData function from auth-utils.js to display user name
+
     this.updateUserName();
-    // Update profile photo if exists
+
     this.updateProfilePhoto();
   }
   
@@ -152,7 +152,7 @@ class HeaderComponent {
     const notificationBtn = document.querySelector('.notification-btn');
     if (notificationBtn) {
       notificationBtn.addEventListener('click', () => {
-        // TODO: Implement notifications functionality
+
       });
     }
   }

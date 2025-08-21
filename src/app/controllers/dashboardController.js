@@ -6,7 +6,6 @@ const {
 const Budget = require('../models/Budget');
 
 class DashboardController {
-  // Busca dados de visão geral (saldo, gastos e receitas do mês)
   static async getOverviewData(req, res) {
     try {
       if (!req.user || !req.user.cpf) {
@@ -20,7 +19,6 @@ class DashboardController {
       const previousMonth = currentMonth === 1 ? 12 : currentMonth - 1;
       const previousYear = currentMonth === 1 ? currentYear - 1 : currentYear;
       
-      // Buscar saldo total de todas as contas do usuário
       const accounts = await Account.findAll({
         where: { 
           user_cpf: cpf,
@@ -32,7 +30,6 @@ class DashboardController {
         return sum + parseFloat(account.balance || 0);
       }, 0);
       
-      // Buscar transações do mês atual
       const currentMonthTransactions = await Transaction.findAll({
         where: {
           [Op.or]: [
@@ -46,7 +43,6 @@ class DashboardController {
         }
       });
       
-      // Buscar transações do mês anterior
       const previousMonthTransactions = await Transaction.findAll({
         where: {
           [Op.or]: [

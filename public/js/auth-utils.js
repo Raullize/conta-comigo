@@ -93,7 +93,7 @@ function initLogoutModalEvents() {
   });
 }
 
-// Ensure logout modal events are initialized when DOM is loaded
+
 document.addEventListener('DOMContentLoaded', () => {
   initLogoutModalEvents();
 });
@@ -128,7 +128,7 @@ async function loadUserData() {
         userNameElement.textContent = userData.name || 'Usuário';
       }
     } else if (response.status === 401) {
-      // Expired or invalid token
+
       logoutUser();
     } else {
       console.error('Erro ao carregar dados do usuário:', response.status);
@@ -144,7 +144,7 @@ async function checkAuthentication() {
     return;
   }
 
-  // Load user data from server
+  
   await loadUserData();
 }
 

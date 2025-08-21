@@ -1,6 +1,3 @@
-/* Institutions Page Styles */
-
-/* Page Header */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -34,7 +31,7 @@
 
 
 
-/* Stats Grid */
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -94,7 +91,7 @@
   font-weight: 500;
 }
 
-/* Institutions Section */
+
 .institutions-section {
   background: var(--white);
   border-radius: var(--border-radius-lg);
@@ -150,7 +147,7 @@
   color: var(--primary-blue);
 }
 
-/* Institutions Grid */
+
 .institutions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -168,7 +165,7 @@
   border: 1px solid var(--gray-200);
 }
 
-/* Institution-specific styles */
+
 
 
 .institution-card:hover {
@@ -329,7 +326,7 @@
   color: var(--white);
 }
 
-/* Empty State */
+
 .empty-state {
   text-align: center;
   padding: var(--spacing-4xl) var(--spacing-2xl);
@@ -373,7 +370,7 @@
   margin-right: auto;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
   .page-header {
     flex-direction: column;
@@ -436,7 +433,7 @@
   }
 }
 
-/* Modal Styles */
+
 .institutions-modal {
   position: fixed;
   top: 0;
@@ -546,7 +543,7 @@
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Loading State */
+
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -577,7 +574,7 @@
   margin: 0;
 }
 
-/* Blur effect for specific elements when modal is open */
+
 .dashboard-container.modal-open #sidebar-container,
 .dashboard-container.modal-open #header-container {
   filter: blur(3px);

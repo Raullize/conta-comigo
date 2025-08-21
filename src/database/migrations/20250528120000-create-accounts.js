@@ -22,7 +22,7 @@ module.exports = {
         defaultValue: false,
       },
       id_bank: {
-        type: Sequelize.INTEGER, // Corrigido para INTEGER
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       institution_name: {

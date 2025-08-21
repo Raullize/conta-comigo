@@ -166,7 +166,7 @@ class OpenFinanceModal {
   }
 
   attachEventListeners() {
-    // Botão de conectar conta
+    
     const linkButtons = document.querySelectorAll('.btn-link-account:not([disabled])');
     linkButtons.forEach(button => {
       button.addEventListener('click', (e) => {
@@ -175,20 +175,20 @@ class OpenFinanceModal {
       });
     });
 
-    // Botão de confirmar consentimento
+    
     document.getElementById('btnConfirmConsent')?.addEventListener('click', () => {
       this.linkAccount();
     });
 
-    // Botão de cancelar consentimento
+    
     document.getElementById('btnCancelConsent')?.addEventListener('click', () => {
       this.showInstitutionSelection();
     });
 
-    // Botão de continuar após sucesso
+    
     document.getElementById('btnContinue')?.addEventListener('click', () => {
       this.hide();
-      window.location.reload(); // Recarrega a página para atualizar os dados
+      window.location.reload();
     });
   }
 
@@ -221,7 +221,7 @@ class OpenFinanceModal {
     document.getElementById('loadingSection').style.display = 'none';
     document.getElementById('successSection').style.display = 'none';
     
-    // Armazena o ID do banco selecionado
+    
     this.selectedBankId = bankId;
   }
 
@@ -238,14 +238,14 @@ class OpenFinanceModal {
     document.getElementById('loadingSection').style.display = 'none';
     document.getElementById('successSection').style.display = 'block';
     
-    // Aguardar um pouco para o servidor processar completamente
+    
     setTimeout(() => {
-      // Limpar cache e recarregar dados das instituições se a função estiver disponível
+      
       if (typeof window.clearCacheAndReload === 'function') {
         window.clearCacheAndReload();
       }
       
-      // Disparar evento personalizado para notificar outras páginas
+      
       window.dispatchEvent(new CustomEvent('accountConnected', {
         detail: { bankId: this.selectedBankId }
       }));
@@ -261,7 +261,7 @@ class OpenFinanceModal {
         throw new Error('Token de autenticação não encontrado');
       }
 
-      // Determina o endpoint baseado no banco selecionado
+  
       const endpoints = {
         vitor: '/open-finance/link-vitor',
         lucas: '/open-finance/link-lucas',
@@ -296,7 +296,7 @@ class OpenFinanceModal {
     }
   }
 
-  // Método estático para verificar se o usuário tem contas vinculadas
+
   static async checkLinkedAccounts() {
     try {
       const token = localStorage.getItem('token');
@@ -323,7 +323,7 @@ class OpenFinanceModal {
   }
 }
 
-// Exporta a classe para uso em outros módulos
+
 window.OpenFinanceModal = OpenFinanceModal;
 
 export default OpenFinanceModal;

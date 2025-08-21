@@ -1,4 +1,3 @@
-/* Settings Page Styles */
 .settings-container {
   max-width: 1000px;
   margin: 0 auto;
@@ -81,7 +80,7 @@
   max-width: 100%;
 }
 
-/* Largura específica para inputs da seção de segurança */
+
 #security-section .password-input {
   width: 250px;
 }
@@ -90,12 +89,12 @@
   width: 100%;
 }
 
-/* Espaçamento maior entre senha atual e nova senha */
+
 #security-section .form-row {
     margin-top: var(--spacing-xl);
 }
 
-/* Profile Photo Section */
+
 .profile-photo-section {
     justify-content: center;
     margin-bottom: var(--spacing-xl);
@@ -228,7 +227,7 @@
   max-width: 100%;
 }
 
-/* Largura específica para barra de força da senha na seção de segurança */
+
 #security-section .password-strength {
   width: 250px;
 }
@@ -618,7 +617,7 @@ input:checked + .toggle-slider:before {
   margin-right: var(--spacing-sm);
 }
 
-/* Modal Improvements */
+
 .modal-body ul {
   margin: var(--spacing-lg) 0;
   padding-left: var(--spacing-xl);
@@ -674,8 +673,8 @@ input:checked + .toggle-slider:before {
   margin-top: var(--spacing-sm);
 }
 
-/* Open Finance Section Improvements */
-/* Open Finance Styles */
+
+
 .connect-new-account {
     text-align: center;
     padding: var(--spacing-xl);
@@ -849,14 +848,14 @@ input:checked + .toggle-slider:before {
   }
 }
 
-/* Blur effect for specific elements when modal is open */
+
 .dashboard-container.modal-open #sidebar-container,
 .dashboard-container.modal-open #header-container {
   filter: blur(3px);
   transition: filter 0.3s ease;
 }
 
-/* Multi-Connect Section Styles */
+
 .multi-connect-section {
   margin-bottom: var(--spacing-2xl);
   padding: var(--spacing-xl);
@@ -960,7 +959,7 @@ input:checked + .toggle-slider:before {
   flex-shrink: 0;
 }
 
-/* Cores específicas para cada banco */
+
 .institution-logo.vitor {
   background: linear-gradient(135deg, #3b82f6, #1d4ed8);
 }
@@ -1049,7 +1048,7 @@ input:checked + .toggle-slider:before {
   cursor: not-allowed;
 }
 
-/* Progress indicator for connection process */
+
 .connection-progress {
   position: fixed;
   top: 0;
@@ -1068,7 +1067,7 @@ input:checked + .toggle-slider:before {
   transition: width 0.3s ease;
 }
 
-/* Loading states */
+
 .institution-card-settings.connecting {
   opacity: 0.7;
   pointer-events: none;
@@ -1088,7 +1087,7 @@ input:checked + .toggle-slider:before {
   to { transform: rotate(360deg); }
 }
 
-/* Toast notification styles for connection results */
+
 .connection-toast {
   position: fixed;
   bottom: 20px;
@@ -1118,7 +1117,7 @@ input:checked + .toggle-slider:before {
   }
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 768px) {
   .institutions-grid-settings {
     grid-template-columns: 1fr;

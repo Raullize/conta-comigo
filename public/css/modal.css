@@ -1,4 +1,3 @@
-/* Generic Modal Styles */
 .modal {
   display: flex;
   position: fixed;
@@ -141,7 +140,7 @@
   background-color: #c82333;
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 768px) {
   .modal .modal-content {
     width: 95%;

@@ -7,9 +7,9 @@ module.exports = {
         autoIncrement: true,
       },
       cpf: {
-        type: Sequelize.STRING(11), // Tamanho para CPF com formatação (xxx.xxx.xxx-xx)
+        type: Sequelize.STRING(11),
         allowNull: false,
-        primaryKey: true, // ← Defina como chave primária
+        primaryKey: true,
         unique: true,
       },
       name: {

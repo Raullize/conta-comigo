@@ -118,7 +118,7 @@ function smoothScrollTo(targetPosition, duration = 1200) {
     const timeElapsed = currentTime - startTime;
     const progress = Math.min(timeElapsed / duration, 1);
 
-    // Easing function for smoother movement (ease-in-out)
+    
     const easeInOutCubic =
       progress < 0.5
         ? 4 * progress * progress * progress
@@ -156,7 +156,7 @@ function initializeHeaderScrollEffect() {
     return;
   }
 
-  // Uses throttle function from global Utils object
+  
   const scrollHandler = throttle(() => {
     const scrollY = window.scrollY;
     const isScrolled = scrollY > 100;
@@ -257,7 +257,7 @@ function initializeBackToTop() {
     return;
   }
 
-  // Uses throttle function from global Utils object
+  
   const toggleVisibility = throttle(() => {
     const scrollY = window.scrollY;
     const shouldShow = scrollY > 300;

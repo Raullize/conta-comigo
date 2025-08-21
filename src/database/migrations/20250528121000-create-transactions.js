@@ -27,7 +27,7 @@ module.exports = {
         allowNull: true,
       },
       id_bank: {
-        type: Sequelize.INTEGER, // Corrigido para INTEGER
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       category: {
@@ -45,7 +45,6 @@ module.exports = {
       },
     });
 
-    // Foreign key para conta de origem
     await queryInterface.addConstraint('transactions', {
       fields: ['origin_cpf', 'id_bank'],
       type: 'foreign key',
@@ -58,7 +57,6 @@ module.exports = {
       onDelete: 'SET NULL',
     });
 
-    // Foreign key para conta de destino
     await queryInterface.addConstraint('transactions', {
       fields: ['destination_cpf', 'id_bank'],
       type: 'foreign key',

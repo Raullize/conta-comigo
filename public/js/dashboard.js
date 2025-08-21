@@ -7,10 +7,10 @@ import OpenFinanceModal from './components/openFinanceModal.js';
 let openFinanceModal;
 let categoryChart;
 
-// Configuração da API
+
 const API_BASE_URL = window.location.origin;
 
-// Função para fazer requisições autenticadas
+
 async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem('token');
   
@@ -35,7 +35,7 @@ async function apiRequest(endpoint, options = {}) {
     
     if (!response.ok) {
       if (response.status === 401) {
-        // Token expirado ou inválido
+
         localStorage.removeItem('token');
         window.location.href = '/pages/login.html';
         return;
@@ -51,19 +51,16 @@ async function apiRequest(endpoint, options = {}) {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Initialize Open Finance modal
+  
   openFinanceModal = new OpenFinanceModal();
-  
-  // Check linked accounts
+
   await checkOpenFinanceAccounts();
-  
-  // Load dashboard data
+
   loadDashboardData();
-  
-  // Setup UI events
+
   setupUIEvents();
   
-  // Listen for account connection events
+  
   window.addEventListener('accountConnected', (event) => {
     setTimeout(() => {
         loadDashboardData();
@@ -71,7 +68,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 });
 
-// Check Open Finance accounts
+
 async function checkOpenFinanceAccounts() {
   try {
     const result = await OpenFinanceModal.checkLinkedAccounts();
@@ -86,7 +83,7 @@ async function checkOpenFinanceAccounts() {
   }
 }
 
-// Load all dashboard data
+
 function loadDashboardData() {
   loadOverviewData();
   loadCategoryChart();
@@ -94,38 +91,35 @@ function loadDashboardData() {
   loadRecentTransactions();
 }
 
-// Load overview cards data
+
 async function loadOverviewData() {
   try {
     const data = await apiRequest('/dashboard/overview');
-    
-    // Total Balance
+  
     document.getElementById('totalBalance').textContent = formatCurrency(parseFloat(data.totalBalance));
     updateChangeIndicator('balanceChange', data.balanceChange);
-    
-    // Monthly Expenses
+  
     document.getElementById('monthlyExpenses').textContent = formatCurrency(parseFloat(data.monthlyExpenses));
     updateChangeIndicator('expensesChange', data.expensesChange);
-    
-    // Monthly Income
+  
     document.getElementById('monthlyIncome').textContent = formatCurrency(parseFloat(data.monthlyIncome));
     updateChangeIndicator('incomeChange', data.incomeChange);
   } catch (error) {
     console.error('Erro ao carregar dados de visão geral:', error);
-    // Show error state
+
     document.getElementById('totalBalance').textContent = 'R$ 0,00';
     document.getElementById('monthlyExpenses').textContent = 'R$ 0,00';
     document.getElementById('monthlyIncome').textContent = 'R$ 0,00';
   }
 }
 
-// Update change indicators
+
 function updateChangeIndicator(elementId, changeValue) {
   const element = document.getElementById(elementId);
   const icon = element.querySelector('i');
   const span = element.querySelector('span');
   
-  // Handle both number and object formats
+
   let percentage, isPositive;
   if (typeof changeValue === 'object' && changeValue !== null) {
     percentage = parseFloat(changeValue.percentage || 0);
@@ -137,7 +131,7 @@ function updateChangeIndicator(elementId, changeValue) {
   
   const isNegative = percentage < 0;
   
-  // Update classes
+
   element.classList.remove('positive', 'negative');
   if (isPositive && percentage !== 0) {
     element.classList.add('positive');
@@ -149,12 +143,12 @@ function updateChangeIndicator(elementId, changeValue) {
     icon.className = 'fas fa-minus';
   }
   
-  // Update text
+
   const prefix = isPositive && percentage > 0 ? '+' : '';
   span.textContent = `${prefix}${Math.abs(percentage).toFixed(1)}% em relação ao mês anterior`;
 }
 
-// Load category expenses chart
+
 async function loadCategoryChart() {
   try {
     const data = await apiRequest('/dashboard/categories');
@@ -166,7 +160,7 @@ async function loadCategoryChart() {
       return;
     }
     
-    // Transform API data to chart format
+
     const totalAmount = data.reduce((sum, item) => sum + parseFloat(item.amount), 0);
     const categories = data.map((item, index) => {
       const amount = parseFloat(item.amount);
@@ -181,7 +175,7 @@ async function loadCategoryChart() {
       };
     });
     
-    // Destroy existing chart if it exists
+
     if (categoryChart) {
       categoryChart.destroy();
     }
@@ -217,17 +211,17 @@ async function loadCategoryChart() {
       }
     });
     
-    // Update legend
+
     updateCategoryLegend(categories);
   } catch (error) {
     console.error('Erro ao carregar gráfico de categorias:', error);
-    // Show error state
+
     document.getElementById('categoryChart').style.display = 'none';
     document.getElementById('categoryLegend').innerHTML = '<p>Erro ao carregar dados de categorias.</p>';
   }
 }
 
-// Função para formatar nomes de categorias
+
 function formatCategoryName(category) {
   const categoryNames = {
     alimentacao: 'Alimentação',
@@ -246,7 +240,7 @@ function formatCategoryName(category) {
   return categoryNames[category] || category.charAt(0).toUpperCase() + category.slice(1);
 }
 
-// Update category legend
+
 function updateCategoryLegend(categories) {
   const legendContainer = document.getElementById('categoryLegend');
   
@@ -261,7 +255,7 @@ function updateCategoryLegend(categories) {
   `).join('');
 }
 
-// Load budget data
+
 async function loadBudgetData() {
   try {
     const data = await apiRequest('/dashboard/budget');
@@ -278,7 +272,7 @@ async function loadBudgetData() {
   }
 }
 
-// Update budget categories
+
 function updateBudgetCategories(categories) {
   const container = document.getElementById('budgetCategories');
   
@@ -306,7 +300,7 @@ function updateBudgetCategories(categories) {
   }).join('');
 }
 
-// Load recent transactions
+
 async function loadRecentTransactions() {
   try {
     const data = await apiRequest('/dashboard/transactions');
@@ -320,7 +314,7 @@ async function loadRecentTransactions() {
     const recentTransactions = data.slice(0, 5);
     
     container.innerHTML = recentTransactions.map(transaction => {
-      // Map transaction type correctly: 'income' for C/credit, 'expense' for D/debit
+
       const isIncome = transaction.type === 'income' || transaction.type === 'C';
       const transactionType = isIncome ? 'income' : 'expense';
       const formattedDate = formatDate(transaction.date);
@@ -351,12 +345,12 @@ async function loadRecentTransactions() {
   }
 }
 
-// Setup UI events
+
 function setupUIEvents() {
-  // UI events can be added here as needed
+
 }
 
-// Utility functions
+
 function formatCurrency(value) {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -373,7 +367,7 @@ function formatDate(dateString) {
   }).format(date);
 }
 
-// Export functions for potential external use
+
 export {
   loadDashboardData,
   loadOverviewData,

@@ -1,7 +1,6 @@
-// Expenses Manager - Gerenciamento de gastos com paginação, filtros e orçamento
 class ExpensesManager {
     constructor() {
-        // Ícones das categorias usando Font Awesome
+
         this.categoryIcons = {
             alimentacao: 'fas fa-utensils',
             transporte: 'fas fa-car',
@@ -17,7 +16,7 @@ class ExpensesManager {
             'Não classificado': 'fas fa-question-circle'
         };
 
-        // Categorias disponíveis para classificação
+
         this.availableCategories = {
             alimentacao: 'Alimentação',
             transporte: 'Transporte',
@@ -32,17 +31,17 @@ class ExpensesManager {
             outros: 'Outros'
         };
 
-        // Transações serão carregadas do backend
+
         this.transactions = [];
 
 
 
-        // Configurações de paginação
+
         this.itemsPerPage = 5;
         this.currentPage = 1;
         this.filteredTransactions = [...this.transactions];
 
-        // Filtros ativos
+
         this.activeFilters = {
             category: '',
             type: '',
@@ -50,8 +49,7 @@ class ExpensesManager {
             endDate: ''
         };
 
-        // Dados do orçamento mensal (simulando dados que virão do banco)
-        // Nota: salário foi removido pois não faz sentido ter limite para receita
+        
         this.monthlyBudget = {
             alimentacao: { limit: null, spent: 0 },
             transporte: { limit: null, spent: 0 },
@@ -70,7 +68,7 @@ class ExpensesManager {
     async init() {
         this.setupEventListeners();
         
-        // Carregar orçamentos do banco de dados
+        
         try {
             await this.loadBudgetsFromDatabase();
         } catch (error) {
@@ -85,26 +83,26 @@ class ExpensesManager {
     }
 
     setupEventListeners() {
-        // Filtros
+    
         document.getElementById('categoryFilter').addEventListener('change', () => this.applyFilters());
         document.getElementById('typeFilter').addEventListener('change', () => this.applyFilters());
         document.getElementById('startDate').addEventListener('change', () => this.applyFilters());
         document.getElementById('endDate').addEventListener('change', () => this.applyFilters());
 
-        // Filtros mobile
+    
         document.getElementById('categoryFilterMobile').addEventListener('change', () => this.applyFilters());
         document.getElementById('typeFilterMobile').addEventListener('change', () => this.applyFilters());
         document.getElementById('startDateMobile').addEventListener('change', () => this.applyFilters());
         document.getElementById('endDateMobile').addEventListener('change', () => this.applyFilters());
 
-        // Botão limpar filtros
+    
         document.getElementById('clearFiltersBtn').addEventListener('click', () => this.clearFilters());
         document.getElementById('clearFiltersBtnMobile').addEventListener('click', () => this.clearFilters());
 
-        // Toggle dropdown mobile
+    
         document.getElementById('filtersToggle').addEventListener('click', () => this.toggleFiltersDropdown());
 
-        // Fechar dropdown ao clicar fora
+    
         document.addEventListener('click', (e) => {
             const filtersToggle = document.getElementById('filtersToggle');
             const filtersDropdown = document.getElementById('filtersDropdown');
@@ -113,7 +111,7 @@ class ExpensesManager {
             }
         });
 
-        // Paginação
+    
         document.addEventListener('click', (e) => {
             if (e.target.classList.contains('page-btn')) {
                 const page = parseInt(e.target.dataset.page);
@@ -125,7 +123,7 @@ class ExpensesManager {
 
 
     applyFilters() {
-        // Verificar se estamos no desktop ou mobile e pegar os valores corretos
+    
         const isDesktop = window.innerWidth > 768;
         
         const categoryFilter = isDesktop ? 
@@ -148,7 +146,7 @@ class ExpensesManager {
             endDate: endDate
         };
 
-        // Sincronizar valores entre desktop e mobile
+    
         if (isDesktop) {
             document.getElementById('categoryFilterMobile').value = categoryFilter;
             document.getElementById('typeFilterMobile').value = typeFilter;
@@ -198,13 +196,13 @@ class ExpensesManager {
     }
 
     clearFilters() {
-        // Limpar filtros desktop
+
         document.getElementById('categoryFilter').value = '';
         document.getElementById('typeFilter').value = '';
         document.getElementById('startDate').value = '';
         document.getElementById('endDate').value = '';
         
-        // Limpar filtros mobile
+
         document.getElementById('categoryFilterMobile').value = '';
         document.getElementById('typeFilterMobile').value = '';
         document.getElementById('startDateMobile').value = '';
@@ -269,12 +267,12 @@ class ExpensesManager {
 
         let paginationHTML = '';
 
-        // Botão anterior
+
         if (this.currentPage > 1) {
             paginationHTML += `<button class="pagination-btn" onclick="expensesManager.goToPage(${this.currentPage - 1})">&laquo;</button>`;
         }
 
-        // Números das páginas
+
         for (let i = 1; i <= totalPages; i++) {
             if (i === this.currentPage) {
                 paginationHTML += `<button class="pagination-btn active">${i}</button>`;
@@ -283,7 +281,7 @@ class ExpensesManager {
             }
         }
 
-        // Botão próximo
+
         if (this.currentPage < totalPages) {
             paginationHTML += `<button class="pagination-btn" onclick="expensesManager.goToPage(${this.currentPage + 1})">&raquo;</button>`;
         }
@@ -342,12 +340,12 @@ class ExpensesManager {
         dropdown.classList.remove('show');
     }
 
-    // Métodos para classificação de transações
+
     openCategoryModal(transactionId) {
         const transaction = this.transactions.find(t => t.id === transactionId);
         if (!transaction) return;
 
-        // Criar modal dinamicamente
+
         const modalHTML = `
             <div id="categoryModal" class="expenses-modal-overlay">
                 <div class="modal-content">
@@ -377,17 +375,17 @@ class ExpensesManager {
             </div>
         `;
 
-        // Adicionar modal ao DOM
+
         document.body.insertAdjacentHTML('beforeend', modalHTML);
         
-        // Adicionar event listener para fechar ao clicar fora
+
         document.getElementById('categoryModal').addEventListener('click', (e) => {
             if (e.target.id === 'categoryModal') {
                 this.closeCategoryModal();
             }
         });
         
-        // Adicionar event listener para fechar com ESC
+
         this.handleEscapeKey = (e) => {
             if (e.key === 'Escape') {
                 this.closeCategoryModal();
@@ -400,7 +398,7 @@ class ExpensesManager {
         const modal = document.getElementById('categoryModal');
         if (modal) {
             modal.remove();
-            // Remover o event listener da tecla ESC
+    
             if (this.handleEscapeKey) {
                 document.removeEventListener('keydown', this.handleEscapeKey);
                 this.handleEscapeKey = null;
@@ -410,21 +408,21 @@ class ExpensesManager {
 
     async classifyTransaction(transactionId, category) {
         try {
-            // Chamar a API para salvar no banco de dados
+    
             await this.updateTransactionCategory(transactionId, category);
             
-            // Encontrar e atualizar a transação localmente
+    
             const transactionIndex = this.transactions.findIndex(t => t.id === transactionId);
             if (transactionIndex !== -1) {
                 this.transactions[transactionIndex].category = category;
                 
-                // Atualizar a visualização
+        
                 this.applyFilters();
                 
-                // Fechar modal
+        
                 this.closeCategoryModal();
                 
-                // Mostrar feedback ao usuário
+        
                 this.showNotification(`Transação classificada como ${this.getCategoryName(category)}!`);
             }
         } catch (error) {
@@ -433,7 +431,7 @@ class ExpensesManager {
         }
     }
 
-    // Método para atualizar categoria da transação via API
+
     async updateTransactionCategory(transactionId, category) {
         const token = localStorage.getItem('token');
         
@@ -455,7 +453,7 @@ class ExpensesManager {
     }
 
     showNotification(message, type = 'success') {
-        // Criar notificação simples
+    
         const notification = document.createElement('div');
         notification.className = 'notification';
         notification.textContent = message;
@@ -476,14 +474,14 @@ class ExpensesManager {
         
         document.body.appendChild(notification);
         
-        // Remover após 3 segundos
+
         setTimeout(() => {
             notification.style.animation = 'slideOut 0.3s ease';
             setTimeout(() => notification.remove(), 300);
         }, 3000);
     }
 
-    // Funções do Orçamento Mensal
+
     renderBudgetSection() {
         const budgetContainer = document.getElementById('budgetCategories');
         if (!budgetContainer) {
@@ -494,7 +492,7 @@ class ExpensesManager {
         budgetContainer.innerHTML = '';
 
         Object.keys(this.monthlyBudget).forEach(categoryKey => {
-            // Filtrar salário do orçamento mensal (não faz sentido ter limite para salário)
+    
             if (categoryKey === 'salario') {
                 return;
             }
@@ -530,7 +528,7 @@ class ExpensesManager {
     }
 
     setupBudgetEventListeners() {
-        // Event listeners para os cards de categoria
+
         const budgetCards = document.querySelectorAll('.budget-category');
         
         budgetCards.forEach((card) => {
@@ -542,7 +540,7 @@ class ExpensesManager {
             });
         });
 
-        // Event listeners para o modal (apenas se ainda não foram configurados)
+
         if (!this.budgetModalListenersSetup) {
             this.setupBudgetModalListeners();
             this.budgetModalListenersSetup = true;
@@ -561,29 +559,29 @@ class ExpensesManager {
             return;
         }
 
-        // Fechar modal
+        
         [closeBtn, cancelBtn].forEach(btn => {
             btn.addEventListener('click', () => this.closeBudgetModal());
         });
 
-        // Fechar modal clicando fora
+        
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 this.closeBudgetModal();
             }
         });
 
-        // Fechar modal com ESC
+        
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && modal.classList.contains('show')) {
                 this.closeBudgetModal();
             }
         });
 
-        // Salvar orçamento
+        
         saveBtn.addEventListener('click', () => this.saveBudgetFromModal());
         
-        // Salvar com Enter
+        
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 this.saveBudgetFromModal();
@@ -596,7 +594,7 @@ class ExpensesManager {
         const categoryName = this.availableCategories[category];
         const categoryIcon = this.categoryIcons[category];
 
-        // Verificar se os elementos do modal existem
+
         const modal = document.getElementById('budgetModal');
         const title = document.getElementById('budgetModalTitle');
         const icon = document.getElementById('budgetModalIcon');
@@ -610,26 +608,26 @@ class ExpensesManager {
             return;
         }
 
-        // Preencher dados do modal
+
         title.textContent = `Configurar Orçamento - ${categoryName}`;
         icon.className = categoryIcon;
         name.textContent = categoryName;
         currentValue.textContent = `R$ ${categoryData.spent.toFixed(2).replace('.', ',')}`;
         input.value = categoryData.limit || '';
         
-        // Aplicar status com cores
+
         const statusClass = this.getBudgetStatusClass(categoryData);
         const statusText = this.getBudgetStatusText(categoryData);
         statusElement.className = `budget-category-status ${statusClass}`;
         statusElement.textContent = statusText;
         
-        // Armazenar categoria atual
+
         this.currentBudgetCategory = category;
         
-        // Mostrar modal
+
         modal.classList.add('show');
         
-        // Focar no input
+
         setTimeout(() => {
             input.focus();
         }, 100);
@@ -657,10 +655,10 @@ class ExpensesManager {
         }
 
         try {
-            // Salvar no banco de dados
+    
             await this.updateBudgetInDatabase(this.currentBudgetCategory, value);
 
-            // Atualizar no objeto local
+    
             this.monthlyBudget[this.currentBudgetCategory].limit = value;
             
             this.showNotification(`Orçamento para ${this.availableCategories[this.currentBudgetCategory]} salvo com sucesso!`);
@@ -674,12 +672,12 @@ class ExpensesManager {
     }
 
     calculateSpentAmounts() {
-        // Resetar valores gastos
+
         Object.keys(this.monthlyBudget).forEach(category => {
             this.monthlyBudget[category].spent = 0;
         });
 
-        // Calcular gastos por categoria baseado nas transações
+
         this.transactions.forEach(transaction => {
             if (transaction.type === 'gasto' && transaction.category !== 'Não classificado') {
                 if (this.monthlyBudget[transaction.category]) {
@@ -709,7 +707,7 @@ class ExpensesManager {
         return 'Dentro do limite';
     }
 
-    // Função para atualizar orçamento no banco
+
     async loadBudgetsFromDatabase() {
     try {
       const response = await fetch('/budgets', {
@@ -725,10 +723,10 @@ class ExpensesManager {
 
       const data = await response.json();
       
-      // Atualizar orçamentos locais com dados do banco
+      
       if (data.success && data.budgets) {
         data.budgets.forEach(budget => {
-          // Filtrar salário dos orçamentos (não faz sentido ter limite para receita)
+          
           if (budget.category !== 'salario' && this.monthlyBudget[budget.category]) {
             this.monthlyBudget[budget.category].limit = budget.limit_amount;
           }
@@ -764,7 +762,7 @@ class ExpensesManager {
     }
   }
 
-    // Método para carregar transações do backend
+
     async loadTransactions() {
         try {
             const token = localStorage.getItem('token');
@@ -799,18 +797,18 @@ class ExpensesManager {
                 id_bank: transaction.id_bank
             }));
 
-            // Atualizar filteredTransactions
+
             this.filteredTransactions = [...this.transactions];
         } catch (error) {
             console.error('Erro ao carregar transações:', error);
-            // Em caso de erro, manter array vazio
+
             this.transactions = [];
             this.filteredTransactions = [];
         }
     }
 }
 
-// Tornar a instância global para uso nos botões de paginação
+
 let expensesManager;
 
 export default ExpensesManager;
