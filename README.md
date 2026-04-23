@@ -1,5 +1,9 @@
 # ContaComigo 💰
 
+> [!IMPORTANT]
+> **Atenção**: Este repositório agora é considerado a versão **"legada"**. O projeto está sendo reconstruído do zero (v2.0) com uma **nova arquitetura de alto desempenho** e **novas funcionalidades baseadas em Inteligência Artificial** para análise preditiva e insights financeiros. Para acompanhar a evolução, entre na nossa organização oficial: [ContaComigo Project](https://github.com/ContaComigo-Project)
+
+---
 [![en](https://img.shields.io/badge/lang-en-red.svg)](./README.en.md)
 
 ![ContaComigo Logo](public/assets/logos/logo.png)

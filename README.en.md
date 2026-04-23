@@ -1,5 +1,9 @@
 # ContaComigo 💰
 
+> [!IMPORTANT]
+> **Attention**: This repository is now considered the **"legacy"** version. The project is being rebuilt from scratch (v2.0) with a **new high-performance architecture** and **new features based on Artificial Intelligence** for predictive analysis and financial insights. To follow the evolution, join our official organization: [ContaComigo Project](https://github.com/ContaComigo-Project)
+
+---
 [![pt-br](https://img.shields.io/badge/lang-pt--br-green.svg)](./README.md)
 
 ![ContaComigo Logo](public/assets/logos/logo.png)
